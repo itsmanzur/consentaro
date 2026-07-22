@@ -1,0 +1,8 @@
+node_modules/
+vendor/
+dist/
+*.map
+*.pdf
+.DS_Store
+*.log
+.phpunit.result.cache

@@ -1,0 +1,20 @@
+#cf-banner{--cf-bg:#fff;--cf-text:#1a1a1a;--cf-btn-bg:#0073aa;--cf-btn-text:#fff;--cf-radius:8px;position:fixed;z-index:99999;left:0;right:0;padding:12px;pointer-events:none;font:14px/1.45 system-ui,sans-serif;color:var(--cf-text)}
+#cf-banner.cf-banner--bottom{bottom:0}
+#cf-banner.cf-banner--top{top:0}
+#cf-banner.cf-banner--bottom-right{left:auto;right:12px;bottom:12px;padding:0;max-width:360px}
+#cf-banner.cf-banner--modal{inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);padding:16px}
+.cf-banner__panel{pointer-events:auto;background:var(--cf-bg);color:var(--cf-text);border-radius:var(--cf-radius);box-shadow:0 -2px 16px rgba(0,0,0,.12);padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto}
+.cf-banner--bottom-right .cf-banner__panel,.cf-banner--modal .cf-banner__panel{margin:0;max-width:400px;flex-direction:column;align-items:stretch}
+.cf-banner__text{margin:0;flex:1 1 220px}
+.cf-banner__buttons{display:flex;flex-wrap:wrap;gap:8px}
+.cf-banner__btn{border:0;border-radius:4px;padding:10px 14px;cursor:pointer;font:inherit;font-weight:600}
+.cf-banner__btn--primary{background:var(--cf-btn-bg);color:var(--cf-btn-text)}
+.cf-banner__btn--ghost{background:#f0f0f1;color:#1a1a1a}
+.cf-banner__modal{display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;padding:16px}
+.cf-banner__modal.is-open{display:flex}
+.cf-banner__modal-card{background:#fff;color:#1a1a1a;border-radius:8px;padding:20px;max-width:420px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.cf-banner__modal-card h2{margin:0 0 12px;font-size:18px}
+.cf-banner__list{list-style:none;margin:0 0 16px;padding:0}
+.cf-banner__list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eee;font-size:13px}
+.cf-banner__modal-actions{display:flex;gap:8px;justify-content:flex-end}
+@media(max-width:600px){.cf-banner__panel{flex-direction:column;align-items:stretch}.cf-banner__buttons{width:100%}.cf-banner__btn{flex:1}}

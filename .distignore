@@ -1,0 +1,39 @@
+# Development / VCS
+.git
+.github
+.gitignore
+.gitattributes
+.wp-env.json
+.distignore
+.editorconfig
+.eslintrc
+.eslintrc.js
+.prettierrc
+.phpunit.result.cache
+phpunit.xml
+phpunit.xml.dist
+phpcs.xml
+phpcs.xml.dist
+tests
+bin
+
+# Node / Composer build tooling (built assets are shipped)
+node_modules
+package.json
+package-lock.json
+webpack.config.js
+composer.json
+composer.lock
+vendor
+
+# React source (compiled output lives in assets/js)
+assets/src
+
+# Local / docs not for WP.org package
+*.pdf
+*.md
+!readme.txt
+.DS_Store
+*.log
+.cursor
+agent-transcripts

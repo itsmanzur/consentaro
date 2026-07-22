@@ -1,0 +1,8 @@
+{
+	"plugins": [ "." ],
+	"themes": [ "twentytwentyfour" ],
+	"phpVersion": "8.0",
+	"config": {
+		"SCRIPT_DEBUG": true
+	}
+}

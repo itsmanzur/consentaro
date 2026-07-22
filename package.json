@@ -1,0 +1,16 @@
+{
+	"name": "consentflow",
+	"version": "1.0.0",
+	"description": "ConsentFlow admin UI",
+	"private": true,
+	"scripts": {
+		"start": "wp-scripts start",
+		"build": "wp-scripts build",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"release": "powershell -ExecutionPolicy Bypass -File bin/build-release.ps1"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^30.0.0"
+	}
+}
