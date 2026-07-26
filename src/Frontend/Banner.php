@@ -2,16 +2,20 @@
 /**
  * Consent banner renderer.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Frontend;
+namespace Consentaro\Frontend;
 
-use ConsentFlow\Admin\Settings;
-use ConsentFlow\Core\ServiceContainer;
-use ConsentFlow\Integration\GeoLocation;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Consentaro\Admin\Settings;
+use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\GeoLocation;
 
 /**
  * Outputs banner HTML when geo + consent rules match.
@@ -63,7 +67,7 @@ final class Banner {
 
 		$text = (string) ( $banner['text'] ?? '' );
 		if ( '' === $text ) {
-			$text = __( 'We use cookies to improve your experience and measure traffic.', 'consentflow' );
+			$text = __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' );
 		}
 
 		$style = $this->getCustomStyles( $banner );
@@ -75,14 +79,14 @@ final class Banner {
 		 * @param string               $html     Markup.
 		 * @param array<string, mixed> $settings Full settings.
 		 */
-		$html = (string) apply_filters( 'consentflow_banner_html', $html, $settings );
+		$html = (string) apply_filters( 'consentaro_banner_html', $html, $settings );
 
-		do_action( 'consentflow_before_banner_display' );
+		do_action( 'consentaro_before_banner_display' );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built with escaping helpers.
 		echo $html;
 
-		do_action( 'consentflow_after_banner_display' );
+		do_action( 'consentaro_after_banner_display' );
 	}
 
 	/**
@@ -92,10 +96,10 @@ final class Banner {
 	 */
 	public function getCustomStyles( array $banner ): string {
 		$map = array(
-			'--cf-bg'       => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
-			'--cf-text'     => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
-			'--cf-btn-bg'   => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0073aa',
-			'--cf-btn-text' => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-bg'       => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-text'     => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
+			'--consentaro-btn-bg'   => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0073aa',
+			'--consentaro-btn-text' => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
 		);
 
 		$parts = array();
@@ -124,54 +128,54 @@ final class Banner {
 	 */
 	private function buildHtml( string $position, string $text, string $style ): string {
 		$categories = array(
-			'analytics_storage'       => __( 'Analytics', 'consentflow' ),
-			'ad_storage'              => __( 'Advertising', 'consentflow' ),
-			'ad_user_data'            => __( 'Ad user data', 'consentflow' ),
-			'ad_personalization'      => __( 'Ad personalization', 'consentflow' ),
-			'personalization_storage' => __( 'Personalization', 'consentflow' ),
+			'analytics_storage'       => __( 'Analytics', 'consentaro' ),
+			'ad_storage'              => __( 'Advertising', 'consentaro' ),
+			'ad_user_data'            => __( 'Ad user data', 'consentaro' ),
+			'ad_personalization'      => __( 'Ad personalization', 'consentaro' ),
+			'personalization_storage' => __( 'Personalization', 'consentaro' ),
 		);
 
 		$items = '';
 		foreach ( $categories as $type => $label ) {
 			$items .= sprintf(
-				'<li><label for="cf-%1$s">%2$s</label><input id="cf-%1$s" type="checkbox" data-cf-type="%1$s" /></li>',
+				'<li><label for="consentaro-%1$s">%2$s</label><input id="consentaro-%1$s" type="checkbox" data-consentaro-type="%1$s" /></li>',
 				esc_attr( $type ),
 				esc_html( $label )
 			);
 		}
 
 		return sprintf(
-			'<div id="cf-banner" class="cf-banner cf-banner--%1$s" style="%2$s" role="dialog" aria-modal="true" aria-label="%3$s">' .
-				'<div class="cf-banner__panel">' .
-					'<p class="cf-banner__text">%4$s</p>' .
-					'<div class="cf-banner__buttons">' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--primary" data-cf-action="accept-all">%5$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-action="deny-all">%6$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-action="customize">%7$s</button>' .
+			'<div id="consentaro-banner" class="consentaro-banner consentaro-banner--%1$s" style="%2$s" role="dialog" aria-modal="true" aria-label="%3$s">' .
+				'<div class="consentaro-banner__panel">' .
+					'<p class="consentaro-banner__text">%4$s</p>' .
+					'<div class="consentaro-banner__buttons">' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-action="accept-all">%5$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="deny-all">%6$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="customize">%7$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>' .
-			'<div id="cf-banner-modal" class="cf-banner__modal" role="dialog" aria-modal="true" aria-labelledby="cf-banner-modal-title">' .
-				'<div class="cf-banner__modal-card">' .
-					'<h2 id="cf-banner-modal-title">%8$s</h2>' .
-					'<ul class="cf-banner__list">%9$s</ul>' .
-					'<div class="cf-banner__modal-actions">' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-close>%10$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--primary" data-cf-save-custom>%11$s</button>' .
+			'<div id="consentaro-banner-modal" class="consentaro-banner__modal" role="dialog" aria-modal="true" aria-labelledby="consentaro-banner-modal-title">' .
+				'<div class="consentaro-banner__modal-card">' .
+					'<h2 id="consentaro-banner-modal-title">%8$s</h2>' .
+					'<ul class="consentaro-banner__list">%9$s</ul>' .
+					'<div class="consentaro-banner__modal-actions">' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-close>%10$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-save-custom>%11$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>',
 			esc_attr( $position ),
 			esc_attr( $style ),
-			esc_attr__( 'Cookie Consent', 'consentflow' ),
+			esc_attr__( 'Cookie Consent', 'consentaro' ),
 			esc_html( $text ),
-			esc_html__( 'Accept All', 'consentflow' ),
-			esc_html__( 'Deny All', 'consentflow' ),
-			esc_html__( 'Customize', 'consentflow' ),
-			esc_html__( 'Customize cookies', 'consentflow' ),
+			esc_html__( 'Accept All', 'consentaro' ),
+			esc_html__( 'Deny All', 'consentaro' ),
+			esc_html__( 'Customize', 'consentaro' ),
+			esc_html__( 'Customize cookies', 'consentaro' ),
 			$items,
-			esc_html__( 'Cancel', 'consentflow' ),
-			esc_html__( 'Save preferences', 'consentflow' )
+			esc_html__( 'Cancel', 'consentaro' ),
+			esc_html__( 'Save preferences', 'consentaro' )
 		);
 	}
 }

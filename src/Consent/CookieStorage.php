@@ -2,15 +2,19 @@
 /**
  * Secure cookie read/write helpers.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Consent;
+namespace Consentaro\Consent;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- * Sets, gets, and deletes ConsentFlow cookies.
+ * Sets, gets, and deletes Consentaro cookies.
  */
 final class CookieStorage {
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * PSR-4 autoloader for ConsentFlow\ → src/
+ * PSR-4 autoloader for Consentaro\ → src/
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 spl_autoload_register(
 	static function ( string $class ): void {
-		$prefix = 'ConsentFlow\\';
+		$prefix = 'Consentaro\\';
 		if ( strncmp( $prefix, $class, strlen( $prefix ) ) !== 0 ) {
 			return;
 		}
 
 		$relative = substr( $class, strlen( $prefix ) );
-		$file     = CONSENTFLOW_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
+		$file     = CONSENTARO_PATH . 'src/' . str_replace( '\\', '/', $relative ) . '.php';
 
 		if ( is_readable( $file ) ) {
 			require $file;

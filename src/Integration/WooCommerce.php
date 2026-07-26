@@ -2,15 +2,19 @@
 /**
  * WooCommerce tracking gated by Consent Mode states.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Integration;
+namespace Consentaro\Integration;
 
-use ConsentFlow\Consent\ConsentManager;
-use ConsentFlow\Core\ServiceContainer;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Consentaro\Consent\ConsentManager;
+use Consentaro\Core\ServiceContainer;
 use WC_Order;
 use WC_Product;
 
@@ -19,7 +23,7 @@ use WC_Product;
  */
 final class WooCommerce {
 
-	private const SESSION_ATC = 'consentflow_atc';
+	private const SESSION_ATC = 'consentaro_atc';
 
 	/**
 	 * Container.
@@ -64,12 +68,12 @@ final class WooCommerce {
 			return;
 		}
 
-		$path = CONSENTFLOW_PATH . 'assets/js/woo.js';
-		$ver  = is_readable( $path ) ? (string) filemtime( $path ) : CONSENTFLOW_VERSION;
+		$path = CONSENTARO_PATH . 'assets/js/woo.js';
+		$ver  = is_readable( $path ) ? (string) filemtime( $path ) : CONSENTARO_VERSION;
 
 		wp_enqueue_script(
-			'consentflow-woo',
-			CONSENTFLOW_URL . 'assets/js/woo.js',
+			'consentaro-woo',
+			CONSENTARO_URL . 'assets/js/woo.js',
 			array( 'jquery' ),
 			$ver,
 			array(
@@ -82,8 +86,8 @@ final class WooCommerce {
 		$manager = $this->container->get( 'consent_manager' );
 
 		wp_localize_script(
-			'consentflow-woo',
-			'consentflowWoo',
+			'consentaro-woo',
+			'consentaroWoo',
 			array(
 				'analytics' => $manager->hasConsent( 'analytics_storage' ),
 				'ads'       => $manager->hasConsent( 'ad_storage' ),
@@ -165,7 +169,7 @@ final class WooCommerce {
 		}
 
 		// Avoid duplicate pushes on thank-you refresh.
-		if ( $order->get_meta( '_consentflow_purchase_pushed' ) ) {
+		if ( $order->get_meta( '_consentaro_purchase_pushed' ) ) {
 			return;
 		}
 
@@ -189,7 +193,7 @@ final class WooCommerce {
 			),
 		);
 
-		$order->update_meta_data( '_consentflow_purchase_pushed', '1' );
+		$order->update_meta_data( '_consentaro_purchase_pushed', '1' );
 		$order->save();
 
 		$this->queueInlineEvent( $payload );
@@ -240,15 +244,26 @@ final class WooCommerce {
 			return;
 		}
 
-		echo '<script data-cf-woo="1">window.dataLayer=window.dataLayer||[];';
+		$pushes = '';
 		foreach ( $events as $payload ) {
-			$json = wp_json_encode( $payload );
+			// HEX flags prevent a product/order field (e.g. an item name)
+			// containing "</script>" from breaking out of the inline tag.
+			$json = wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 			if ( false !== $json ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON from wp_json_encode.
-				echo 'window.dataLayer.push(' . $json . ');';
+				$pushes .= 'window.dataLayer.push(' . $json . ');';
 			}
 		}
-		echo "</script>\n";
+
+		if ( '' === $pushes ) {
+			return;
+		}
+
+		wp_print_inline_script_tag(
+			'window.dataLayer=window.dataLayer||[];' . $pushes,
+			array(
+				'data-consentaro-woo' => '1',
+			)
+		);
 	}
 
 	/**
@@ -264,11 +279,11 @@ final class WooCommerce {
 		);
 
 		/**
-		 * Filter WooCommerce events ConsentFlow may track.
+		 * Filter WooCommerce events Consentaro may track.
 		 *
 		 * @param array<string, bool> $events Event map.
 		 */
-		$filtered = apply_filters( 'consentflow_woocommerce_track_events', $defaults );
+		$filtered = apply_filters( 'consentaro_woocommerce_track_events', $defaults );
 
 		if ( ! is_array( $filtered ) ) {
 			return $defaults;
@@ -323,18 +338,18 @@ final class WooCommerce {
 		 * @param string $event   Event name.
 		 * @param int    $ref     Reference ID.
 		 */
-		if ( ! apply_filters( 'consentflow_woocommerce_anonymized_fallback', false, $event, $ref ) ) {
+		if ( ! apply_filters( 'consentaro_woocommerce_anonymized_fallback', false, $event, $ref ) ) {
 			return;
 		}
 
-		$queue   = get_option( 'consentflow_woo_anon_queue', array() );
+		$queue   = get_option( 'consentaro_woo_anon_queue', array() );
 		$queue   = is_array( $queue ) ? $queue : array();
 		$queue[] = array(
 			'event' => sanitize_key( $event ),
 			'ref'   => $ref,
 			'ts'    => time(),
 		);
-		update_option( 'consentflow_woo_anon_queue', array_slice( $queue, -50 ), false );
+		update_option( 'consentaro_woo_anon_queue', array_slice( $queue, -50 ), false );
 	}
 
 	/**
@@ -343,16 +358,16 @@ final class WooCommerce {
 	 * @param array<string, mixed> $payload Event payload.
 	 */
 	private function queueInlineEvent( array $payload ): void {
-		$GLOBALS['consentflow_woo_inline']   = $GLOBALS['consentflow_woo_inline'] ?? array();
-		$GLOBALS['consentflow_woo_inline'][] = $payload;
+		$GLOBALS['consentaro_woo_inline']   = $GLOBALS['consentaro_woo_inline'] ?? array();
+		$GLOBALS['consentaro_woo_inline'][] = $payload;
 	}
 
 	/**
 	 * @return array<int, array<string, mixed>>
 	 */
 	private function consumeInlineQueue(): array {
-		$queue = $GLOBALS['consentflow_woo_inline'] ?? array();
-		unset( $GLOBALS['consentflow_woo_inline'] );
+		$queue = $GLOBALS['consentaro_woo_inline'] ?? array();
+		unset( $GLOBALS['consentaro_woo_inline'] );
 		return is_array( $queue ) ? $queue : array();
 	}
 
@@ -360,7 +375,7 @@ final class WooCommerce {
 	 * Plugin enabled flag.
 	 */
 	private function isEnabled(): bool {
-		$settings = get_option( 'consentflow_settings', array() );
+		$settings = get_option( 'consentaro_settings', array() );
 		if ( ! is_array( $settings ) ) {
 			return true;
 		}

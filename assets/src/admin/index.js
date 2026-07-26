@@ -3,7 +3,7 @@ import App from './App';
 import './style.scss';
 
 document.addEventListener( 'DOMContentLoaded', () => {
-	const container = document.getElementById( 'consentflow-admin' );
+	const container = document.getElementById( 'consentaro-admin' );
 	if ( container ) {
 		render( <App />, container );
 	}

@@ -2,14 +2,18 @@
 /**
  * Geo detection with Cloudflare → server → ip-api fallback.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Integration;
+namespace Consentaro\Integration;
 
-use ConsentFlow\Consent\ConsentManager;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Consentaro\Consent\ConsentManager;
 
 /**
  * Resolves visitor country for banner gating.
@@ -43,7 +47,7 @@ final class GeoLocation {
 		 *
 		 * @param string|null $country Country code.
 		 */
-		$filtered = apply_filters( 'consentflow_user_geo_country', null );
+		$filtered = apply_filters( 'consentaro_user_geo_country', null );
 		if ( is_string( $filtered ) && '' !== $filtered ) {
 			return strtoupper( $filtered );
 		}
@@ -91,7 +95,7 @@ final class GeoLocation {
 		 *
 		 * @param bool $force Force display.
 		 */
-		if ( apply_filters( 'consentflow_force_banner_display', false ) ) {
+		if ( apply_filters( 'consentaro_force_banner_display', false ) ) {
 			return true;
 		}
 
@@ -99,7 +103,7 @@ final class GeoLocation {
 			return false;
 		}
 
-		$settings = get_option( 'consentflow_settings', array() );
+		$settings = get_option( 'consentaro_settings', array() );
 		if ( is_array( $settings ) && isset( $settings['enabled'] ) && empty( $settings['enabled'] ) ) {
 			return false;
 		}
@@ -129,8 +133,8 @@ final class GeoLocation {
 			return null;
 		}
 
-		$cache_key = 'cf_geo_' . md5( $ip );
-		$cached    = get_transient( $cache_key );
+		$cache_key = 'consentaro_geo_' . md5( $this->getSubnet( $ip ) );
+		$cached    = $this->cacheGet( $cache_key );
 		if ( false !== $cached ) {
 			return is_string( $cached ) ? $cached : null;
 		}
@@ -148,16 +152,65 @@ final class GeoLocation {
 
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 		if ( ! is_array( $body ) || ( $body['status'] ?? '' ) !== 'success' ) {
-			set_transient( $cache_key, '', HOUR_IN_SECONDS );
+			$this->cacheSet( $cache_key, '', HOUR_IN_SECONDS );
 			return null;
 		}
 
 		$country = isset( $body['countryCode'] ) ? strtoupper( sanitize_text_field( $body['countryCode'] ) ) : null;
 		if ( $country ) {
-			set_transient( $cache_key, $country, DAY_IN_SECONDS );
+			$this->cacheSet( $cache_key, $country, DAY_IN_SECONDS );
 		}
 
 		return $country;
+	}
+
+	/**
+	 * Reduces an IP address to its subnet (IPv4 /24, IPv6 /64) so that many
+	 * visitors sharing an ISP/region resolve to the same cache entry instead
+	 * of creating one row per unique visitor.
+	 */
+	private function getSubnet( string $ip ): string {
+		if ( str_contains( $ip, ':' ) ) {
+			$parts = explode( ':', $ip );
+			return implode( ':', array_slice( $parts, 0, 4 ) ) . '::/64';
+		}
+
+		$parts = explode( '.', $ip );
+		if ( 4 === count( $parts ) ) {
+			$parts[3] = '0';
+			return implode( '.', $parts ) . '/24';
+		}
+
+		return $ip;
+	}
+
+	/**
+	 * Reads a cached value, preferring a persistent object cache (Redis/Memcached)
+	 * over the options table so lookups don't accumulate rows in wp_options on
+	 * sites without an external object cache.
+	 *
+	 * @return string|false False when not cached.
+	 */
+	private function cacheGet( string $key ): string|false {
+		if ( wp_using_ext_object_cache() ) {
+			$found = false;
+			$value = wp_cache_get( $key, 'consentaro_geo', false, $found );
+			return $found ? (string) $value : false;
+		}
+
+		return get_transient( $key );
+	}
+
+	/**
+	 * Writes a cached value via the same object-cache-first strategy as cacheGet().
+	 */
+	private function cacheSet( string $key, string $value, int $ttl ): void {
+		if ( wp_using_ext_object_cache() ) {
+			wp_cache_set( $key, $value, 'consentaro_geo', $ttl );
+			return;
+		}
+
+		set_transient( $key, $value, $ttl );
 	}
 
 	/**

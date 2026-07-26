@@ -1,7 +1,7 @@
 {
-	"name": "consentflow",
+	"name": "consentaro",
 	"version": "1.0.0",
-	"description": "ConsentFlow admin UI",
+	"description": "Consentaro admin UI",
 	"private": true,
 	"scripts": {
 		"start": "wp-scripts start",

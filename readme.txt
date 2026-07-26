@@ -1,10 +1,10 @@
-=== ConsentFlow ===
+=== Consentaro - Cookie Consent & Google Consent Mode for WooCommerce ===
 Contributors: itsmanzur
 Tags: consent mode, cookies, gdpr, woocommerce, privacy
-Requires at least: 6.4
+Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Ultra-light Google Consent Mode v2 for WordPress. Simple cookie banner, GTM load
 
 == Description ==
 
-ConsentFlow helps your site ask visitors for a clear cookie choice, remember that choice, and tell Google what is allowed — without a heavy cookie suite.
+Consentaro helps your site ask visitors for a clear cookie choice, remember that choice, and tell Google what is allowed — without a heavy cookie suite.
 
 **Who it is for**
 
@@ -35,13 +35,13 @@ ConsentFlow helps your site ask visitors for a clear cookie choice, remember tha
 * It is not legal advice
 * It does not replace a full privacy policy or lawyer review for your region
 
-Open **ConsentFlow → Guide** after activation for a non-technical walkthrough.
+Open **Consentaro → Guide** after activation for a non-technical walkthrough.
 
 == Installation ==
 
-1. Upload the `consentflow` folder to `/wp-content/plugins/`, or install the ZIP via **Plugins → Add New → Upload Plugin**.
-2. Activate **ConsentFlow** through the **Plugins** screen.
-3. Open **ConsentFlow** in the admin menu.
+1. Upload the `consentaro` folder to `/wp-content/plugins/`, or install the ZIP via **Plugins → Add New → Upload Plugin**.
+2. Activate **Consentaro** through the **Plugins** screen.
+3. Open **Consentaro** in the admin menu.
 4. Read the **Guide** tab, then set your options under **General** and **Design**.
 5. (Optional) Enter your GTM container ID, for example `GTM-XXXXXXX`.
 6. Test in a private/incognito window: Accept / Deny should hide the banner and remember the choice.
@@ -58,7 +58,7 @@ Try a private window (an earlier choice may be saved). Confirm the plugin is ena
 
 = Will this slow my site down? =
 
-ConsentFlow is built to stay light. Front-end assets are small and load only when needed.
+Consentaro is built to stay light. Front-end assets are small and load only when needed.
 
 = Does it work with WooCommerce? =
 
@@ -66,7 +66,7 @@ Yes. Shop events are sent to the data layer only when the visitor’s consent al
 
 = Is this a complete GDPR solution by itself? =
 
-ConsentFlow helps with Consent Mode and a clear visitor choice. Rules differ by country and business. This plugin does not replace legal advice.
+Consentaro helps with Consent Mode and a clear visitor choice. Rules differ by country and business. This plugin does not replace legal advice.
 
 == Screenshots ==
 
@@ -74,7 +74,42 @@ ConsentFlow helps with Consent Mode and a clear visitor choice. Rules differ by 
 2. General settings — enable, GTM ID, geo option
 3. Design settings — banner text, position, colors, live preview
 
+== Credits ==
+
+Consentaro is developed and maintained by itsmanzur. All code, design, and assets in this plugin are original work created specifically for Consentaro.
+
+Source code: https://github.com/itsmanzur/consentaro
+
+== External services ==
+
+This plugin can connect to the following third-party services. Both are optional and only activate based on your own configuration; they are not used to track visitors on Consentaro's behalf.
+
+**Google Tag Manager (Google LLC)**
+If you enter your own Google Tag Manager (GTM) container ID in the plugin settings, Consentaro loads the standard GTM container script from Google's servers (googletagmanager.com) so that your GTM tags can run. The script is only loaded in the visitor's browser after a consent decision has been recorded (or immediately, with Google Consent Mode v2 default/denied state, if you have not required a banner), consistent with Google Consent Mode v2. No data is sent to Consentaro or to us; any data transmitted to Google is governed by your own GTM/Google Analytics configuration and Google's terms.
+This service is provided by Google LLC: [Terms of Service](https://marketingplatform.google.com/about/analytics/terms/us/), [Privacy Policy](https://policies.google.com/privacy).
+
+**ip-api.com (geolocation, optional)**
+If geo-targeting is enabled in the plugin settings and the visitor's country cannot be determined from your hosting provider (e.g. a Cloudflare header) or server-level GeoIP data, Consentaro sends the visitor's IP address, server-side, to ip-api.com to determine their country. This is only used to decide whether the consent banner should be displayed (e.g. to EU/EEA/UK/CH visitors) and is not stored beyond a short server-side cache. No personal data is sent other than the IP address already present in the request.
+This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
+
 == Changelog ==
+
+= 1.1.0 =
+* Security: the WooCommerce dataLayer event script now uses hex-escaped JSON output, closing a stored-XSS path where a product/order field containing "</script>" could break out of the inline script tag
+* Fixed: uninstall cleanup was matching a stale transient prefix and never removed cached geolocation lookups from the database
+* Fixed: all internal CSS classes, data attributes, and inline-script markers now consistently use the "consentaro-" prefix instead of a leftover "cf-" shorthand from an earlier plugin name, avoiding collisions with other plugins/services using that prefix
+* Fixed: raised the declared minimum WordPress version to 6.6 — the admin bundle depends on the `react-jsx-runtime` script handle, which core only registers from 6.6 onward; on 6.4/6.5 the settings page's React app failed to mount
+* Fixed: the settings-updated hook now receives the actual previous settings instead of a duplicate of the new ones
+* Fixed: switching admin tabs before saving could silently discard unsaved General/Design edits
+* Fixed: an invalid GTM Container ID was silently dropped on save with no warning
+* Fixed: the Guide tab's "enabled" checklist item could show a false state, disconnected from the real toggle
+* Fixed: added the standard direct-file-access guard to all class files flagged by Plugin Check
+* Fixed: silenced a Plugin Check nonce-verification warning in the activation handler with justification (only an isset() check on a WP-core-set flag, no user input is trusted)
+* Added: unsaved-changes warning when leaving the admin page
+* Added: inline validation message on the GTM Container ID field
+* Added: one-time redirect to the Guide tab right after activation
+* Added: Active / Disabled status badge in the admin header
+* Added: "Reset to defaults" button on the Design tab
 
 = 1.0.0 =
 * Initial public release
@@ -88,5 +123,8 @@ ConsentFlow helps with Consent Mode and a clear visitor choice. Rules differ by 
 
 == Upgrade Notice ==
 
+= 1.1.0 =
+Includes a security fix (stored-XSS in the WooCommerce dataLayer event output — update recommended for all WooCommerce sites), plus admin usability improvements: no more lost edits when switching settings tabs, clearer GTM ID validation, and a guided first-activation experience.
+
 = 1.0.0 =
-First public release of ConsentFlow.
+First public release of Consentaro.

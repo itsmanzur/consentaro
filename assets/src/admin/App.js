@@ -15,12 +15,12 @@ const App = () => {
 	const [ tab, setTab ] = useState( 'guide' );
 
 	useEffect( () => {
-		apiFetch( { path: '/consentflow/v1/settings' } )
+		apiFetch( { path: '/consentaro/v1/settings' } )
 			.then( setSettings )
 			.catch( () => {
 				setNotice( {
 					status: 'error',
-					message: __( 'Failed to load settings.', 'consentflow' ),
+					message: __( 'Failed to load settings.', 'consentaro' ),
 				} );
 			} );
 	}, [] );
@@ -38,19 +38,19 @@ const App = () => {
 		setNotice( null );
 		try {
 			const updated = await apiFetch( {
-				path: '/consentflow/v1/settings',
+				path: '/consentaro/v1/settings',
 				method: 'POST',
 				data,
 			} );
 			setSettings( updated );
 			setNotice( {
 				status: 'success',
-				message: __( 'Settings saved.', 'consentflow' ),
+				message: __( 'Settings saved.', 'consentaro' ),
 			} );
 		} catch ( e ) {
 			setNotice( {
 				status: 'error',
-				message: __( 'Could not save settings.', 'consentflow' ),
+				message: __( 'Could not save settings.', 'consentaro' ),
 			} );
 		} finally {
 			setSaving( false );
@@ -59,22 +59,22 @@ const App = () => {
 
 	if ( ! settings ) {
 		return (
-			<div className="consentflow-admin consentflow-admin--loading">
+			<div className="consentaro-admin consentaro-admin--loading">
 				<Spinner />
-				<p>{ __( 'Loading settings…', 'consentflow' ) }</p>
+				<p>{ __( 'Loading settings…', 'consentaro' ) }</p>
 			</div>
 		);
 	}
 
 	return (
 		<div
-			className={ `consentflow-admin ${
-				tab === 'guide' ? 'consentflow-admin--guide' : ''
+			className={ `consentaro-admin ${
+				tab === 'guide' ? 'consentaro-admin--guide' : ''
 			}` }
 		>
 			<Header />
 			{ notice && (
-				<div className="consentflow-admin__notice">
+				<div className="consentaro-admin__notice">
 					<Notice
 						status={ notice.status }
 						onRemove={ () => setNotice( null ) }
@@ -84,15 +84,15 @@ const App = () => {
 				</div>
 			) }
 			<TabPanel
-				className="consentflow-admin__tabs"
+				className="consentaro-admin__tabs"
 				activeClass="is-active"
 				initialTabName={ tab }
 				key={ tab }
 				onSelect={ setTab }
 				tabs={ [
-					{ name: 'guide', title: __( 'Guide', 'consentflow' ) },
-					{ name: 'general', title: __( 'General', 'consentflow' ) },
-					{ name: 'design', title: __( 'Design', 'consentflow' ) },
+					{ name: 'guide', title: __( 'Guide', 'consentaro' ) },
+					{ name: 'general', title: __( 'General', 'consentaro' ) },
+					{ name: 'design', title: __( 'Design', 'consentaro' ) },
 				] }
 			>
 				{ ( t ) => {

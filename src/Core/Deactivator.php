@@ -2,12 +2,16 @@
 /**
  * Deactivation handler.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Core;
+namespace Consentaro\Core;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Runs on plugin deactivation (keeps options for re-activation).

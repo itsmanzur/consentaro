@@ -20,19 +20,19 @@ import { __ } from '@wordpress/i18n';
 const ColorField = ( { label, color, onChange } ) => (
 	<BaseControl
 		label={ label }
-		id={ `cf-color-${ label }` }
-		className="consentflow-admin__color-field"
+		id={ `consentaro-color-${ label }` }
+		className="consentaro-admin__color-field"
 		__nextHasNoMarginBottom
 	>
 		<Dropdown
-			className="consentflow-admin__color-dropdown"
-			contentClassName="consentflow-admin__color-popover"
+			className="consentaro-admin__color-dropdown"
+			contentClassName="consentaro-admin__color-popover"
 			popoverProps={ { placement: 'bottom-start' } }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
-					className="consentflow-admin__color-toggle"
+					className="consentaro-admin__color-toggle"
 					variant="secondary"
 					__next40pxDefaultSize
 				>
@@ -53,31 +53,31 @@ const ColorField = ( { label, color, onChange } ) => (
 );
 
 const BannerPreview = ( { banner } ) => (
-	<div className="consentflow-admin__preview">
-		<div className="consentflow-admin__preview-label">
-			{ __( 'Live preview', 'consentflow' ) }
+	<div className="consentaro-admin__preview">
+		<div className="consentaro-admin__preview-label">
+			{ __( 'Live preview', 'consentaro' ) }
 		</div>
 		<div
-			className={ `consentflow-admin__preview-stage consentflow-admin__preview-stage--${
+			className={ `consentaro-admin__preview-stage consentaro-admin__preview-stage--${
 				banner.position || 'bottom'
 			}` }
 		>
 			<div
-				className="consentflow-admin__preview-banner"
+				className="consentaro-admin__preview-banner"
 				style={ {
-					'--cf-bg': banner.bg || '#ffffff',
-					'--cf-text': banner.text_color || '#1a1a1a',
-					'--cf-btn-bg': banner.btn_primary_bg || '#0073aa',
-					'--cf-btn-text': banner.btn_primary_text || '#ffffff',
+					'--consentaro-bg': banner.bg || '#ffffff',
+					'--consentaro-text': banner.text_color || '#1a1a1a',
+					'--consentaro-btn-bg': banner.btn_primary_bg || '#0073aa',
+					'--consentaro-btn-text': banner.btn_primary_text || '#ffffff',
 				} }
 			>
-				<p>{ banner.text || __( 'Banner text…', 'consentflow' ) }</p>
-				<div className="consentflow-admin__preview-actions">
+				<p>{ banner.text || __( 'Banner text…', 'consentaro' ) }</p>
+				<div className="consentaro-admin__preview-actions">
 					<button type="button" className="is-primary">
-						{ __( 'Accept All', 'consentflow' ) }
+						{ __( 'Accept All', 'consentaro' ) }
 					</button>
 					<button type="button" className="is-secondary">
-						{ __( 'Deny All', 'consentflow' ) }
+						{ __( 'Deny All', 'consentaro' ) }
 					</button>
 				</div>
 			</div>
@@ -102,35 +102,35 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 	};
 
 	return (
-		<div className="consentflow-admin__design">
-			<Card className="consentflow-admin__card">
+		<div className="consentaro-admin__design">
+			<Card className="consentaro-admin__card">
 				<CardHeader>
-					<strong>{ __( 'Banner', 'consentflow' ) }</strong>
-					<span className="consentflow-admin__card-sub">
-						{ __( 'Position, copy, and colors', 'consentflow' ) }
+					<strong>{ __( 'Banner', 'consentaro' ) }</strong>
+					<span className="consentaro-admin__card-sub">
+						{ __( 'Position, copy, and colors', 'consentaro' ) }
 					</span>
 				</CardHeader>
 				<CardBody>
 					<VStack spacing={ 5 }>
-						<div className="consentflow-admin__field consentflow-admin__field--narrow">
+						<div className="consentaro-admin__field consentaro-admin__field--narrow">
 							<SelectControl
-								label={ __( 'Position', 'consentflow' ) }
+								label={ __( 'Position', 'consentaro' ) }
 								value={ banner.position || 'bottom' }
 								options={ [
 									{
-										label: __( 'Bottom bar', 'consentflow' ),
+										label: __( 'Bottom bar', 'consentaro' ),
 										value: 'bottom',
 									},
 									{
-										label: __( 'Top bar', 'consentflow' ),
+										label: __( 'Top bar', 'consentaro' ),
 										value: 'top',
 									},
 									{
-										label: __( 'Bottom-right floating', 'consentflow' ),
+										label: __( 'Bottom-right floating', 'consentaro' ),
 										value: 'bottom-right',
 									},
 									{
-										label: __( 'Center modal', 'consentflow' ),
+										label: __( 'Center modal', 'consentaro' ),
 										value: 'modal',
 									},
 								] }
@@ -143,35 +143,35 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 						</div>
 
 						<TextareaControl
-							label={ __( 'Banner text', 'consentflow' ) }
+							label={ __( 'Banner text', 'consentaro' ) }
 							value={ banner.text || '' }
 							onChange={ ( text ) => updateBanner( 'text', text ) }
 							rows={ 3 }
 							__nextHasNoMarginBottom
 						/>
 
-						<div className="consentflow-admin__colors">
+						<div className="consentaro-admin__colors">
 							<ColorField
-								label={ __( 'Background', 'consentflow' ) }
+								label={ __( 'Background', 'consentaro' ) }
 								color={ banner.bg || '#ffffff' }
 								onChange={ ( bg ) => updateBanner( 'bg', bg ) }
 							/>
 							<ColorField
-								label={ __( 'Text', 'consentflow' ) }
+								label={ __( 'Text', 'consentaro' ) }
 								color={ banner.text_color || '#1a1a1a' }
 								onChange={ ( text_color ) =>
 									updateBanner( 'text_color', text_color )
 								}
 							/>
 							<ColorField
-								label={ __( 'Button background', 'consentflow' ) }
+								label={ __( 'Button background', 'consentaro' ) }
 								color={ banner.btn_primary_bg || '#0073aa' }
 								onChange={ ( btn_primary_bg ) =>
 									updateBanner( 'btn_primary_bg', btn_primary_bg )
 								}
 							/>
 							<ColorField
-								label={ __( 'Button text', 'consentflow' ) }
+								label={ __( 'Button text', 'consentaro' ) }
 								color={ banner.btn_primary_text || '#ffffff' }
 								onChange={ ( btn_primary_text ) =>
 									updateBanner( 'btn_primary_text', btn_primary_text )
@@ -180,7 +180,7 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 						</div>
 					</VStack>
 				</CardBody>
-				<CardFooter className="consentflow-admin__footer">
+				<CardFooter className="consentaro-admin__footer">
 					<HStack justify="flex-start">
 						<Button
 							variant="primary"
@@ -191,10 +191,10 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 							{ saving ? (
 								<>
 									<Spinner />
-									{ __( 'Saving…', 'consentflow' ) }
+									{ __( 'Saving…', 'consentaro' ) }
 								</>
 							) : (
-								__( 'Save changes', 'consentflow' )
+								__( 'Save changes', 'consentaro' )
 							) }
 						</Button>
 					</HStack>

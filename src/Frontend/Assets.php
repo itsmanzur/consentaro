@@ -2,15 +2,19 @@
 /**
  * Frontend asset loader.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Frontend;
+namespace Consentaro\Frontend;
 
-use ConsentFlow\Core\ServiceContainer;
-use ConsentFlow\Integration\GeoLocation;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\GeoLocation;
 
 /**
  * Conditional enqueue for banner CSS/JS.
@@ -53,15 +57,15 @@ final class Assets {
 		$version = $this->getAssetVersion();
 
 		wp_enqueue_style(
-			'consentflow-banner',
-			CONSENTFLOW_URL . 'assets/css/banner.css',
+			'consentaro-banner',
+			CONSENTARO_URL . 'assets/css/banner.css',
 			array(),
 			$version
 		);
 
 		wp_enqueue_script(
-			'consentflow-banner',
-			CONSENTFLOW_URL . 'assets/js/banner.js',
+			'consentaro-banner',
+			CONSENTARO_URL . 'assets/js/banner.js',
 			array(),
 			$version,
 			array(
@@ -71,11 +75,11 @@ final class Assets {
 		);
 
 		wp_localize_script(
-			'consentflow-banner',
-			'consentflowAPI',
+			'consentaro-banner',
+			'consentaroAPI',
 			array(
 				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'url'   => esc_url_raw( rest_url( 'consentflow/v1/consent' ) ),
+				'url'   => esc_url_raw( rest_url( 'consentaro/v1/consent' ) ),
 			)
 		);
 	}
@@ -84,11 +88,11 @@ final class Assets {
 	 * Filemtime-based cache bust when possible.
 	 */
 	public function getAssetVersion(): string {
-		$js = CONSENTFLOW_PATH . 'assets/js/banner.js';
+		$js = CONSENTARO_PATH . 'assets/js/banner.js';
 		if ( is_readable( $js ) ) {
 			return (string) filemtime( $js );
 		}
 
-		return CONSENTFLOW_VERSION;
+		return CONSENTARO_VERSION;
 	}
 }

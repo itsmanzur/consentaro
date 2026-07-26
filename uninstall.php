@@ -1,8 +1,8 @@
 <?php
 /**
- * Uninstall cleanup for ConsentFlow.
+ * Uninstall cleanup for Consentaro.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
@@ -11,21 +11,23 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$consentflow_options = array(
-	'consentflow_settings',
-	'consentflow_gtm_id',
-	'consentflow_banner_style',
-	'consentflow_geo_enabled',
-	'consentflow_woo_anon_queue',
+$consentaro_options = array(
+	'consentaro_settings',
+	'consentaro_gtm_id',
+	'consentaro_banner_style',
+	'consentaro_geo_enabled',
+	'consentaro_woo_anon_queue',
 );
 
-foreach ( $consentflow_options as $consentflow_option ) {
-	delete_option( $consentflow_option );
+foreach ( $consentaro_options as $consentaro_option ) {
+	delete_option( $consentaro_option );
 }
 
-// Clear geo transients (prefix cf_geo_).
+delete_transient( 'consentaro_activation_redirect' );
+
+// Clear geo transients (prefix consentaro_geo_).
 global $wpdb;
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query(
-	"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_cf_geo_%' OR option_name LIKE '_transient_timeout_cf_geo_%'"
+	"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_consentaro_geo_%' OR option_name LIKE '_transient_timeout_consentaro_geo_%'"
 );
