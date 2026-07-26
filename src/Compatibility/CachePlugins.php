@@ -189,7 +189,7 @@ final class CachePlugins {
 			'consentaro/assets/js/banner',
 			'consentaro/assets/js/gtm-loader',
 			'consentaro/assets/js/woo',
-			'data-cf-consent',
+			'data-consentaro-consent',
 			'consentaroAPI',
 			'consentaroGTM',
 		);

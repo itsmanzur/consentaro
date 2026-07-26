@@ -25,9 +25,9 @@ foreach ( $consentaro_options as $consentaro_option ) {
 
 delete_transient( 'consentaro_activation_redirect' );
 
-// Clear geo transients (prefix cf_geo_).
+// Clear geo transients (prefix consentaro_geo_).
 global $wpdb;
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query(
-	"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_cf_geo_%' OR option_name LIKE '_transient_timeout_cf_geo_%'"
+	"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_consentaro_geo_%' OR option_name LIKE '_transient_timeout_consentaro_geo_%'"
 );

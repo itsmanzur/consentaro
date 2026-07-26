@@ -92,10 +92,10 @@ final class Banner {
 	 */
 	public function getCustomStyles( array $banner ): string {
 		$map = array(
-			'--cf-bg'       => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
-			'--cf-text'     => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
-			'--cf-btn-bg'   => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0073aa',
-			'--cf-btn-text' => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-bg'       => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-text'     => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
+			'--consentaro-btn-bg'   => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0073aa',
+			'--consentaro-btn-text' => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
 		);
 
 		$parts = array();
@@ -134,30 +134,30 @@ final class Banner {
 		$items = '';
 		foreach ( $categories as $type => $label ) {
 			$items .= sprintf(
-				'<li><label for="cf-%1$s">%2$s</label><input id="cf-%1$s" type="checkbox" data-cf-type="%1$s" /></li>',
+				'<li><label for="consentaro-%1$s">%2$s</label><input id="consentaro-%1$s" type="checkbox" data-consentaro-type="%1$s" /></li>',
 				esc_attr( $type ),
 				esc_html( $label )
 			);
 		}
 
 		return sprintf(
-			'<div id="cf-banner" class="cf-banner cf-banner--%1$s" style="%2$s" role="dialog" aria-modal="true" aria-label="%3$s">' .
-				'<div class="cf-banner__panel">' .
-					'<p class="cf-banner__text">%4$s</p>' .
-					'<div class="cf-banner__buttons">' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--primary" data-cf-action="accept-all">%5$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-action="deny-all">%6$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-action="customize">%7$s</button>' .
+			'<div id="consentaro-banner" class="consentaro-banner consentaro-banner--%1$s" style="%2$s" role="dialog" aria-modal="true" aria-label="%3$s">' .
+				'<div class="consentaro-banner__panel">' .
+					'<p class="consentaro-banner__text">%4$s</p>' .
+					'<div class="consentaro-banner__buttons">' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-action="accept-all">%5$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="deny-all">%6$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="customize">%7$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>' .
-			'<div id="cf-banner-modal" class="cf-banner__modal" role="dialog" aria-modal="true" aria-labelledby="cf-banner-modal-title">' .
-				'<div class="cf-banner__modal-card">' .
-					'<h2 id="cf-banner-modal-title">%8$s</h2>' .
-					'<ul class="cf-banner__list">%9$s</ul>' .
-					'<div class="cf-banner__modal-actions">' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--ghost" data-cf-close>%10$s</button>' .
-						'<button type="button" class="cf-banner__btn cf-banner__btn--primary" data-cf-save-custom>%11$s</button>' .
+			'<div id="consentaro-banner-modal" class="consentaro-banner__modal" role="dialog" aria-modal="true" aria-labelledby="consentaro-banner-modal-title">' .
+				'<div class="consentaro-banner__modal-card">' .
+					'<h2 id="consentaro-banner-modal-title">%8$s</h2>' .
+					'<ul class="consentaro-banner__list">%9$s</ul>' .
+					'<div class="consentaro-banner__modal-actions">' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-close>%10$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-save-custom>%11$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>',

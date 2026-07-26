@@ -76,7 +76,7 @@ final class GTM {
 				wp_json_encode( $id )
 			),
 			array(
-				'data-cf-gtm' => 'pending',
+				'data-consentaro-gtm' => 'pending',
 			)
 		);
 	}
@@ -178,7 +178,7 @@ final class GTM {
 		wp_print_inline_script_tag(
 			$script,
 			array(
-				'data-cf-gtm' => 'loaded',
+				'data-consentaro-gtm' => 'loaded',
 			)
 		);
 

@@ -180,6 +180,7 @@ final class Settings {
 	 */
 	public function saveSettings( array $data ): array {
 		$current  = $this->getSettings();
+		$previous = $current;
 		$rejected = array();
 
 		if ( isset( $data['enabled'] ) ) {
@@ -227,9 +228,9 @@ final class Settings {
 		 * Fires after settings are saved.
 		 *
 		 * @param array $new New settings.
-		 * @param array $old Previous (same shape; use carefully).
+		 * @param array $old Previous settings.
 		 */
-		do_action( 'consentaro_settings_updated', $current, $current );
+		do_action( 'consentaro_settings_updated', $current, $previous );
 
 		// Not persisted — surfaced to the REST response only, so the admin
 		// UI can tell the difference between "saved" and "silently ignored".

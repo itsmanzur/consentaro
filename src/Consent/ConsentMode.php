@@ -79,7 +79,7 @@ final class ConsentMode {
 		wp_print_inline_script_tag(
 			$script,
 			array(
-				'data-cf-consent' => 'default',
+				'data-consentaro-consent' => 'default',
 			)
 		);
 	}
@@ -107,7 +107,7 @@ final class ConsentMode {
 		wp_print_inline_script_tag(
 			$script,
 			array(
-				'data-cf-consent' => 'update',
+				'data-consentaro-consent' => 'update',
 			)
 		);
 	}

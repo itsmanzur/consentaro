@@ -240,15 +240,26 @@ final class WooCommerce {
 			return;
 		}
 
-		echo '<script data-cf-woo="1">window.dataLayer=window.dataLayer||[];';
+		$pushes = '';
 		foreach ( $events as $payload ) {
-			$json = wp_json_encode( $payload );
+			// HEX flags prevent a product/order field (e.g. an item name)
+			// containing "</script>" from breaking out of the inline tag.
+			$json = wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 			if ( false !== $json ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON from wp_json_encode.
-				echo 'window.dataLayer.push(' . $json . ');';
+				$pushes .= 'window.dataLayer.push(' . $json . ');';
 			}
 		}
-		echo "</script>\n";
+
+		if ( '' === $pushes ) {
+			return;
+		}
+
+		wp_print_inline_script_tag(
+			'window.dataLayer=window.dataLayer||[];' . $pushes,
+			array(
+				'data-consentaro-woo' => '1',
+			)
+		);
 	}
 
 	/**

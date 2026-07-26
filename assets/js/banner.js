@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
 	var cfg = window.consentaroAPI || {};
-	var root = document.getElementById('cf-banner');
+	var root = document.getElementById('consentaro-banner');
 	if (!root || !cfg.url) return;
 
-	var modal = document.getElementById('cf-banner-modal');
+	var modal = document.getElementById('consentaro-banner-modal');
 
 	function gtagUpdate(consent) {
 		window.dataLayer = window.dataLayer || [];
@@ -25,7 +25,7 @@
 			},
 			body: JSON.stringify(body),
 		}).then(function (r) {
-			if (!r.ok) throw new Error('cf');
+			if (!r.ok) throw new Error('consentaro-request-failed');
 			return r.json();
 		});
 	}
@@ -68,25 +68,25 @@
 	}
 
 	root.addEventListener('click', function (e) {
-		var btn = e.target.closest('[data-cf-action]');
+		var btn = e.target.closest('[data-consentaro-action]');
 		if (!btn) return;
 		e.preventDefault();
-		onAction(btn.getAttribute('data-cf-action'));
+		onAction(btn.getAttribute('data-consentaro-action'));
 	});
 
 	if (modal) {
 		modal.addEventListener('click', function (e) {
-			if (e.target === modal || e.target.closest('[data-cf-close]')) {
+			if (e.target === modal || e.target.closest('[data-consentaro-close]')) {
 				modal.classList.remove('is-open');
 				return;
 			}
-			var save = e.target.closest('[data-cf-save-custom]');
+			var save = e.target.closest('[data-consentaro-save-custom]');
 			if (!save) return;
 			e.preventDefault();
 			var consent = {};
-			var boxes = modal.querySelectorAll('[data-cf-type]');
+			var boxes = modal.querySelectorAll('[data-consentaro-type]');
 			for (var i = 0; i < boxes.length; i++) {
-				consent[boxes[i].getAttribute('data-cf-type')] = boxes[i].checked
+				consent[boxes[i].getAttribute('data-consentaro-type')] = boxes[i].checked
 					? 'granted'
 					: 'denied';
 			}
