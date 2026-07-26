@@ -1,14 +1,14 @@
-# Build a WordPress.org-ready ZIP as consentflow-1.0.0.zip
+# Build a WordPress.org-ready ZIP as consentaro-1.1.0.zip
 # Usage: powershell -File bin/build-release.ps1
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $root
 
-$version = "1.0.0"
-$slug = "consentflow"
+$version = "1.1.0"
+$slug = "consentaro"
 $distIgnorePath = Join-Path $root ".distignore"
-$stagingParent = Join-Path $env:TEMP "consentflow-release-staging"
+$stagingParent = Join-Path $env:TEMP "consentaro-release-staging"
 $staging = Join-Path $stagingParent $slug
 $outZip = Join-Path $root "dist\$slug-$version.zip"
 
@@ -65,7 +65,7 @@ $required = @(
 	"assets\js\gtm-loader.js",
 	"assets\js\woo.js",
 	"assets\css\banner.css",
-	"consentflow.php",
+	"consentaro.php",
 	"readme.txt",
 	"uninstall.php"
 )

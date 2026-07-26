@@ -1,6 +1,6 @@
 (function () {
 	'use strict';
-	var cfg = window.consentflowAPI || {};
+	var cfg = window.consentaroAPI || {};
 	var root = document.getElementById('cf-banner');
 	if (!root || !cfg.url) return;
 
@@ -31,7 +31,7 @@
 	}
 
 	function loadGTM() {
-		var g = window.consentflowGTM;
+		var g = window.consentaroGTM;
 		if (!g || !g.id || g.loaded) return;
 		window.dataLayer = window.dataLayer || [];
 		window.dataLayer.push({
@@ -55,7 +55,7 @@
 		if (root && root.parentNode) root.parentNode.removeChild(root);
 		if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
 		document.dispatchEvent(
-			new CustomEvent('consentflow:updated', { detail: consent })
+			new CustomEvent('consentaro:updated', { detail: consent })
 		);
 	}
 

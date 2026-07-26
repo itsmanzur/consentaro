@@ -1,8 +1,8 @@
 <?php
 /**
- * Uninstall cleanup for ConsentFlow.
+ * Uninstall cleanup for Consentaro.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
@@ -11,17 +11,19 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$consentflow_options = array(
-	'consentflow_settings',
-	'consentflow_gtm_id',
-	'consentflow_banner_style',
-	'consentflow_geo_enabled',
-	'consentflow_woo_anon_queue',
+$consentaro_options = array(
+	'consentaro_settings',
+	'consentaro_gtm_id',
+	'consentaro_banner_style',
+	'consentaro_geo_enabled',
+	'consentaro_woo_anon_queue',
 );
 
-foreach ( $consentflow_options as $consentflow_option ) {
-	delete_option( $consentflow_option );
+foreach ( $consentaro_options as $consentaro_option ) {
+	delete_option( $consentaro_option );
 }
+
+delete_transient( 'consentaro_activation_redirect' );
 
 // Clear geo transients (prefix cf_geo_).
 global $wpdb;

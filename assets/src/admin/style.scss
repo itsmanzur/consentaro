@@ -1,14 +1,14 @@
-.consentflow-admin {
+.consentaro-admin {
 	max-width: 780px;
 	margin: 8px 0 40px;
 	font-size: 13px;
 }
 
-.consentflow-admin--guide {
+.consentaro-admin--guide {
 	max-width: 980px;
 }
 
-.consentflow-admin--loading {
+.consentaro-admin--loading {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -16,17 +16,60 @@
 	color: #646970;
 }
 
-.consentflow-admin__header {
+.consentaro-admin__header {
 	margin-bottom: 8px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
 }
 
-.consentflow-admin__brand {
+.consentaro-admin__brand {
 	display: flex;
 	align-items: flex-start;
 	gap: 12px;
 }
 
-.consentflow-admin__mark {
+.consentaro-admin__status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 4px;
+	padding: 6px 12px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.consentaro-admin__status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+.consentaro-admin__status--active {
+	border: 1px solid #b4e6bb;
+	background: #edfaef;
+	color: #1a7f37;
+}
+
+.consentaro-admin__status--active .consentaro-admin__status-dot {
+	background: #1a7f37;
+}
+
+.consentaro-admin__status--disabled {
+	border: 1px solid #f3c6c6;
+	background: #fcf0f1;
+	color: #b32d2e;
+}
+
+.consentaro-admin__status--disabled .consentaro-admin__status-dot {
+	background: #b32d2e;
+}
+
+.consentaro-admin__mark {
 	width: 36px;
 	height: 36px;
 	margin-top: 4px;
@@ -36,7 +79,7 @@
 	flex-shrink: 0;
 }
 
-.consentflow-admin__header h1 {
+.consentaro-admin__header h1 {
 	margin: 0 0 2px;
 	font-size: 23px;
 	font-weight: 600;
@@ -44,31 +87,31 @@
 	color: #1d2327;
 }
 
-.consentflow-admin__tagline {
+.consentaro-admin__tagline {
 	margin: 0;
 	color: #646970;
 	font-size: 13px;
 }
 
-.consentflow-admin__notice {
+.consentaro-admin__notice {
 	margin: 12px 0 4px;
 }
 
-.consentflow-admin__tabs {
+.consentaro-admin__tabs {
 	margin-top: 12px;
 }
 
-.consentflow-admin__tabs .components-tab-panel__tabs {
+.consentaro-admin__tabs .components-tab-panel__tabs {
 	margin-bottom: 16px;
 	border-bottom: 1px solid #dcdcde;
 }
 
-.consentflow-admin__card {
+.consentaro-admin__card {
 	border: 1px solid #dcdcde;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
-.consentflow-admin__card .components-card-header {
+.consentaro-admin__card .components-card-header {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -77,40 +120,44 @@
 	border-bottom: 1px solid #f0f0f1;
 }
 
-.consentflow-admin__card-sub {
+.consentaro-admin__card-sub {
 	color: #646970;
 	font-size: 12px;
 	font-weight: 400;
 }
 
-.consentflow-admin__card .components-card-body {
+.consentaro-admin__card .components-card-body {
 	padding: 20px;
 }
 
-.consentflow-admin__footer {
+.consentaro-admin__footer {
 	padding: 14px 20px;
 	border-top: 1px solid #f0f0f1;
 	background: #fcfcfc;
 }
 
-.consentflow-admin__footer .components-button {
+.consentaro-admin__footer .components-button {
 	min-width: 120px;
 	justify-content: center;
 	gap: 6px;
 }
 
-.consentflow-admin__field--narrow {
+.consentaro-admin__field--narrow {
 	max-width: 280px;
 }
 
-.consentflow-admin__section {
+.consentaro-admin__field-error {
+	color: #b32d2e;
+}
+
+.consentaro-admin__section {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
 	padding-top: 4px;
 }
 
-.consentflow-admin__badge {
+.consentaro-admin__badge {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;
@@ -125,7 +172,7 @@
 	color: #2c3338;
 }
 
-.consentflow-admin__badge-label {
+.consentaro-admin__badge-label {
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	font-size: 10px;
@@ -133,48 +180,48 @@
 	color: #646970;
 }
 
-.consentflow-admin__badge-value {
+.consentaro-admin__badge-value {
 	font-weight: 600;
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-.consentflow-admin__badge-sep {
+.consentaro-admin__badge-sep {
 	color: #c3c4c7;
 }
 
-.consentflow-admin__badge--eu {
+.consentaro-admin__badge--eu {
 	border-color: #c3ddfd;
 	background: #f0f6fc;
 }
 
-.consentflow-admin__badge--other {
+.consentaro-admin__badge--other {
 	border-color: #dcdcde;
 	background: #f6f7f7;
 }
 
-.consentflow-admin__design {
+.consentaro-admin__design {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 }
 
-.consentflow-admin__colors {
+.consentaro-admin__colors {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 16px 20px;
 }
 
 @media (max-width: 600px) {
-	.consentflow-admin__colors {
+	.consentaro-admin__colors {
 		grid-template-columns: 1fr;
 	}
 }
 
-.consentflow-admin__color-field .components-base-control__label {
+.consentaro-admin__color-field .components-base-control__label {
 	margin-bottom: 8px;
 }
 
-.consentflow-admin__color-toggle {
+.consentaro-admin__color-toggle {
 	display: inline-flex !important;
 	align-items: center;
 	gap: 10px;
@@ -183,7 +230,7 @@
 	border-radius: 4px;
 }
 
-.consentflow-admin__color-toggle .component-color-indicator {
+.consentaro-admin__color-toggle .component-color-indicator {
 	width: 24px;
 	height: 24px;
 	margin: 0;
@@ -191,18 +238,18 @@
 	border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.consentflow-admin__color-toggle code {
+.consentaro-admin__color-toggle code {
 	font-size: 12px;
 	background: transparent;
 	padding: 0;
 	color: #2c3338;
 }
 
-.consentflow-admin__color-popover {
+.consentaro-admin__color-popover {
 	padding: 12px;
 }
 
-.consentflow-admin__preview {
+.consentaro-admin__preview {
 	border: 1px solid #dcdcde;
 	border-radius: 2px;
 	overflow: hidden;
@@ -210,7 +257,7 @@
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
-.consentflow-admin__preview-label {
+.consentaro-admin__preview-label {
 	padding: 10px 16px;
 	font-size: 11px;
 	font-weight: 600;
@@ -221,7 +268,7 @@
 	background: #fcfcfc;
 }
 
-.consentflow-admin__preview-stage {
+.consentaro-admin__preview-stage {
 	position: relative;
 	min-height: 160px;
 	padding: 20px;
@@ -237,21 +284,21 @@
 	align-items: flex-end;
 }
 
-.consentflow-admin__preview-stage--top {
+.consentaro-admin__preview-stage--top {
 	align-items: flex-start;
 }
 
-.consentflow-admin__preview-stage--bottom-right {
+.consentaro-admin__preview-stage--bottom-right {
 	justify-content: flex-end;
 	align-items: flex-end;
 }
 
-.consentflow-admin__preview-stage--modal {
+.consentaro-admin__preview-stage--modal {
 	align-items: center;
 	justify-content: center;
 }
 
-.consentflow-admin__preview-banner {
+.consentaro-admin__preview-banner {
 	width: 100%;
 	max-width: 100%;
 	padding: 14px 16px;
@@ -266,25 +313,25 @@
 	gap: 12px;
 }
 
-.consentflow-admin__preview-stage--bottom-right .consentflow-admin__preview-banner,
-.consentflow-admin__preview-stage--modal .consentflow-admin__preview-banner {
+.consentaro-admin__preview-stage--bottom-right .consentaro-admin__preview-banner,
+.consentaro-admin__preview-stage--modal .consentaro-admin__preview-banner {
 	max-width: 360px;
 }
 
-.consentflow-admin__preview-banner p {
+.consentaro-admin__preview-banner p {
 	margin: 0;
 	flex: 1 1 180px;
 	font-size: 13px;
 	line-height: 1.45;
 }
 
-.consentflow-admin__preview-actions {
+.consentaro-admin__preview-actions {
 	display: flex;
 	gap: 8px;
 	flex-shrink: 0;
 }
 
-.consentflow-admin__preview-actions button {
+.consentaro-admin__preview-actions button {
 	border: 0;
 	border-radius: 4px;
 	padding: 8px 12px;
@@ -294,12 +341,12 @@
 	pointer-events: none;
 }
 
-.consentflow-admin__preview-actions .is-primary {
+.consentaro-admin__preview-actions .is-primary {
 	background: var(--cf-btn-bg, #0073aa);
 	color: var(--cf-btn-text, #fff);
 }
 
-.consentflow-admin__preview-actions .is-secondary {
+.consentaro-admin__preview-actions .is-secondary {
 	background: #f0f0f1;
 	color: #1a1a1a;
 }
@@ -513,6 +560,16 @@
 .cf-guide__checklist .is-done {
 	color: #646970;
 	text-decoration: line-through;
+}
+
+.cf-guide__checklist-auto {
+	cursor: default;
+}
+
+.cf-guide__auto-tag {
+	font-style: normal;
+	color: #646970;
+	font-size: 11px;
 }
 
 .cf-guide__actions {

@@ -1,6 +1,6 @@
 (function ($) {
 	'use strict';
-	var cfg = window.consentflowWoo || {};
+	var cfg = window.consentaroWoo || {};
 	if (!cfg.events) return;
 
 	function pushEvent(payload) {
@@ -13,7 +13,7 @@
 		return !!cfg.analytics;
 	}
 
-	document.addEventListener('consentflow:updated', function (e) {
+	document.addEventListener('consentaro:updated', function (e) {
 		var c = (e && e.detail) || {};
 		cfg.analytics = c.analytics_storage === 'granted';
 		cfg.ads = c.ad_storage === 'granted';

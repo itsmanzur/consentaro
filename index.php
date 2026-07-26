@@ -2,6 +2,6 @@
 /**
  * Silence is golden.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 

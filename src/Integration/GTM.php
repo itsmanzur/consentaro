@@ -2,16 +2,16 @@
 /**
  * GTM / gtag integration with consent-aware loading.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Integration;
+namespace Consentaro\Integration;
 
-use ConsentFlow\Admin\Settings;
-use ConsentFlow\Consent\ConsentManager;
-use ConsentFlow\Core\ServiceContainer;
+use Consentaro\Admin\Settings;
+use Consentaro\Consent\ConsentManager;
+use Consentaro\Core\ServiceContainer;
 
 /**
  * Injects GTM only after a consent decision (or when banner is not required).
@@ -72,7 +72,7 @@ final class GTM {
 		// Waiting for banner choice — config only (loader listens for event).
 		wp_print_inline_script_tag(
 			sprintf(
-				'window.consentflowGTM=window.consentflowGTM||{id:%s,loaded:false};',
+				'window.consentaroGTM=window.consentaroGTM||{id:%s,loaded:false};',
 				wp_json_encode( $id )
 			),
 			array(
@@ -98,12 +98,12 @@ final class GTM {
 			return;
 		}
 
-		$path = CONSENTFLOW_PATH . 'assets/js/gtm-loader.js';
-		$ver  = is_readable( $path ) ? (string) filemtime( $path ) : CONSENTFLOW_VERSION;
+		$path = CONSENTARO_PATH . 'assets/js/gtm-loader.js';
+		$ver  = is_readable( $path ) ? (string) filemtime( $path ) : CONSENTARO_VERSION;
 
 		wp_enqueue_script(
-			'consentflow-gtm-loader',
-			CONSENTFLOW_URL . 'assets/js/gtm-loader.js',
+			'consentaro-gtm-loader',
+			CONSENTARO_URL . 'assets/js/gtm-loader.js',
 			array(),
 			$ver,
 			array(
@@ -127,7 +127,7 @@ final class GTM {
 		 *
 		 * @param string $id Container ID.
 		 */
-		$id = (string) apply_filters( 'consentflow_gtm_id', $id );
+		$id = (string) apply_filters( 'consentaro_gtm_id', $id );
 		$id = strtoupper( trim( $id ) );
 
 		if ( '' === $id || ! preg_match( '/^GTM-[A-Z0-9]+$/', $id ) ) {
@@ -166,7 +166,7 @@ final class GTM {
 		}
 
 		$script = sprintf(
-			'window.consentflowGTM={id:%1$s,loaded:true};' .
+			'window.consentaroGTM={id:%1$s,loaded:true};' .
 			'(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({\'gtm.start\':new Date().getTime(),event:\'gtm.js\'});' .
 			'var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!=\'dataLayer\'?\'&l=\'+l:\'\';' .
 			'j.async=true;j.src=\'https://www.googletagmanager.com/gtm.js?id=\'+i+dl;' .

@@ -2,23 +2,23 @@
 /**
  * REST API controller.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Admin;
+namespace Consentaro\Admin;
 
-use ConsentFlow\Consent\ConsentManager;
-use ConsentFlow\Consent\ConsentMode;
-use ConsentFlow\Core\ServiceContainer;
-use ConsentFlow\Integration\GeoLocation;
+use Consentaro\Consent\ConsentManager;
+use Consentaro\Consent\ConsentMode;
+use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\GeoLocation;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * Routes under /consentflow/v1/.
+ * Routes under /consentaro/v1/.
  */
 final class REST_Controller {
 
@@ -50,7 +50,7 @@ final class REST_Controller {
 	 */
 	public function registerRoutes(): void {
 		register_rest_route(
-			'consentflow/v1',
+			'consentaro/v1',
 			'/settings',
 			array(
 				array(
@@ -67,7 +67,7 @@ final class REST_Controller {
 		);
 
 		register_rest_route(
-			'consentflow/v1',
+			'consentaro/v1',
 			'/geo-check',
 			array(
 				'methods'             => 'GET',
@@ -77,7 +77,7 @@ final class REST_Controller {
 		);
 
 		register_rest_route(
-			'consentflow/v1',
+			'consentaro/v1',
 			'/consent',
 			array(
 				array(
@@ -122,8 +122,8 @@ final class REST_Controller {
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 		if ( ! is_string( $nonce ) || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new WP_Error(
-				'consentflow_invalid_nonce',
-				__( 'Invalid privacy nonce.', 'consentflow' ),
+				'consentaro_invalid_nonce',
+				__( 'Invalid privacy nonce.', 'consentaro' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -230,8 +230,8 @@ final class REST_Controller {
 
 				if ( empty( $incoming ) && '' === $action ) {
 					return new WP_Error(
-						'consentflow_missing_consent',
-						__( 'Provide action or consent map.', 'consentflow' ),
+						'consentaro_missing_consent',
+						__( 'Provide action or consent map.', 'consentaro' ),
 						array( 'status' => 400 )
 					);
 				}
@@ -244,8 +244,8 @@ final class REST_Controller {
 				break;
 			default:
 				return new WP_Error(
-					'consentflow_invalid_action',
-					__( 'Unknown consent action.', 'consentflow' ),
+					'consentaro_invalid_action',
+					__( 'Unknown consent action.', 'consentaro' ),
 					array( 'status' => 400 )
 				);
 		}

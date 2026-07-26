@@ -2,16 +2,16 @@
 /**
  * Consent banner renderer.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Frontend;
+namespace Consentaro\Frontend;
 
-use ConsentFlow\Admin\Settings;
-use ConsentFlow\Core\ServiceContainer;
-use ConsentFlow\Integration\GeoLocation;
+use Consentaro\Admin\Settings;
+use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\GeoLocation;
 
 /**
  * Outputs banner HTML when geo + consent rules match.
@@ -63,7 +63,7 @@ final class Banner {
 
 		$text = (string) ( $banner['text'] ?? '' );
 		if ( '' === $text ) {
-			$text = __( 'We use cookies to improve your experience and measure traffic.', 'consentflow' );
+			$text = __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' );
 		}
 
 		$style = $this->getCustomStyles( $banner );
@@ -75,14 +75,14 @@ final class Banner {
 		 * @param string               $html     Markup.
 		 * @param array<string, mixed> $settings Full settings.
 		 */
-		$html = (string) apply_filters( 'consentflow_banner_html', $html, $settings );
+		$html = (string) apply_filters( 'consentaro_banner_html', $html, $settings );
 
-		do_action( 'consentflow_before_banner_display' );
+		do_action( 'consentaro_before_banner_display' );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built with escaping helpers.
 		echo $html;
 
-		do_action( 'consentflow_after_banner_display' );
+		do_action( 'consentaro_after_banner_display' );
 	}
 
 	/**
@@ -124,11 +124,11 @@ final class Banner {
 	 */
 	private function buildHtml( string $position, string $text, string $style ): string {
 		$categories = array(
-			'analytics_storage'       => __( 'Analytics', 'consentflow' ),
-			'ad_storage'              => __( 'Advertising', 'consentflow' ),
-			'ad_user_data'            => __( 'Ad user data', 'consentflow' ),
-			'ad_personalization'      => __( 'Ad personalization', 'consentflow' ),
-			'personalization_storage' => __( 'Personalization', 'consentflow' ),
+			'analytics_storage'       => __( 'Analytics', 'consentaro' ),
+			'ad_storage'              => __( 'Advertising', 'consentaro' ),
+			'ad_user_data'            => __( 'Ad user data', 'consentaro' ),
+			'ad_personalization'      => __( 'Ad personalization', 'consentaro' ),
+			'personalization_storage' => __( 'Personalization', 'consentaro' ),
 		);
 
 		$items = '';
@@ -163,15 +163,15 @@ final class Banner {
 			'</div>',
 			esc_attr( $position ),
 			esc_attr( $style ),
-			esc_attr__( 'Cookie Consent', 'consentflow' ),
+			esc_attr__( 'Cookie Consent', 'consentaro' ),
 			esc_html( $text ),
-			esc_html__( 'Accept All', 'consentflow' ),
-			esc_html__( 'Deny All', 'consentflow' ),
-			esc_html__( 'Customize', 'consentflow' ),
-			esc_html__( 'Customize cookies', 'consentflow' ),
+			esc_html__( 'Accept All', 'consentaro' ),
+			esc_html__( 'Deny All', 'consentaro' ),
+			esc_html__( 'Customize', 'consentaro' ),
+			esc_html__( 'Customize cookies', 'consentaro' ),
 			$items,
-			esc_html__( 'Cancel', 'consentflow' ),
-			esc_html__( 'Save preferences', 'consentflow' )
+			esc_html__( 'Cancel', 'consentaro' ),
+			esc_html__( 'Save preferences', 'consentaro' )
 		);
 	}
 }

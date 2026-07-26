@@ -1,5 +1,5 @@
 {
-	"name": "consentflow/consentflow",
+	"name": "consentaro/consentaro",
 	"description": "Ultra-light Google Consent Mode v2 WordPress plugin",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
@@ -8,7 +8,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ConsentFlow\\": "src/"
+			"Consentaro\\": "src/"
 		}
 	},
 	"require-dev": {

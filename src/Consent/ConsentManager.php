@@ -2,19 +2,19 @@
 /**
  * Consent state orchestration.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Consent;
+namespace Consentaro\Consent;
 
 /**
  * Reads/writes consent cookie and prints Consent Mode scripts.
  */
 final class ConsentManager {
 
-	public const COOKIE_NAME = 'consentflow_state';
+	public const COOKIE_NAME = 'consentaro_state';
 
 	/**
 	 * Cookie lifetime (365 days).
@@ -124,7 +124,7 @@ final class ConsentManager {
 		 * @param array<string, string> $new New states.
 		 * @param array<string, string> $old Previous states.
 		 */
-		do_action( 'consentflow_consent_updated', $new, $old );
+		do_action( 'consentaro_consent_updated', $new, $old );
 
 		return $new;
 	}
@@ -165,7 +165,7 @@ final class ConsentManager {
 	 * Plugin enabled flag from settings.
 	 */
 	private function isEnabled(): bool {
-		$settings = get_option( 'consentflow_settings', array() );
+		$settings = get_option( 'consentaro_settings', array() );
 		if ( ! is_array( $settings ) ) {
 			return true;
 		}

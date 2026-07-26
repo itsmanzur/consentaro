@@ -2,12 +2,12 @@
 /**
  * Google Consent Mode v2 script generator.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Consent;
+namespace Consentaro\Consent;
 
 /**
  * Builds gtag consent default / update snippets.
@@ -50,7 +50,7 @@ final class ConsentMode {
 		 *
 		 * @param array<string, string> $states Default states.
 		 */
-		$filtered = apply_filters( 'consentflow_default_consent_states', $states );
+		$filtered = apply_filters( 'consentaro_default_consent_states', $states );
 
 		return $this->sanitizeStates( is_array( $filtered ) ? $filtered : $states );
 	}

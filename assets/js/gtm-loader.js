@@ -1,10 +1,10 @@
 (function () {
 	'use strict';
-	var cfg = window.consentflowGTM;
+	var cfg = window.consentaroGTM;
 	if (!cfg || !cfg.id || cfg.loaded) return;
 
 	function loadGTM(id) {
-		if (window.consentflowGTM && window.consentflowGTM.loaded) return;
+		if (window.consentaroGTM && window.consentaroGTM.loaded) return;
 		window.dataLayer = window.dataLayer || [];
 		window.dataLayer.push({
 			'gtm.start': new Date().getTime(),
@@ -15,15 +15,15 @@
 		j.async = true;
 		j.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(id);
 		f.parentNode.insertBefore(j, f);
-		window.consentflowGTM = window.consentflowGTM || {};
-		window.consentflowGTM.id = id;
-		window.consentflowGTM.loaded = true;
+		window.consentaroGTM = window.consentaroGTM || {};
+		window.consentaroGTM.id = id;
+		window.consentaroGTM.loaded = true;
 		document.dispatchEvent(
-			new CustomEvent('consentflow:gtm-loaded', { detail: { id: id } })
+			new CustomEvent('consentaro:gtm-loaded', { detail: { id: id } })
 		);
 	}
 
-	document.addEventListener('consentflow:updated', function () {
+	document.addEventListener('consentaro:updated', function () {
 		loadGTM(cfg.id);
 	});
 })();

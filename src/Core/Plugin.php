@@ -2,24 +2,24 @@
 /**
  * Main plugin bootstrapper.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Core;
+namespace Consentaro\Core;
 
-use ConsentFlow\Admin\REST_Controller;
-use ConsentFlow\Admin\Settings;
-use ConsentFlow\Compatibility\CachePlugins;
-use ConsentFlow\Consent\ConsentManager;
-use ConsentFlow\Consent\ConsentMode;
-use ConsentFlow\Consent\CookieStorage;
-use ConsentFlow\Frontend\Assets;
-use ConsentFlow\Frontend\Banner;
-use ConsentFlow\Integration\GeoLocation;
-use ConsentFlow\Integration\GTM;
-use ConsentFlow\Integration\WooCommerce;
+use Consentaro\Admin\REST_Controller;
+use Consentaro\Admin\Settings;
+use Consentaro\Compatibility\CachePlugins;
+use Consentaro\Consent\ConsentManager;
+use Consentaro\Consent\ConsentMode;
+use Consentaro\Consent\CookieStorage;
+use Consentaro\Frontend\Assets;
+use Consentaro\Frontend\Banner;
+use Consentaro\Integration\GeoLocation;
+use Consentaro\Integration\GTM;
+use Consentaro\Integration\WooCommerce;
 
 /**
  * Singleton plugin orchestrator.

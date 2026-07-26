@@ -8,19 +8,32 @@ import GeneralTab from './components/GeneralTab';
 import DesignTab from './components/DesignTab';
 import GuideTab from './components/GuideTab';
 
+const DEFAULT_BANNER = {
+	position: 'bottom',
+	text: '',
+	bg: '#ffffff',
+	text_color: '#1a1a1a',
+	btn_primary_bg: '#0073aa',
+	btn_primary_text: '#ffffff',
+};
+
 const App = () => {
 	const [ settings, setSettings ] = useState( null );
+	const [ form, setForm ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
 	const [ tab, setTab ] = useState( 'guide' );
 
 	useEffect( () => {
-		apiFetch( { path: '/consentflow/v1/settings' } )
-			.then( setSettings )
+		apiFetch( { path: '/consentaro/v1/settings' } )
+			.then( ( data ) => {
+				setSettings( data );
+				setForm( data );
+			} )
 			.catch( () => {
 				setNotice( {
 					status: 'error',
-					message: __( 'Failed to load settings.', 'consentflow' ),
+					message: __( 'Failed to load settings.', 'consentaro' ),
 				} );
 			} );
 	}, [] );
@@ -33,48 +46,97 @@ const App = () => {
 		return () => clearTimeout( timer );
 	}, [ notice ] );
 
-	const save = useCallback( async ( data ) => {
+	// Draft `form` lives here (not inside each tab) so it survives tab
+	// switches — WordPress's TabPanel unmounts inactive tabs, which was
+	// silently discarding unsaved edits.
+	const dirty =
+		!! settings &&
+		!! form &&
+		JSON.stringify( settings ) !== JSON.stringify( form );
+
+	useEffect( () => {
+		if ( ! dirty ) {
+			return;
+		}
+		const handler = ( e ) => {
+			e.preventDefault();
+			e.returnValue = '';
+			return '';
+		};
+		window.addEventListener( 'beforeunload', handler );
+		return () => window.removeEventListener( 'beforeunload', handler );
+	}, [ dirty ] );
+
+	const update = useCallback( ( key, value ) => {
+		setForm( ( prev ) => ( { ...prev, [ key ]: value } ) );
+	}, [] );
+
+	const updateBanner = useCallback( ( key, value ) => {
+		setForm( ( prev ) => ( {
+			...prev,
+			banner: { ...prev.banner, [ key ]: value },
+		} ) );
+	}, [] );
+
+	const resetBanner = useCallback( () => {
+		setForm( ( prev ) => ( { ...prev, banner: { ...DEFAULT_BANNER } } ) );
+	}, [] );
+
+	const save = useCallback( async () => {
 		setSaving( true );
 		setNotice( null );
 		try {
-			const updated = await apiFetch( {
-				path: '/consentflow/v1/settings',
+			const response = await apiFetch( {
+				path: '/consentaro/v1/settings',
 				method: 'POST',
-				data,
+				data: form,
 			} );
-			setSettings( updated );
-			setNotice( {
-				status: 'success',
-				message: __( 'Settings saved.', 'consentflow' ),
-			} );
+			const { rejected, ...saved } = response;
+			setSettings( saved );
+			setForm( saved );
+			if ( rejected && rejected.length ) {
+				setNotice( {
+					status: 'warning',
+					message:
+						__(
+							'Settings saved, but this looked invalid and was not changed: ',
+							'consentaro'
+						) + rejected.join( ', ' ),
+				} );
+			} else {
+				setNotice( {
+					status: 'success',
+					message: __( 'Settings saved.', 'consentaro' ),
+				} );
+			}
 		} catch ( e ) {
 			setNotice( {
 				status: 'error',
-				message: __( 'Could not save settings.', 'consentflow' ),
+				message: __( 'Could not save settings.', 'consentaro' ),
 			} );
 		} finally {
 			setSaving( false );
 		}
-	}, [] );
+	}, [ form ] );
 
-	if ( ! settings ) {
+	if ( ! form ) {
 		return (
-			<div className="consentflow-admin consentflow-admin--loading">
+			<div className="consentaro-admin consentaro-admin--loading">
 				<Spinner />
-				<p>{ __( 'Loading settings…', 'consentflow' ) }</p>
+				<p>{ __( 'Loading settings…', 'consentaro' ) }</p>
 			</div>
 		);
 	}
 
 	return (
 		<div
-			className={ `consentflow-admin ${
-				tab === 'guide' ? 'consentflow-admin--guide' : ''
+			className={ `consentaro-admin ${
+				tab === 'guide' ? 'consentaro-admin--guide' : ''
 			}` }
 		>
-			<Header />
+			<Header enabled={ !! settings?.enabled } />
 			{ notice && (
-				<div className="consentflow-admin__notice">
+				<div className="consentaro-admin__notice">
 					<Notice
 						status={ notice.status }
 						onRemove={ () => setNotice( null ) }
@@ -84,27 +146,31 @@ const App = () => {
 				</div>
 			) }
 			<TabPanel
-				className="consentflow-admin__tabs"
+				className="consentaro-admin__tabs"
 				activeClass="is-active"
 				initialTabName={ tab }
 				key={ tab }
 				onSelect={ setTab }
 				tabs={ [
-					{ name: 'guide', title: __( 'Guide', 'consentflow' ) },
-					{ name: 'general', title: __( 'General', 'consentflow' ) },
-					{ name: 'design', title: __( 'Design', 'consentflow' ) },
+					{ name: 'guide', title: __( 'Guide', 'consentaro' ) },
+					{ name: 'general', title: __( 'General', 'consentaro' ) },
+					{ name: 'design', title: __( 'Design', 'consentaro' ) },
 				] }
 			>
 				{ ( t ) => {
 					if ( t.name === 'guide' ) {
 						return (
-							<GuideTab onGoToTab={ ( name ) => setTab( name ) } />
+							<GuideTab
+								settings={ settings }
+								onGoToTab={ ( name ) => setTab( name ) }
+							/>
 						);
 					}
 					if ( t.name === 'general' ) {
 						return (
 							<GeneralTab
-								settings={ settings }
+								form={ form }
+								onChange={ update }
 								onSave={ save }
 								saving={ saving }
 							/>
@@ -112,7 +178,9 @@ const App = () => {
 					}
 					return (
 						<DesignTab
-							settings={ settings }
+							form={ form }
+							onChange={ updateBanner }
+							onReset={ resetBanner }
 							onSave={ save }
 							saving={ saving }
 						/>

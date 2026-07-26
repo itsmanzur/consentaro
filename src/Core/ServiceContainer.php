@@ -2,12 +2,12 @@
 /**
  * Simple PSR-11 style service container.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Core;
+namespace Consentaro\Core;
 
 use RuntimeException;
 

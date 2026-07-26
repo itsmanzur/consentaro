@@ -2,16 +2,16 @@
 /**
  * Full-page cache plugin compatibility.
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Compatibility;
+namespace Consentaro\Compatibility;
 
-use ConsentFlow\Consent\ConsentManager;
-use ConsentFlow\Core\ServiceContainer;
-use ConsentFlow\Integration\GeoLocation;
+use Consentaro\Consent\ConsentManager;
+use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\GeoLocation;
 
 /**
  * Ensures consent cookie / banner are not served from the wrong cache entry.
@@ -108,7 +108,7 @@ final class CachePlugins {
 		}
 
 		// Third-party LiteSpeed API (intentionally unprefixed hook name).
-		do_action( 'litespeed_control_set_nocache', 'consentflow banner' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		do_action( 'litespeed_control_set_nocache', 'consentaro banner' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
 
 	/**
@@ -118,7 +118,7 @@ final class CachePlugins {
 	 * @return array<string, mixed>
 	 */
 	public function addW3tcCookieGroup( array $groups ): array {
-		$groups['consentflow'] = array(
+		$groups['consentaro'] = array(
 			'enabled' => true,
 			'cache'   => true,
 			'cookies' => array( ConsentManager::COOKIE_NAME ),
@@ -186,12 +186,12 @@ final class CachePlugins {
 	 */
 	private function scriptPathFragments(): array {
 		return array(
-			'consentflow/assets/js/banner',
-			'consentflow/assets/js/gtm-loader',
-			'consentflow/assets/js/woo',
+			'consentaro/assets/js/banner',
+			'consentaro/assets/js/gtm-loader',
+			'consentaro/assets/js/woo',
 			'data-cf-consent',
-			'consentflowAPI',
-			'consentflowGTM',
+			'consentaroAPI',
+			'consentaroGTM',
 		);
 	}
 

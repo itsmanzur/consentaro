@@ -2,17 +2,17 @@
 /**
  * Admin settings page (React mount).
  *
- * @package ConsentFlow
+ * @package Consentaro
  */
 
 declare(strict_types=1);
 
-namespace ConsentFlow\Admin;
+namespace Consentaro\Admin;
 
-use ConsentFlow\Core\ServiceContainer;
+use Consentaro\Core\ServiceContainer;
 
 /**
- * Registers ConsentFlow menu and enqueues React admin.
+ * Registers Consentaro menu and enqueues React admin.
  */
 final class Settings {
 
@@ -38,6 +38,26 @@ final class Settings {
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'registerMenu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueAdmin' ) );
+		add_action( 'admin_init', array( $this, 'maybeRedirectAfterActivation' ) );
+	}
+
+	/**
+	 * One-time redirect to the Guide screen right after activation, so a new
+	 * admin lands on the walkthrough instead of having to find the menu.
+	 */
+	public function maybeRedirectAfterActivation(): void {
+		if ( ! get_transient( 'consentaro_activation_redirect' ) ) {
+			return;
+		}
+
+		delete_transient( 'consentaro_activation_redirect' );
+
+		if ( wp_doing_ajax() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'admin.php?page=consentaro' ) );
+		exit;
 	}
 
 	/**
@@ -45,10 +65,10 @@ final class Settings {
 	 */
 	public function registerMenu(): void {
 		add_menu_page(
-			'ConsentFlow',
-			'ConsentFlow',
+			'Consentaro',
+			'Consentaro',
 			'manage_options',
-			'consentflow',
+			'consentaro',
 			array( $this, 'renderPage' ),
 			'dashicons-privacy',
 			30
@@ -63,7 +83,7 @@ final class Settings {
 			return;
 		}
 
-		echo '<div class="wrap"><div id="consentflow-admin"></div></div>';
+		echo '<div class="wrap"><div id="consentaro-admin"></div></div>';
 	}
 
 	/**
@@ -72,16 +92,16 @@ final class Settings {
 	 * @param string $hook Current admin hook.
 	 */
 	public function enqueueAdmin( string $hook ): void {
-		if ( 'toplevel_page_consentflow' !== $hook ) {
+		if ( 'toplevel_page_consentaro' !== $hook ) {
 			return;
 		}
 
-		$asset_file = CONSENTFLOW_PATH . 'assets/build/admin.asset.php';
+		$asset_file = CONSENTARO_PATH . 'assets/build/admin.asset.php';
 		$asset      = is_readable( $asset_file )
 			? include $asset_file
 			: array(
 				'dependencies' => array( 'wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n' ),
-				'version'      => CONSENTFLOW_VERSION,
+				'version'      => CONSENTARO_VERSION,
 			);
 
 		wp_enqueue_style( 'wp-components' );
@@ -92,30 +112,30 @@ final class Settings {
 			'assets/js/style-admin.css',
 		);
 		foreach ( $css_candidates as $rel ) {
-			if ( is_readable( CONSENTFLOW_PATH . $rel ) ) {
+			if ( is_readable( CONSENTARO_PATH . $rel ) ) {
 				wp_enqueue_style(
-					'consentflow-admin',
-					CONSENTFLOW_URL . $rel,
+					'consentaro-admin',
+					CONSENTARO_URL . $rel,
 					array( 'wp-components' ),
-					(string) ( $asset['version'] ?? CONSENTFLOW_VERSION )
+					(string) ( $asset['version'] ?? CONSENTARO_VERSION )
 				);
 				break;
 			}
 		}
 
 		wp_enqueue_script(
-			'consentflow-admin',
-			CONSENTFLOW_URL . 'assets/build/admin.js',
+			'consentaro-admin',
+			CONSENTARO_URL . 'assets/build/admin.js',
 			$asset['dependencies'] ?? array(),
-			(string) ( $asset['version'] ?? CONSENTFLOW_VERSION ),
+			(string) ( $asset['version'] ?? CONSENTARO_VERSION ),
 			true
 		);
 
 		wp_localize_script(
-			'consentflow-admin',
-			'consentflowAdmin',
+			'consentaro-admin',
+			'consentaroAdmin',
 			array(
-				'root'  => esc_url_raw( rest_url( 'consentflow/v1' ) ),
+				'root'  => esc_url_raw( rest_url( 'consentaro/v1' ) ),
 				'nonce' => wp_create_nonce( 'wp_rest' ),
 			)
 		);
@@ -141,7 +161,7 @@ final class Settings {
 			),
 		);
 
-		$stored = get_option( 'consentflow_settings', array() );
+		$stored = get_option( 'consentaro_settings', array() );
 		if ( ! is_array( $stored ) ) {
 			$stored = array();
 		}
@@ -159,7 +179,8 @@ final class Settings {
 	 * @return array<string, mixed>
 	 */
 	public function saveSettings( array $data ): array {
-		$current = $this->getSettings();
+		$current  = $this->getSettings();
+		$rejected = array();
 
 		if ( isset( $data['enabled'] ) ) {
 			$current['enabled'] = (bool) $data['enabled'];
@@ -171,6 +192,8 @@ final class Settings {
 			$gtm = strtoupper( sanitize_text_field( (string) $data['gtm_id'] ) );
 			if ( '' === $gtm || preg_match( '/^GTM-[A-Z0-9]+$/', $gtm ) ) {
 				$current['gtm_id'] = $gtm;
+			} else {
+				$rejected[] = 'gtm_id';
 			}
 		}
 		if ( isset( $data['banner'] ) && is_array( $data['banner'] ) ) {
@@ -179,6 +202,8 @@ final class Settings {
 				$pos = sanitize_key( (string) $banner['position'] );
 				if ( in_array( $pos, array( 'bottom', 'top', 'bottom-right', 'modal' ), true ) ) {
 					$current['banner']['position'] = $pos;
+				} else {
+					$rejected[] = 'banner.position';
 				}
 			}
 			if ( isset( $banner['text'] ) ) {
@@ -189,12 +214,14 @@ final class Settings {
 					$hex = sanitize_hex_color( (string) $banner[ $color_key ] );
 					if ( $hex ) {
 						$current['banner'][ $color_key ] = $hex;
+					} else {
+						$rejected[] = 'banner.' . $color_key;
 					}
 				}
 			}
 		}
 
-		update_option( 'consentflow_settings', $current, true );
+		update_option( 'consentaro_settings', $current, true );
 
 		/**
 		 * Fires after settings are saved.
@@ -202,7 +229,11 @@ final class Settings {
 		 * @param array $new New settings.
 		 * @param array $old Previous (same shape; use carefully).
 		 */
-		do_action( 'consentflow_settings_updated', $current, $current );
+		do_action( 'consentaro_settings_updated', $current, $current );
+
+		// Not persisted — surfaced to the REST response only, so the admin
+		// UI can tell the difference between "saved" and "silently ignored".
+		$current['rejected'] = $rejected;
 
 		return $current;
 	}
