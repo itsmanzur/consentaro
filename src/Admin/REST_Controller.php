@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Consentaro\Consent\ConsentManager;
 use Consentaro\Consent\ConsentMode;
 use Consentaro\Core\ServiceContainer;

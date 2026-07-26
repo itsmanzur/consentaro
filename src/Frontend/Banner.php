@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Frontend;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Consentaro\Admin\Settings;
 use Consentaro\Core\ServiceContainer;
 use Consentaro\Integration\GeoLocation;

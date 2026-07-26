@@ -1,11 +1,17 @@
-# Build a WordPress.org-ready ZIP as consentaro-1.1.0.zip
+# Build a WordPress.org-ready ZIP as consentaro-<version>.zip
 # Usage: powershell -File bin/build-release.ps1
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $root
 
-$version = "1.1.0"
+# Read the version straight from the plugin header so this never drifts out of
+# sync with consentaro.php / readme.txt again.
+$pluginHeader = Get-Content (Join-Path $root "consentaro.php") -Raw
+if ($pluginHeader -notmatch "Version:\s*([0-9][0-9.]*)") {
+	throw "Could not read Version from consentaro.php"
+}
+$version = $Matches[1]
 $slug = "consentaro"
 $distIgnorePath = Join-Path $root ".distignore"
 $stagingParent = Join-Path $env:TEMP "consentaro-release-staging"

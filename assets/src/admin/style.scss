@@ -1,0 +1,634 @@
+.consentaro-admin {
+	max-width: 780px;
+	margin: 8px 0 40px;
+	font-size: 13px;
+}
+
+.consentaro-admin--guide {
+	max-width: 980px;
+}
+
+.consentaro-admin--loading {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 48px 0;
+	color: #646970;
+}
+
+.consentaro-admin__header {
+	margin-bottom: 8px;
+}
+
+.consentaro-admin__brand {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.consentaro-admin__mark {
+	width: 36px;
+	height: 36px;
+	margin-top: 4px;
+	border-radius: 10px;
+	background: linear-gradient(145deg, #2271b1 0%, #135e96 100%);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+	flex-shrink: 0;
+}
+
+.consentaro-admin__header h1 {
+	margin: 0 0 2px;
+	font-size: 23px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #1d2327;
+}
+
+.consentaro-admin__tagline {
+	margin: 0;
+	color: #646970;
+	font-size: 13px;
+}
+
+.consentaro-admin__notice {
+	margin: 12px 0 4px;
+}
+
+.consentaro-admin__tabs {
+	margin-top: 12px;
+}
+
+.consentaro-admin__tabs .components-tab-panel__tabs {
+	margin-bottom: 16px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.consentaro-admin__card {
+	border: 1px solid #dcdcde;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.consentaro-admin__card .components-card-header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: 16px 20px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.consentaro-admin__card-sub {
+	color: #646970;
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.consentaro-admin__card .components-card-body {
+	padding: 20px;
+}
+
+.consentaro-admin__footer {
+	padding: 14px 20px;
+	border-top: 1px solid #f0f0f1;
+	background: #fcfcfc;
+}
+
+.consentaro-admin__footer .components-button {
+	min-width: 120px;
+	justify-content: center;
+	gap: 6px;
+}
+
+.consentaro-admin__field--narrow {
+	max-width: 280px;
+}
+
+.consentaro-admin__section {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding-top: 4px;
+}
+
+.consentaro-admin__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	width: fit-content;
+	max-width: 100%;
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #2c3338;
+}
+
+.consentaro-admin__badge-label {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 10px;
+	font-weight: 600;
+	color: #646970;
+}
+
+.consentaro-admin__badge-value {
+	font-weight: 600;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.consentaro-admin__badge-sep {
+	color: #c3c4c7;
+}
+
+.consentaro-admin__badge--eu {
+	border-color: #c3ddfd;
+	background: #f0f6fc;
+}
+
+.consentaro-admin__badge--other {
+	border-color: #dcdcde;
+	background: #f6f7f7;
+}
+
+.consentaro-admin__design {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.consentaro-admin__colors {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px 20px;
+}
+
+@media (max-width: 600px) {
+	.consentaro-admin__colors {
+		grid-template-columns: 1fr;
+	}
+}
+
+.consentaro-admin__color-field .components-base-control__label {
+	margin-bottom: 8px;
+}
+
+.consentaro-admin__color-toggle {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 10px;
+	height: auto !important;
+	padding: 6px 12px 6px 8px !important;
+	border-radius: 4px;
+}
+
+.consentaro-admin__color-toggle .component-color-indicator {
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.consentaro-admin__color-toggle code {
+	font-size: 12px;
+	background: transparent;
+	padding: 0;
+	color: #2c3338;
+}
+
+.consentaro-admin__color-popover {
+	padding: 12px;
+}
+
+.consentaro-admin__preview {
+	border: 1px solid #dcdcde;
+	border-radius: 2px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.consentaro-admin__preview-label {
+	padding: 10px 16px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #646970;
+	border-bottom: 1px solid #f0f0f1;
+	background: #fcfcfc;
+}
+
+.consentaro-admin__preview-stage {
+	position: relative;
+	min-height: 160px;
+	padding: 20px;
+	background:
+		linear-gradient(45deg, #f0f0f1 25%, transparent 25%),
+		linear-gradient(-45deg, #f0f0f1 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, #f0f0f1 75%),
+		linear-gradient(-45deg, transparent 75%, #f0f0f1 75%);
+	background-size: 16px 16px;
+	background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+	background-color: #fff;
+	display: flex;
+	align-items: flex-end;
+}
+
+.consentaro-admin__preview-stage--top {
+	align-items: flex-start;
+}
+
+.consentaro-admin__preview-stage--bottom-right {
+	justify-content: flex-end;
+	align-items: flex-end;
+}
+
+.consentaro-admin__preview-stage--modal {
+	align-items: center;
+	justify-content: center;
+}
+
+.consentaro-admin__preview-banner {
+	width: 100%;
+	max-width: 100%;
+	padding: 14px 16px;
+	border-radius: 8px;
+	background: var(--consentaro-bg, #fff);
+	color: var(--consentaro-text, #1a1a1a);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.consentaro-admin__preview-stage--bottom-right .consentaro-admin__preview-banner,
+.consentaro-admin__preview-stage--modal .consentaro-admin__preview-banner {
+	max-width: 360px;
+}
+
+.consentaro-admin__preview-banner p {
+	margin: 0;
+	flex: 1 1 180px;
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+.consentaro-admin__preview-actions {
+	display: flex;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.consentaro-admin__preview-actions button {
+	border: 0;
+	border-radius: 4px;
+	padding: 8px 12px;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: default;
+	pointer-events: none;
+}
+
+.consentaro-admin__preview-actions .is-primary {
+	background: var(--consentaro-btn-bg, #0073aa);
+	color: var(--consentaro-btn-text, #fff);
+}
+
+.consentaro-admin__preview-actions .is-secondary {
+	background: #f0f0f1;
+	color: #1a1a1a;
+}
+
+/* —— Interactive Guide —— */
+.consentaro-guide {
+	display: grid;
+	grid-template-columns: 200px minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+.consentaro-guide__nav {
+	position: sticky;
+	top: 46px;
+	padding: 14px;
+	border: 1px solid #dcdcde;
+	border-radius: 2px;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.consentaro-guide__nav-title {
+	margin: 0 0 10px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #646970;
+}
+
+.consentaro-guide__nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.consentaro-guide__nav li + li {
+	margin-top: 2px;
+}
+
+.consentaro-guide__nav button {
+	display: block;
+	width: 100%;
+	text-align: left;
+	border: 0;
+	background: transparent;
+	padding: 7px 8px;
+	border-radius: 4px;
+	color: #2c3338;
+	cursor: pointer;
+	font-size: 12.5px;
+	line-height: 1.35;
+}
+
+.consentaro-guide__nav button:hover {
+	background: #f0f0f1;
+}
+
+.consentaro-guide__nav button.is-active {
+	background: #f0f6fc;
+	color: #135e96;
+	font-weight: 600;
+}
+
+.consentaro-guide__content {
+	min-width: 0;
+}
+
+.consentaro-guide__section {
+	margin-bottom: 28px;
+	scroll-margin-top: 56px;
+}
+
+.consentaro-guide__section h2 {
+	margin: 0 0 8px;
+	font-size: 18px;
+	line-height: 1.3;
+}
+
+.consentaro-guide__section-intro,
+.consentaro-guide__section > p {
+	margin: 0 0 14px;
+	color: #50575e;
+	line-height: 1.55;
+}
+
+.consentaro-guide__hero {
+	padding: 20px;
+	border: 1px solid #c3ddfd;
+	border-radius: 2px;
+	background: linear-gradient(180deg, #f0f6fc 0%, #fff 70%);
+	margin-bottom: 14px;
+}
+
+.consentaro-guide__badge {
+	display: inline-block;
+	margin-bottom: 8px;
+	padding: 3px 8px;
+	border-radius: 999px;
+	background: #2271b1;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.consentaro-guide__hero h2 {
+	margin-bottom: 8px;
+}
+
+.consentaro-guide__lead {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: #1d2327;
+}
+
+.consentaro-guide__plain {
+	padding: 16px 18px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 2px;
+}
+
+.consentaro-guide__plain h3 {
+	margin: 0 0 10px;
+	font-size: 14px;
+}
+
+.consentaro-guide__steps {
+	margin: 0 0 12px;
+	padding-left: 20px;
+	line-height: 1.55;
+	color: #2c3338;
+}
+
+.consentaro-guide__steps li + li {
+	margin-top: 6px;
+}
+
+.consentaro-guide__note {
+	margin: 0;
+	padding: 10px 12px;
+	background: #fcf9e8;
+	border-left: 3px solid #dba617;
+	color: #3c434a;
+	line-height: 1.5;
+}
+
+.consentaro-guide__progress {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.consentaro-guide__progress-bar {
+	flex: 1;
+	height: 8px;
+	background: #f0f0f1;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.consentaro-guide__progress-bar span {
+	display: block;
+	height: 100%;
+	background: #2271b1;
+	border-radius: 999px;
+	transition: width 0.25s ease;
+}
+
+.consentaro-guide__progress-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #646970;
+	white-space: nowrap;
+}
+
+.consentaro-guide__checklist {
+	list-style: none;
+	margin: 0 0 16px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 2px;
+}
+
+.consentaro-guide__checklist li {
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.consentaro-guide__checklist li:last-child {
+	border-bottom: 0;
+}
+
+.consentaro-guide__checklist label {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px 14px;
+	cursor: pointer;
+	line-height: 1.45;
+}
+
+.consentaro-guide__checklist input {
+	margin-top: 2px;
+}
+
+.consentaro-guide__checklist .is-done {
+	color: #646970;
+	text-decoration: line-through;
+}
+
+.consentaro-guide__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.consentaro-guide__module {
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 2px;
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+.consentaro-guide__module-toggle {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 12px 14px;
+	border: 0;
+	background: #fcfcfc;
+	cursor: pointer;
+	text-align: left;
+}
+
+.consentaro-guide__module.is-open .consentaro-guide__module-toggle {
+	border-bottom: 1px solid #f0f0f1;
+	background: #fff;
+}
+
+.consentaro-guide__module-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.consentaro-guide__module-mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 6px;
+	background: #f0f6fc;
+	color: #135e96;
+	font-size: 12px;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.consentaro-guide__chevron {
+	color: #646970;
+	font-size: 12px;
+}
+
+.consentaro-guide__module-body {
+	padding: 14px 16px 16px;
+	line-height: 1.55;
+	color: #2c3338;
+}
+
+.consentaro-guide__module-body p {
+	margin: 0;
+}
+
+.consentaro-guide__bullets {
+	margin: 0 0 10px;
+	padding-left: 18px;
+}
+
+.consentaro-guide__bullets li + li {
+	margin-top: 8px;
+}
+
+.consentaro-guide__footer-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	margin-top: 14px;
+	padding: 16px 18px;
+	border: 1px solid #c3ddfd;
+	background: #f0f6fc;
+	border-radius: 2px;
+}
+
+.consentaro-guide__footer-cta p {
+	margin: 4px 0 0;
+	color: #50575e;
+}
+
+@media (max-width: 782px) {
+	.consentaro-guide {
+		grid-template-columns: 1fr;
+	}
+
+	.consentaro-guide__nav {
+		position: static;
+	}
+
+	.consentaro-guide__nav ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+
+	.consentaro-guide__nav li {
+		margin: 0;
+	}
+
+	.consentaro-guide__nav button {
+		width: auto;
+	}
+}

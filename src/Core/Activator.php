@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Core;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Runs on plugin activation.
  */
@@ -40,7 +44,10 @@ final class Activator {
 		}
 
 		// Skip on bulk/network activation so only a single-plugin activation
-		// by an admin triggers the onboarding redirect.
+		// by an admin triggers the onboarding redirect. Only presence of this
+		// WP-core-set flag is checked (no value is read/trusted), so no nonce
+		// applies here.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['activate-multi'] ) && ! ( is_multisite() && is_network_admin() ) ) {
 			set_transient( 'consentaro_activation_redirect', 1, 30 );
 		}

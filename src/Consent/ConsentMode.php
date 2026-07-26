@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Consent;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Builds gtag consent default / update snippets.
  */

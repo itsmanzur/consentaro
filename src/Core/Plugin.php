@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Core;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Consentaro\Admin\REST_Controller;
 use Consentaro\Admin\Settings;
 use Consentaro\Compatibility\CachePlugins;

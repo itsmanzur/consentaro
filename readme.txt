@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.1.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,17 +94,17 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 
 == Changelog ==
 
-= 1.1.1 =
+= 1.1.0 =
 * Security: the WooCommerce dataLayer event script now uses hex-escaped JSON output, closing a stored-XSS path where a product/order field containing "</script>" could break out of the inline script tag
 * Fixed: uninstall cleanup was matching a stale transient prefix and never removed cached geolocation lookups from the database
 * Fixed: all internal CSS classes, data attributes, and inline-script markers now consistently use the "consentaro-" prefix instead of a leftover "cf-" shorthand from an earlier plugin name, avoiding collisions with other plugins/services using that prefix
 * Fixed: raised the declared minimum WordPress version to 6.6 — the admin bundle depends on the `react-jsx-runtime` script handle, which core only registers from 6.6 onward; on 6.4/6.5 the settings page's React app failed to mount
 * Fixed: the settings-updated hook now receives the actual previous settings instead of a duplicate of the new ones
-
-= 1.1.0 =
 * Fixed: switching admin tabs before saving could silently discard unsaved General/Design edits
 * Fixed: an invalid GTM Container ID was silently dropped on save with no warning
 * Fixed: the Guide tab's "enabled" checklist item could show a false state, disconnected from the real toggle
+* Fixed: added the standard direct-file-access guard to all class files flagged by Plugin Check
+* Fixed: silenced a Plugin Check nonce-verification warning in the activation handler with justification (only an isset() check on a WP-core-set flag, no user input is trusted)
 * Added: unsaved-changes warning when leaving the admin page
 * Added: inline validation message on the GTM Container ID field
 * Added: one-time redirect to the Guide tab right after activation
@@ -123,11 +123,8 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 
 == Upgrade Notice ==
 
-= 1.1.1 =
-Security fix: closes a stored-XSS path in the WooCommerce dataLayer event output. Update is recommended for all WooCommerce sites.
-
 = 1.1.0 =
-Admin usability fixes: no more lost edits when switching settings tabs, clearer GTM ID validation, and a guided first-activation experience.
+Includes a security fix (stored-XSS in the WooCommerce dataLayer event output — update recommended for all WooCommerce sites), plus admin usability improvements: no more lost edits when switching settings tabs, clearer GTM ID validation, and a guided first-activation experience.
 
 = 1.0.0 =
 First public release of Consentaro.

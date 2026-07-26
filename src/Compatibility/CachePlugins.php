@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Compatibility;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Consentaro\Consent\ConsentManager;
 use Consentaro\Core\ServiceContainer;
 use Consentaro\Integration\GeoLocation;

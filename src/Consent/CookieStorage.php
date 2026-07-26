@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Consent;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Sets, gets, and deletes Consentaro cookies.
  */

@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Consent;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Reads/writes consent cookie and prints Consent Mode scripts.
  */

@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Core;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Runs on plugin deactivation (keeps options for re-activation).
  */

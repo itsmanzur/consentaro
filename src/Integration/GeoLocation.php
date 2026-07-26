@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Consentaro\Integration;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use Consentaro\Consent\ConsentManager;
 
 /**
