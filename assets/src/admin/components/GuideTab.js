@@ -50,7 +50,7 @@ const ModuleCard = ( { mark, title, children, defaultOpen = false } ) => {
 	);
 };
 
-const GuideTab = ( { onGoToTab } ) => {
+const GuideTab = ( { settings, onGoToTab } ) => {
 	const [ active, setActive ] = useState( 'intro' );
 	const [ checks, setChecks ] = useState( {} );
 
@@ -77,7 +77,13 @@ const GuideTab = ( { onGoToTab } ) => {
 		} );
 	};
 
-	const doneCount = CHECKLIST.filter( ( item ) => checks[ item.id ] ).length;
+	// The "enable" item mirrors the real General → Enable Consentaro toggle
+	// instead of being tracked separately, so it can't drift out of sync
+	// with what's actually turned on.
+	const isChecked = ( id ) =>
+		id === 'enable' ? !! ( settings && settings.enabled ) : !! checks[ id ];
+
+	const doneCount = CHECKLIST.filter( ( item ) => isChecked( item.id ) ).length;
 	const progress = Math.round( ( doneCount / CHECKLIST.length ) * 100 );
 
 	const scrollTo = ( id ) => {
@@ -180,20 +186,44 @@ const GuideTab = ( { onGoToTab } ) => {
 					</div>
 
 					<ul className="consentaro-guide__checklist">
-						{ CHECKLIST.map( ( item ) => (
-							<li key={ item.id }>
-								<label>
-									<input
-										type="checkbox"
-										checked={ !! checks[ item.id ] }
-										onChange={ () => toggleCheck( item.id ) }
-									/>
-									<span className={ checks[ item.id ] ? 'is-done' : undefined }>
-										{ item.label }
-									</span>
-								</label>
-							</li>
-						) ) }
+						{ CHECKLIST.map( ( item ) => {
+							const isAuto = item.id === 'enable';
+							const checked = isChecked( item.id );
+							return (
+								<li key={ item.id }>
+									<label
+										className={
+											isAuto
+												? 'consentaro-guide__checklist-auto'
+												: undefined
+										}
+									>
+										<input
+											type="checkbox"
+											checked={ checked }
+											disabled={ isAuto }
+											onChange={
+												isAuto
+													? undefined
+													: () => toggleCheck( item.id )
+											}
+										/>
+										<span className={ checked ? 'is-done' : undefined }>
+											{ item.label }
+											{ isAuto && (
+												<em className="consentaro-guide__auto-tag">
+													{ ' ' }
+													{ __(
+														'(synced with General)',
+														'consentaro'
+													) }
+												</em>
+											) }
+										</span>
+									</label>
+								</li>
+							);
+						} ) }
 					</ul>
 
 					<div className="consentaro-guide__actions">

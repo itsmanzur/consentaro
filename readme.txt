@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +94,10 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 
 == Changelog ==
 
+= 1.2.0 =
+* Security: Cloudflare-supplied geo/IP headers (CF-IPCountry, CF-Connecting-IP) are no longer trusted by default, since a site not actually proxied through Cloudflare could have these headers spoofed to force incorrect country detection and bypass the consent banner
+* Added: "This site is behind Cloudflare" toggle on the General tab — enable only if your site genuinely proxies traffic through Cloudflare, to restore the faster header-based geo detection
+
 = 1.1.0 =
 * Security: the WooCommerce dataLayer event script now uses hex-escaped JSON output, closing a stored-XSS path where a product/order field containing "</script>" could break out of the inline script tag
 * Fixed: uninstall cleanup was matching a stale transient prefix and never removed cached geolocation lookups from the database
@@ -122,6 +126,9 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 * React admin: Guide, General, and Design tabs
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Security hardening: Cloudflare geo/IP headers are now ignored unless you explicitly confirm your site is behind Cloudflare (new toggle on the General tab). If your site is behind Cloudflare, enable the toggle after updating to keep fast geo detection.
 
 = 1.1.0 =
 Includes a security fix (stored-XSS in the WooCommerce dataLayer event output — update recommended for all WooCommerce sites), plus admin usability improvements: no more lost edits when switching settings tabs, clearer GTM ID validation, and a guided first-activation experience.

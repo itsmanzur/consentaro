@@ -17,6 +17,11 @@
 }
 
 .consentaro-admin__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
 	margin-bottom: 8px;
 }
 
@@ -24,6 +29,44 @@
 	display: flex;
 	align-items: flex-start;
 	gap: 12px;
+}
+
+.consentaro-admin__status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 4px;
+	padding: 6px 12px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.consentaro-admin__status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+.consentaro-admin__status--active {
+	background: #edfaef;
+	border: 1px solid #b4e6bb;
+	color: #1a7f37;
+}
+
+.consentaro-admin__status--active .consentaro-admin__status-dot {
+	background: #1a7f37;
+}
+
+.consentaro-admin__status--disabled {
+	background: #fcf0f1;
+	border: 1px solid #f3c6c6;
+	color: #b32d2e;
+}
+
+.consentaro-admin__status--disabled .consentaro-admin__status-dot {
+	background: #b32d2e;
 }
 
 .consentaro-admin__mark {
@@ -101,6 +144,16 @@
 
 .consentaro-admin__field--narrow {
 	max-width: 280px;
+}
+
+.consentaro-admin__field--indent {
+	margin-left: 24px;
+	padding-left: 12px;
+	border-left: 2px solid #f0f0f1;
+}
+
+.consentaro-admin__field-error {
+	color: #b32d2e;
 }
 
 .consentaro-admin__section {
@@ -513,6 +566,16 @@
 .consentaro-guide__checklist .is-done {
 	color: #646970;
 	text-decoration: line-through;
+}
+
+.consentaro-guide__checklist-auto {
+	cursor: default;
+}
+
+.consentaro-guide__auto-tag {
+	font-style: normal;
+	font-size: 11px;
+	color: #646970;
 }
 
 .consentaro-guide__actions {

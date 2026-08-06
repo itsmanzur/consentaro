@@ -14,13 +14,10 @@ import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
-const GeneralTab = ( { settings, onSave, saving } ) => {
-	const [ form, setForm ] = useState( settings );
-	const [ geo, setGeo ] = useState( null );
+const GTM_ID_PATTERN = /^GTM-[A-Z0-9]+$/;
 
-	useEffect( () => {
-		setForm( settings );
-	}, [ settings ] );
+const GeneralTab = ( { form, onChange, onSave, saving } ) => {
+	const [ geo, setGeo ] = useState( null );
 
 	useEffect( () => {
 		apiFetch( { path: '/consentaro/v1/geo-check' } )
@@ -28,9 +25,8 @@ const GeneralTab = ( { settings, onSave, saving } ) => {
 			.catch( () => setGeo( null ) );
 	}, [] );
 
-	const update = ( key, value ) => {
-		setForm( ( prev ) => ( { ...prev, [ key ]: value } ) );
-	};
+	const gtmId = form.gtm_id || '';
+	const gtmInvalid = gtmId !== '' && ! GTM_ID_PATTERN.test( gtmId.toUpperCase() );
 
 	return (
 		<Card className="consentaro-admin__card">
@@ -45,17 +41,28 @@ const GeneralTab = ( { settings, onSave, saving } ) => {
 					<ToggleControl
 						label={ __( 'Enable Consentaro', 'consentaro' ) }
 						checked={ !! form.enabled }
-						onChange={ ( enabled ) => update( 'enabled', enabled ) }
+						onChange={ ( enabled ) => onChange( 'enabled', enabled ) }
 						__nextHasNoMarginBottom
 					/>
 
 					<div className="consentaro-admin__field consentaro-admin__field--narrow">
 						<TextControl
 							label={ __( 'GTM Container ID', 'consentaro' ) }
-							help={ __( 'Example: GTM-XXXXXXX', 'consentaro' ) }
+							help={
+								gtmInvalid ? (
+									<span className="consentaro-admin__field-error">
+										{ __(
+											'Doesn’t look like a GTM ID (e.g. GTM-XXXXXXX) — this won’t be saved until fixed.',
+											'consentaro'
+										) }
+									</span>
+								) : (
+									__( 'Example: GTM-XXXXXXX', 'consentaro' )
+								)
+							}
 							placeholder="GTM-"
-							value={ form.gtm_id || '' }
-							onChange={ ( gtm_id ) => update( 'gtm_id', gtm_id ) }
+							value={ gtmId }
+							onChange={ ( gtm_id ) => onChange( 'gtm_id', gtm_id ) }
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 						/>
@@ -70,10 +77,29 @@ const GeneralTab = ( { settings, onSave, saving } ) => {
 							) }
 							checked={ !! form.geo_enabled }
 							onChange={ ( geo_enabled ) =>
-								update( 'geo_enabled', geo_enabled )
+								onChange( 'geo_enabled', geo_enabled )
 							}
 							__nextHasNoMarginBottom
 						/>
+						{ !! form.geo_enabled && (
+							<div className="consentaro-admin__field consentaro-admin__field--indent">
+								<ToggleControl
+									label={ __(
+										'This site is behind Cloudflare',
+										'consentaro'
+									) }
+									help={ __(
+										'Only enable this if your site actually proxies traffic through Cloudflare (orange-cloud DNS). Cloudflare-supplied headers are used for faster, more accurate country detection — but if your site is not really behind Cloudflare, these headers can be faked by anyone, letting them force the wrong country and skip the consent banner. Leave off if unsure.',
+										'consentaro'
+									) }
+									checked={ !! form.cf_trusted }
+									onChange={ ( cf_trusted ) =>
+										onChange( 'cf_trusted', cf_trusted )
+									}
+									__nextHasNoMarginBottom
+								/>
+							</div>
+						) }
 						{ geo && (
 							<div
 								className={ `consentaro-admin__badge ${
@@ -104,7 +130,7 @@ const GeneralTab = ( { settings, onSave, saving } ) => {
 					<Button
 						variant="primary"
 						disabled={ saving }
-						onClick={ () => onSave( form ) }
+						onClick={ onSave }
 						__next40pxDefaultSize
 					>
 						{ saving ? (

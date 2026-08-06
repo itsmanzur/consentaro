@@ -14,7 +14,6 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 const ColorField = ( { label, color, onChange } ) => (
@@ -85,21 +84,8 @@ const BannerPreview = ( { banner } ) => (
 	</div>
 );
 
-const DesignTab = ( { settings, onSave, saving } ) => {
-	const [ form, setForm ] = useState( settings );
-
-	useEffect( () => {
-		setForm( settings );
-	}, [ settings ] );
-
+const DesignTab = ( { form, onChange, onReset, onSave, saving } ) => {
 	const banner = form.banner || {};
-
-	const updateBanner = ( key, value ) => {
-		setForm( ( prev ) => ( {
-			...prev,
-			banner: { ...prev.banner, [ key ]: value },
-		} ) );
-	};
 
 	return (
 		<div className="consentaro-admin__design">
@@ -135,7 +121,7 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 									},
 								] }
 								onChange={ ( position ) =>
-									updateBanner( 'position', position )
+									onChange( 'position', position )
 								}
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
@@ -145,7 +131,7 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 						<TextareaControl
 							label={ __( 'Banner text', 'consentaro' ) }
 							value={ banner.text || '' }
-							onChange={ ( text ) => updateBanner( 'text', text ) }
+							onChange={ ( text ) => onChange( 'text', text ) }
 							rows={ 3 }
 							__nextHasNoMarginBottom
 						/>
@@ -154,27 +140,27 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 							<ColorField
 								label={ __( 'Background', 'consentaro' ) }
 								color={ banner.bg || '#ffffff' }
-								onChange={ ( bg ) => updateBanner( 'bg', bg ) }
+								onChange={ ( bg ) => onChange( 'bg', bg ) }
 							/>
 							<ColorField
 								label={ __( 'Text', 'consentaro' ) }
 								color={ banner.text_color || '#1a1a1a' }
 								onChange={ ( text_color ) =>
-									updateBanner( 'text_color', text_color )
+									onChange( 'text_color', text_color )
 								}
 							/>
 							<ColorField
 								label={ __( 'Button background', 'consentaro' ) }
 								color={ banner.btn_primary_bg || '#0073aa' }
 								onChange={ ( btn_primary_bg ) =>
-									updateBanner( 'btn_primary_bg', btn_primary_bg )
+									onChange( 'btn_primary_bg', btn_primary_bg )
 								}
 							/>
 							<ColorField
 								label={ __( 'Button text', 'consentaro' ) }
 								color={ banner.btn_primary_text || '#ffffff' }
 								onChange={ ( btn_primary_text ) =>
-									updateBanner( 'btn_primary_text', btn_primary_text )
+									onChange( 'btn_primary_text', btn_primary_text )
 								}
 							/>
 						</div>
@@ -185,7 +171,7 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 						<Button
 							variant="primary"
 							disabled={ saving }
-							onClick={ () => onSave( form ) }
+							onClick={ onSave }
 							__next40pxDefaultSize
 						>
 							{ saving ? (
@@ -196,6 +182,14 @@ const DesignTab = ( { settings, onSave, saving } ) => {
 							) : (
 								__( 'Save changes', 'consentaro' )
 							) }
+						</Button>
+						<Button
+							variant="tertiary"
+							disabled={ saving }
+							onClick={ onReset }
+							__next40pxDefaultSize
+						>
+							{ __( 'Reset to defaults', 'consentaro' ) }
 						</Button>
 					</HStack>
 				</CardFooter>
