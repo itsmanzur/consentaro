@@ -16,6 +16,8 @@ phpcs.xml
 phpcs.xml.dist
 tests
 bin
+*.patch
+*.diff
 
 # Node / Composer build tooling (built assets are shipped)
 node_modules

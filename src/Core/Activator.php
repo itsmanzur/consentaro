@@ -29,6 +29,7 @@ final class Activator {
 					'enabled'     => true,
 					'gtm_id'      => '',
 					'geo_enabled' => true,
+					'cf_trusted'  => false,
 					'banner'      => array(
 						'position'         => 'bottom',
 						'text'             => __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' ),

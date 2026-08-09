@@ -56,8 +56,11 @@ final class GeoLocation {
 			return false === $this->country ? null : $this->country;
 		}
 
-		// Level 1: Cloudflare.
-		if ( ! empty( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) {
+		// Level 1: Cloudflare (only trusted when the site owner has confirmed
+		// traffic actually passes through Cloudflare — otherwise this header
+		// is fully attacker-controllable and can be used to spoof country
+		// detection and bypass the consent banner).
+		if ( $this->isCloudflareTrusted() && ! empty( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) {
 			$code = strtoupper( sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ) );
 			if ( 'XX' !== $code && 'T1' !== $code ) {
 				$this->country = $code;
@@ -217,7 +220,7 @@ final class GeoLocation {
 	 * Best-effort client IP.
 	 */
 	private function getClientIp(): string {
-		if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+		if ( $this->isCloudflareTrusted() && ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
 			return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
 		}
 
@@ -226,6 +229,17 @@ final class GeoLocation {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Whether the site owner has confirmed this site's traffic actually
+	 * passes through Cloudflare. When false (the default), Cloudflare-supplied
+	 * headers are ignored, since anyone can send fake CF-* headers directly
+	 * to the origin if it isn't actually behind Cloudflare.
+	 */
+	private function isCloudflareTrusted(): bool {
+		$settings = get_option( 'consentaro_settings', array() );
+		return is_array( $settings ) && ! empty( $settings['cf_trusted'] );
 	}
 
 	/**

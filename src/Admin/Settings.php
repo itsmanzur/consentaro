@@ -155,6 +155,7 @@ final class Settings {
 			'enabled'     => true,
 			'gtm_id'      => '',
 			'geo_enabled' => true,
+			'cf_trusted'  => false,
 			'banner'      => array(
 				'position'         => 'bottom',
 				'text'             => '',
@@ -192,6 +193,9 @@ final class Settings {
 		}
 		if ( isset( $data['geo_enabled'] ) ) {
 			$current['geo_enabled'] = (bool) $data['geo_enabled'];
+		}
+		if ( isset( $data['cf_trusted'] ) ) {
+			$current['cf_trusted'] = (bool) $data['cf_trusted'];
 		}
 		if ( isset( $data['gtm_id'] ) ) {
 			$gtm = strtoupper( sanitize_text_field( (string) $data['gtm_id'] ) );
