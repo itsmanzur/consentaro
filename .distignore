@@ -33,6 +33,7 @@ assets/src
 
 # Local / docs not for WP.org package
 *.pdf
+*.docx
 *.md
 !readme.txt
 .DS_Store
