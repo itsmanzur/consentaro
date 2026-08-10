@@ -695,3 +695,37 @@
 		width: auto;
 	}
 }
+
+.consentaro-admin__scripts-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 8px;
+	font-size: 12px;
+}
+
+.consentaro-admin__scripts-table th {
+	text-align: left;
+	padding: 8px 10px;
+	color: #646970;
+	font-weight: 600;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.consentaro-admin__scripts-table td {
+	padding: 8px 10px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: middle;
+}
+
+.consentaro-admin__scripts-src {
+	word-break: break-all;
+	font-size: 11px;
+}
+
+.consentaro-admin__scripts-auto {
+	display: block;
+	margin-top: 4px;
+	font-size: 11px;
+	color: #646970;
+	text-transform: capitalize;
+}

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Consentaro\Admin\Settings;
 use Consentaro\Core\ServiceContainer;
 use Consentaro\Integration\GeoLocation;
 
@@ -82,6 +83,26 @@ final class Assets {
 				'url'   => esc_url_raw( rest_url( 'consentaro/v1/consent' ) ),
 			)
 		);
+
+		/** @var Settings $settings_svc */
+		$settings_svc = $this->container->get( 'settings' );
+		$settings     = $settings_svc->getSettings();
+
+		if ( ! empty( $settings['script_blocking'] ) ) {
+			$unblock_path = CONSENTARO_PATH . 'assets/js/script-unblock.js';
+			$unblock_ver  = is_readable( $unblock_path ) ? (string) filemtime( $unblock_path ) : $version;
+
+			wp_enqueue_script(
+				'consentaro-script-unblock',
+				CONSENTARO_URL . 'assets/js/script-unblock.js',
+				array(),
+				$unblock_ver,
+				array(
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				)
+			);
+		}
 	}
 
 	/**

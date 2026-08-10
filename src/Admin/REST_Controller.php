@@ -72,6 +72,16 @@ final class REST_Controller {
 
 		register_rest_route(
 			'consentaro/v1',
+			'/detected-scripts',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'getDetectedScripts' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
 			'/geo-check',
 			array(
 				'methods'             => 'GET',
@@ -158,6 +168,30 @@ final class REST_Controller {
 		}
 
 		return rest_ensure_response( $settings->saveSettings( is_array( $data ) ? $data : array() ) );
+	}
+
+	/**
+	 * GET /detected-scripts — third-party scripts seen on the front end so
+	 * far, with their auto-detected category, for the admin review table.
+	 */
+	public function getDetectedScripts(): WP_REST_Response {
+		$detected = get_option( 'consentaro_detected_scripts', array() );
+		if ( ! is_array( $detected ) ) {
+			$detected = array();
+		}
+
+		$rows = array();
+		foreach ( $detected as $identifier => $info ) {
+			$rows[] = array(
+				'identifier' => (string) $identifier,
+				'category'   => (string) ( $info['category'] ?? 'necessary' ),
+				'is_src'     => ! empty( $info['is_src'] ),
+				'first_seen' => (int) ( $info['first_seen'] ?? 0 ),
+				'last_seen'  => (int) ( $info['last_seen'] ?? 0 ),
+			);
+		}
+
+		return rest_ensure_response( $rows );
 	}
 
 	/**

@@ -23,6 +23,7 @@ use Consentaro\Frontend\Assets;
 use Consentaro\Frontend\Banner;
 use Consentaro\Integration\GeoLocation;
 use Consentaro\Integration\GTM;
+use Consentaro\Integration\ScriptBlocker;
 use Consentaro\Integration\WooCommerce;
 
 /**
@@ -148,6 +149,13 @@ final class Plugin {
 				return new CachePlugins( $container );
 			}
 		);
+
+		$c->set(
+			'script_blocker',
+			static function ( ServiceContainer $container ): ScriptBlocker {
+				return new ScriptBlocker( $container );
+			}
+		);
 	}
 
 	/**
@@ -161,6 +169,7 @@ final class Plugin {
 		$this->container->get( 'banner' )->register();
 		$this->container->get( 'gtm' )->register();
 		$this->container->get( 'cache_plugins' )->register();
+		$this->container->get( 'script_blocker' )->register();
 
 		// WooCommerce may load after us on plugins_loaded.
 		add_action( 'woocommerce_loaded', array( $this, 'bootWooCommerce' ) );

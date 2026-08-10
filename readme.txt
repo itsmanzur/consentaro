@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Shows a friendly Accept / Deny / Customize banner when needed
 * Sets Google Consent Mode v2 defaults (denied until the visitor chooses)
 * Loads Google Tag Manager only after a choice (or when a banner is not required)
+* Automatically holds known third-party trackers (Analytics, Meta Pixel, TikTok Pixel, and more) inert until the matching consent category is granted, with a review screen to override any script's category
 * Optionally focuses the banner on EU/EEA-style visitors (geo helper)
 * Gates WooCommerce dataLayer events (view item, add to cart, purchase) by consent
 * Plays nicely with popular page caches (WP Rocket, LiteSpeed, W3 Total Cache)
@@ -64,6 +65,10 @@ Consentaro is built to stay light. Front-end assets are small and load only when
 
 Yes. Shop events are sent to the data layer only when the visitor’s consent allows them.
 
+= Will script blocking break scripts I actually need? =
+
+It's built to be conservative: only scripts matching a known tracker signature (Google Analytics, Meta Pixel, TikTok Pixel, and similar) are held back, and only until the matching consent category is granted. Anything Consentaro doesn't recognize — including your theme, page builder, and WooCommerce scripts — is always left alone. You can also review every detected script under **Consentaro → Scripts** and set its category by hand.
+
 = Is this a complete GDPR solution by itself? =
 
 Consentaro helps with Consent Mode and a clear visitor choice. Rules differ by country and business. This plugin does not replace legal advice.
@@ -72,7 +77,8 @@ Consentaro helps with Consent Mode and a clear visitor choice. Rules differ by c
 
 1. Guide tab — plain-English overview and checklist
 2. General settings — enable, GTM ID, geo option
-3. Design settings — banner text, position, colors, live preview
+3. Scripts tab — detected third-party scripts with category overrides
+4. Design settings — banner text, position, colors, live preview
 
 == Credits ==
 
@@ -93,6 +99,12 @@ If geo-targeting is enabled in the plugin settings and the visitor's country can
 This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
 
 == Changelog ==
+
+= 1.3.0 =
+* Added: script blocking — recognized third-party trackers (Google Analytics, Meta Pixel, TikTok Pixel, LinkedIn Insight, Hotjar, and more) are automatically held inert in the page until the visitor grants the matching consent category, both for tags loaded from an external file and for inline snippets pasted directly into the theme
+* Added: **Scripts** tab under Consentaro settings — review every third-party script detected on the site, see its auto-assigned category, and override it per script
+* Added: `consentaro_tracker_signatures` and `consentaro_tracker_content_signatures` filters so developers can extend or correct auto-detection
+* Added: unrecognized scripts (theme, page builder, WooCommerce, payment scripts) are never touched — detection is conservative by design
 
 = 1.2.0 =
 * Security: Cloudflare-supplied geo/IP headers (CF-IPCountry, CF-Connecting-IP) are no longer trusted by default, since a site not actually proxied through Cloudflare could have these headers spoofed to force incorrect country detection and bypass the consent banner

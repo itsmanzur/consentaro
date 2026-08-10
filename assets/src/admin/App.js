@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import Header from './components/Header';
 import Notice from './components/Notice';
 import GeneralTab from './components/GeneralTab';
+import ScriptsTab from './components/ScriptsTab';
 import DesignTab from './components/DesignTab';
 import GuideTab from './components/GuideTab';
 
@@ -151,6 +152,7 @@ const App = () => {
 				tabs={ [
 					{ name: 'guide', title: __( 'Guide', 'consentaro' ) },
 					{ name: 'general', title: __( 'General', 'consentaro' ) },
+					{ name: 'scripts', title: __( 'Scripts', 'consentaro' ) },
 					{ name: 'design', title: __( 'Design', 'consentaro' ) },
 				] }
 			>
@@ -166,6 +168,16 @@ const App = () => {
 					if ( t.name === 'general' ) {
 						return (
 							<GeneralTab
+								form={ form }
+								onChange={ updateField }
+								onSave={ save }
+								saving={ saving }
+							/>
+						);
+					}
+					if ( t.name === 'scripts' ) {
+						return (
+							<ScriptsTab
 								form={ form }
 								onChange={ updateField }
 								onSave={ save }

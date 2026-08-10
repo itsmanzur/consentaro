@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Consentaro\Core\ServiceContainer;
+use Consentaro\Integration\TrackerSignatures;
 
 /**
  * Registers Consentaro menu and enqueues React admin.
@@ -152,11 +153,13 @@ final class Settings {
 	 */
 	public function getSettings(): array {
 		$defaults = array(
-			'enabled'     => true,
-			'gtm_id'      => '',
-			'geo_enabled' => true,
-			'cf_trusted'  => false,
-			'banner'      => array(
+			'enabled'          => true,
+			'gtm_id'           => '',
+			'geo_enabled'      => true,
+			'cf_trusted'       => false,
+			'script_blocking'  => true,
+			'script_overrides' => array(),
+			'banner'           => array(
 				'position'         => 'bottom',
 				'text'             => '',
 				'bg'               => '#ffffff',
@@ -171,8 +174,9 @@ final class Settings {
 			$stored = array();
 		}
 
-		$merged           = array_merge( $defaults, $stored );
-		$merged['banner'] = array_merge( $defaults['banner'], is_array( $stored['banner'] ?? null ) ? $stored['banner'] : array() );
+		$merged                    = array_merge( $defaults, $stored );
+		$merged['banner']          = array_merge( $defaults['banner'], is_array( $stored['banner'] ?? null ) ? $stored['banner'] : array() );
+		$merged['script_overrides'] = is_array( $merged['script_overrides'] ?? null ) ? $merged['script_overrides'] : array();
 
 		return $merged;
 	}
@@ -196,6 +200,22 @@ final class Settings {
 		}
 		if ( isset( $data['cf_trusted'] ) ) {
 			$current['cf_trusted'] = (bool) $data['cf_trusted'];
+		}
+		if ( isset( $data['script_blocking'] ) ) {
+			$current['script_blocking'] = (bool) $data['script_blocking'];
+		}
+		if ( isset( $data['script_overrides'] ) && is_array( $data['script_overrides'] ) ) {
+			$clean_overrides = array();
+			foreach ( $data['script_overrides'] as $identifier => $category ) {
+				$identifier = sanitize_text_field( (string) $identifier );
+				$category   = sanitize_key( (string) $category );
+				if ( '' === $identifier || ! TrackerSignatures::isValidCategory( $category ) ) {
+					$rejected[] = 'script_overrides.' . $identifier;
+					continue;
+				}
+				$clean_overrides[ $identifier ] = $category;
+			}
+			$current['script_overrides'] = $clean_overrides;
 		}
 		if ( isset( $data['gtm_id'] ) ) {
 			$gtm = strtoupper( sanitize_text_field( (string) $data['gtm_id'] ) );
