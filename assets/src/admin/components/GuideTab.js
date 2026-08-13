@@ -85,6 +85,7 @@ const GuideTab = ( { settings, onGoToTab } ) => {
 
 	const doneCount = CHECKLIST.filter( ( item ) => isChecked( item.id ) ).length;
 	const progress = Math.round( ( doneCount / CHECKLIST.length ) * 100 );
+	const isComplete = progress === 100;
 
 	const scrollTo = ( id ) => {
 		setActive( id );
@@ -173,12 +174,30 @@ const GuideTab = ( { settings, onGoToTab } ) => {
 						) }
 					</p>
 
+					{ isComplete && (
+						<div className="consentaro-guide__success" role="status">
+							<span
+								className="consentaro-guide__success-icon"
+								aria-hidden="true"
+							>
+								✓
+							</span>
+							{ __(
+								'All set — Consentaro is fully configured',
+								'consentaro'
+							) }
+						</div>
+					) }
+
 					<div
 						className="consentaro-guide__progress"
 						aria-label={ __( 'Setup progress', 'consentaro' ) }
 					>
 						<div className="consentaro-guide__progress-bar">
-							<span style={ { width: `${ progress }%` } } />
+							<span
+								className={ isComplete ? 'is-complete' : undefined }
+								style={ { width: `${ progress }%` } }
+							/>
 						</div>
 						<span className="consentaro-guide__progress-label">
 							{ doneCount } / { CHECKLIST.length } · { progress }%

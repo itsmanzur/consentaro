@@ -4,7 +4,7 @@ import {
 	CardFooter,
 	CardHeader,
 	ToggleControl,
-	SelectControl,
+	CustomSelectControl,
 	Button,
 	Spinner,
 	Notice as WPNotice,
@@ -29,6 +29,15 @@ const OVERRIDE_OPTIONS = [
 	{ label: CATEGORY_LABELS.marketing, value: 'marketing' },
 	{ label: CATEGORY_LABELS.personalization, value: 'personalization' },
 ];
+
+// CustomSelectControl renders its own styled listbox (not a native <select>),
+// so the highlight color can be themed with CSS — a native <select>'s open-state
+// highlight is drawn by the OS/browser and can't be overridden.
+const CUSTOM_SELECT_OPTIONS = OVERRIDE_OPTIONS.map( ( option ) => ( {
+	key: option.value === '' ? 'auto' : option.value,
+	name: option.label,
+	value: option.value,
+} ) );
 
 function formatSeen( timestamp ) {
 	if ( ! timestamp ) {
@@ -177,14 +186,22 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 												</code>
 											</td>
 											<td>
-												<SelectControl
-													value={ overrides[ row.identifier ] || '' }
-													options={ OVERRIDE_OPTIONS }
-													onChange={ ( value ) =>
-														setOverride( row.identifier, value )
+												<CustomSelectControl
+													label={ __( 'Category', 'consentaro' ) }
+													hideLabelFromVision
+													className="consentaro-admin__scripts-select"
+													options={ CUSTOM_SELECT_OPTIONS }
+													value={ CUSTOM_SELECT_OPTIONS.find(
+														( option ) =>
+															option.value ===
+															( overrides[ row.identifier ] || '' )
+													) }
+													onChange={ ( { selectedItem } ) =>
+														setOverride(
+															row.identifier,
+															selectedItem.value
+														)
 													}
-													__nextHasNoMarginBottom
-													__next40pxDefaultSize
 												/>
 												{ ! overrides[ row.identifier ] && (
 													<span className="consentaro-admin__scripts-auto">

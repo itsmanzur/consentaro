@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,6 +26,8 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Sets Google Consent Mode v2 defaults (denied until the visitor chooses)
 * Loads Google Tag Manager only after a choice (or when a banner is not required)
 * Automatically holds known third-party trackers (Analytics, Meta Pixel, TikTok Pixel, and more) inert until the matching consent category is granted, with a review screen to override any script's category
+* Design settings now include live preview (desktop/mobile), border-radius, button layout, font size, and one-click preset themes
+* A new Insights tab shows anonymous daily Accept/Deny/Customize counts — no visitor data, IP addresses, or individual records are ever stored
 * Optionally focuses the banner on EU/EEA-style visitors (geo helper)
 * Gates WooCommerce dataLayer events (view item, add to cart, purchase) by consent
 * Plays nicely with popular page caches (WP Rocket, LiteSpeed, W3 Total Cache)
@@ -73,12 +75,18 @@ It's built to be conservative: only scripts matching a known tracker signature (
 
 Consentaro helps with Consent Mode and a clear visitor choice. Rules differ by country and business. This plugin does not replace legal advice.
 
+= Does Consentaro track individual visitors? =
+
+No. The Insights tab only stores anonymous daily aggregate counts (how many Accept / Deny / Customize decisions happened each day). No per-visitor data, IP addresses, cookie IDs, or timestamp-level records are ever stored.
+
 == Screenshots ==
 
 1. Guide tab — plain-English overview and checklist
 2. General settings — enable, GTM ID, geo option
 3. Scripts tab — detected third-party scripts with category overrides
 4. Design settings — banner text, position, colors, live preview
+5. Design tab — live preview, theme presets, shape & layout controls
+6. Insights tab — anonymous daily consent-decision chart
 
 == Credits ==
 
@@ -99,6 +107,16 @@ If geo-targeting is enabled in the plugin settings and the visitor's country can
 This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
 
 == Changelog ==
+
+= 1.4.0 =
+* Changed: admin UI fully re-themed with Consentaro's brand colors (previously used WordPress's default blue throughout)
+* Added: live preview in the Design tab — desktop/mobile toggle, clickable Accept/Deny/Customize buttons that simulate the real consent flow
+* Added: border-radius, button layout (inline/stacked), button alignment, and font-size controls for the banner
+* Added: four one-click theme presets (Consentaro, Minimal, Dark, Warm)
+* Added: **Insights** tab — anonymous daily consent-decision counts (Accept/Deny/Customize) with a 7/30/90-day chart; no per-visitor data, IP addresses, or individual records are stored
+* Improved: category dropdown in the Scripts tab now uses a fully brand-styled listbox
+* Improved: setup checklist in the Guide tab shows a success state at 100% completion
+* Improved: save confirmation now fades in/out smoothly
 
 = 1.3.0 =
 * Added: script blocking — recognized third-party trackers (Google Analytics, Meta Pixel, TikTok Pixel, LinkedIn Insight, Hotjar, and more) are automatically held inert in the page until the visitor grants the matching consent category, both for tags loaded from an external file and for inline snippets pasted directly into the theme

@@ -17,6 +17,7 @@ $consentaro_options = array(
 	'consentaro_banner_style',
 	'consentaro_geo_enabled',
 	'consentaro_woo_anon_queue',
+	'consentaro_stats_daily',
 );
 
 foreach ( $consentaro_options as $consentaro_option ) {

@@ -35,7 +35,7 @@ final class Activator {
 						'text'             => __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' ),
 						'bg'               => '#ffffff',
 						'text_color'       => '#1a1a1a',
-						'btn_primary_bg'   => '#0073aa',
+						'btn_primary_bg'   => '#0E7C66',
 						'btn_primary_text' => '#ffffff',
 					),
 				),

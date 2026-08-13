@@ -3,7 +3,7 @@
  * Plugin Name:       Consentaro - Cookie Consent & Google Consent Mode for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/consentaro/
  * Description:       Ultra-light Google Consent Mode v2 for WordPress — simple banner, GTM after choice, WooCommerce-ready.
- * Version:           1.3.0
+ * Version:           1.4.0
  * Requires at least: 6.6
  * Requires PHP:      8.0
  * Author:            itsmanzur
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'CONSENTARO_VERSION', '1.3.0' );
+define( 'CONSENTARO_VERSION', '1.4.0' );
 define( 'CONSENTARO_FILE', __FILE__ );
 define( 'CONSENTARO_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CONSENTARO_URL', plugin_dir_url( __FILE__ ) );

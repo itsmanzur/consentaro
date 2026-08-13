@@ -95,11 +95,44 @@ final class Banner {
 	 * @param array<string, mixed> $banner Banner settings.
 	 */
 	public function getCustomStyles( array $banner ): string {
+		$border_radius     = isset( $banner['border_radius'] ) ? absint( $banner['border_radius'] ) : 8;
+		$btn_border_radius = isset( $banner['btn_border_radius'] ) ? absint( $banner['btn_border_radius'] ) : 4;
+		$font_size         = isset( $banner['font_size'] ) ? absint( $banner['font_size'] ) : 13;
+
+		$layout    = sanitize_key( (string) ( $banner['btn_layout'] ?? 'inline' ) );
+		$direction = 'stacked' === $layout ? 'column' : 'row';
+
+		$align       = sanitize_key( (string) ( $banner['btn_align'] ?? 'left' ) );
+		$justify_map = array(
+			'left'   => 'flex-start',
+			'center' => 'center',
+			'right'  => 'flex-end',
+		);
+		$justify = $justify_map[ $align ] ?? 'flex-start';
+
+		// Positions the button group itself within the banner row/column when
+		// it isn't already stretched full-width (modal/bottom-right handle
+		// that via --consentaro-btn-justify + align-items on a stretched box).
+		$margin_map = array(
+			'left'   => '0',
+			'center' => '0 auto',
+			'right'  => '0 0 0 auto',
+		);
+		$margin = $margin_map[ $align ] ?? '0';
+
 		$map = array(
-			'--consentaro-bg'       => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
-			'--consentaro-text'     => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
-			'--consentaro-btn-bg'   => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0073aa',
-			'--consentaro-btn-text' => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-bg'                 => sanitize_hex_color( (string) ( $banner['bg'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-text'                => sanitize_hex_color( (string) ( $banner['text_color'] ?? '' ) ) ?: '#1a1a1a',
+			'--consentaro-btn-bg'              => sanitize_hex_color( (string) ( $banner['btn_primary_bg'] ?? '' ) ) ?: '#0E7C66',
+			'--consentaro-btn-text'            => sanitize_hex_color( (string) ( $banner['btn_primary_text'] ?? '' ) ) ?: '#ffffff',
+			'--consentaro-btn-secondary-bg'    => sanitize_hex_color( (string) ( $banner['btn_secondary_bg'] ?? '' ) ) ?: '#f0f0f1',
+			'--consentaro-btn-secondary-text'  => sanitize_hex_color( (string) ( $banner['btn_secondary_text'] ?? '' ) ) ?: '#1a1a1a',
+			'--consentaro-radius'              => $border_radius . 'px',
+			'--consentaro-btn-radius'          => $btn_border_radius . 'px',
+			'--consentaro-btn-direction'       => $direction,
+			'--consentaro-btn-justify'         => $justify,
+			'--consentaro-btn-margin'          => $margin,
+			'--consentaro-font-size'           => $font_size . 'px',
 		);
 
 		$parts = array();

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Consentaro\Admin\Insights;
 use Consentaro\Admin\REST_Controller;
 use Consentaro\Admin\Settings;
 use Consentaro\Compatibility\CachePlugins;
@@ -112,6 +113,13 @@ final class Plugin {
 			'settings',
 			static function ( ServiceContainer $container ): Settings {
 				return new Settings( $container );
+			}
+		);
+
+		$c->set(
+			'insights',
+			static function (): Insights {
+				return new Insights();
 			}
 		);
 

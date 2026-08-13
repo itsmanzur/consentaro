@@ -82,6 +82,16 @@ final class REST_Controller {
 
 		register_rest_route(
 			'consentaro/v1',
+			'/insights',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'getInsights' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
 			'/geo-check',
 			array(
 				'methods'             => 'GET',
@@ -211,6 +221,42 @@ final class REST_Controller {
 	}
 
 	/**
+	 * GET /insights — anonymous daily consent-decision counts.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function getInsights( WP_REST_Request $request ): WP_REST_Response {
+		/** @var Insights $insights */
+		$insights = $this->container->get( 'insights' );
+
+		$range = (int) $request->get_param( 'range' );
+		if ( ! in_array( $range, array( 7, 30, 90 ), true ) ) {
+			$range = 30;
+		}
+
+		$days = $insights->getRange( $range );
+
+		$totals = array(
+			'accepted'   => 0,
+			'denied'     => 0,
+			'customized' => 0,
+		);
+		foreach ( $days as $day ) {
+			$totals['accepted']   += $day['accepted'];
+			$totals['denied']     += $day['denied'];
+			$totals['customized'] += $day['customized'];
+		}
+
+		return rest_ensure_response(
+			array(
+				'range'  => $range,
+				'days'   => $days,
+				'totals' => $totals,
+			)
+		);
+	}
+
+	/**
 	 * GET /consent — current states (defaults if unset).
 	 */
 	public function getConsent(): WP_REST_Response {
@@ -286,6 +332,16 @@ final class REST_Controller {
 					__( 'Unknown consent action.', 'consentaro' ),
 					array( 'status' => 400 )
 				);
+		}
+
+		/** @var Insights $insights */
+		$insights = $this->container->get( 'insights' );
+		if ( 'accept-all' === $action ) {
+			$insights->record( 'accepted' );
+		} elseif ( 'deny-all' === $action ) {
+			$insights->record( 'denied' );
+		} else {
+			$insights->record( 'customized' );
 		}
 
 		return rest_ensure_response(

@@ -8,14 +8,22 @@ import GeneralTab from './components/GeneralTab';
 import ScriptsTab from './components/ScriptsTab';
 import DesignTab from './components/DesignTab';
 import GuideTab from './components/GuideTab';
+import InsightsTab from './components/InsightsTab';
 
 const DEFAULT_BANNER = {
 	position: 'bottom',
 	text: '',
 	bg: '#ffffff',
 	text_color: '#1a1a1a',
-	btn_primary_bg: '#0073aa',
+	btn_primary_bg: '#0E7C66',
 	btn_primary_text: '#ffffff',
+	btn_secondary_bg: '#f0f0f1',
+	btn_secondary_text: '#1a1a1a',
+	border_radius: 8,
+	btn_border_radius: 4,
+	btn_layout: 'inline',
+	btn_align: 'left',
+	font_size: 13,
 };
 
 const App = () => {
@@ -40,14 +48,6 @@ const App = () => {
 				} );
 			} );
 	}, [] );
-
-	useEffect( () => {
-		if ( ! notice || notice.status !== 'success' ) {
-			return;
-		}
-		const timer = setTimeout( () => setNotice( null ), 3500 );
-		return () => clearTimeout( timer );
-	}, [ notice ] );
 
 	const isDirty =
 		!! settings && !! form && JSON.stringify( settings ) !== JSON.stringify( form );
@@ -130,7 +130,7 @@ const App = () => {
 		<div
 			className={ `consentaro-admin ${
 				tab === 'guide' ? 'consentaro-admin--guide' : ''
-			}` }
+			} ${ tab === 'design' ? 'consentaro-admin--wide' : '' }` }
 		>
 			<Header enabled={ !! settings?.enabled } />
 			{ notice && (
@@ -154,6 +154,7 @@ const App = () => {
 					{ name: 'general', title: __( 'General', 'consentaro' ) },
 					{ name: 'scripts', title: __( 'Scripts', 'consentaro' ) },
 					{ name: 'design', title: __( 'Design', 'consentaro' ) },
+					{ name: 'insights', title: __( 'Insights', 'consentaro' ) },
 				] }
 			>
 				{ ( t ) => {
@@ -185,15 +186,18 @@ const App = () => {
 							/>
 						);
 					}
-					return (
-						<DesignTab
-							form={ form }
-							onChange={ updateBanner }
-							onReset={ resetBanner }
-							onSave={ save }
-							saving={ saving }
-						/>
-					);
+					if ( t.name === 'design' ) {
+						return (
+							<DesignTab
+								form={ form }
+								onChange={ updateBanner }
+								onReset={ resetBanner }
+								onSave={ save }
+								saving={ saving }
+							/>
+						);
+					}
+					return <InsightsTab />;
 				} }
 			</TabPanel>
 		</div>
