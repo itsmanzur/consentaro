@@ -177,30 +177,39 @@ final class Banner {
 			);
 		}
 
+		// A true modal (position=modal) covers the whole page and warrants
+		// role="dialog" + aria-modal. bottom/top/bottom-right are a persistent
+		// but non-blocking region — marking those aria-modal would wrongly
+		// tell screen readers the rest of the page is inaccessible.
+		$is_modal_position = 'modal' === $position;
+		$root_role         = $is_modal_position ? 'dialog' : 'region';
+		$root_aria_modal   = $is_modal_position ? ' aria-modal="true"' : '';
+
 		return sprintf(
-			'<div id="consentaro-banner" class="consentaro-banner consentaro-banner--%1$s" style="%2$s" role="dialog" aria-modal="true" aria-label="%3$s">' .
+			'<div id="consentaro-banner" class="consentaro-banner consentaro-banner--%1$s" style="%2$s" role="%3$s"%4$s aria-labelledby="consentaro-banner-text">' .
 				'<div class="consentaro-banner__panel">' .
-					'<p class="consentaro-banner__text">%4$s</p>' .
+					'<p class="consentaro-banner__text" id="consentaro-banner-text">%5$s</p>' .
 					'<div class="consentaro-banner__buttons">' .
-						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-action="accept-all">%5$s</button>' .
-						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="deny-all">%6$s</button>' .
-						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="customize">%7$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-action="accept-all">%6$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="deny-all">%7$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-action="customize">%8$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>' .
 			'<div id="consentaro-banner-modal" class="consentaro-banner__modal" role="dialog" aria-modal="true" aria-labelledby="consentaro-banner-modal-title">' .
 				'<div class="consentaro-banner__modal-card">' .
-					'<h2 id="consentaro-banner-modal-title">%8$s</h2>' .
-					'<ul class="consentaro-banner__list">%9$s</ul>' .
+					'<h2 id="consentaro-banner-modal-title">%9$s</h2>' .
+					'<ul class="consentaro-banner__list">%10$s</ul>' .
 					'<div class="consentaro-banner__modal-actions">' .
-						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-close>%10$s</button>' .
-						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-save-custom>%11$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--ghost" data-consentaro-close>%11$s</button>' .
+						'<button type="button" class="consentaro-banner__btn consentaro-banner__btn--primary" data-consentaro-save-custom>%12$s</button>' .
 					'</div>' .
 				'</div>' .
 			'</div>',
 			esc_attr( $position ),
 			esc_attr( $style ),
-			esc_attr__( 'Cookie Consent', 'consentaro' ),
+			esc_attr( $root_role ),
+			$root_aria_modal,
 			esc_html( $text ),
 			esc_html__( 'Accept All', 'consentaro' ),
 			esc_html__( 'Deny All', 'consentaro' ),

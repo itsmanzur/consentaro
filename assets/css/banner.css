@@ -18,3 +18,4 @@
 .consentaro-banner__list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #eee;font-size:13px}
 .consentaro-banner__modal-actions{display:flex;gap:8px;justify-content:flex-end}
 @media(max-width:600px){.consentaro-banner__panel{flex-direction:column;align-items:stretch}.consentaro-banner__buttons{width:100%}.consentaro-banner__btn{flex:1}}
+.consentaro-banner__btn:focus-visible,.consentaro-banner__list input:focus-visible{outline:2px solid #fff;outline-offset:2px;box-shadow:0 0 0 4px #2FD9AE}

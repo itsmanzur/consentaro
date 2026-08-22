@@ -5,6 +5,69 @@
 	if (!root || !cfg.url) return;
 
 	var modal = document.getElementById('consentaro-banner-modal');
+	var modalCard = modal ? modal.querySelector('.consentaro-banner__modal-card') : null;
+	var modalTrigger = null; // Element that opened the modal, to restore focus on close.
+	var trapCleanup = null;
+
+	var FOCUSABLE_SELECTOR =
+		'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+	function focusableElements(container) {
+		return Array.prototype.slice
+			.call(container.querySelectorAll(FOCUSABLE_SELECTOR))
+			.filter(function (el) {
+				return !el.disabled && el.offsetParent !== null;
+			});
+	}
+
+	function trapFocus(container) {
+		function handleKeydown(e) {
+			if (e.key !== 'Tab') return;
+			var items = focusableElements(container);
+			if (!items.length) return;
+			var first = items[0];
+			var last = items[items.length - 1];
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && document.activeElement === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		}
+		container.addEventListener('keydown', handleKeydown);
+		return function () {
+			container.removeEventListener('keydown', handleKeydown);
+		};
+	}
+
+	function clearTrap() {
+		if (trapCleanup) {
+			trapCleanup();
+			trapCleanup = null;
+		}
+	}
+
+	function openModal(trigger) {
+		if (!modal) return;
+		modalTrigger = trigger || null;
+		modal.classList.add('is-open');
+		if (modalCard) {
+			var items = focusableElements(modalCard);
+			if (items.length) items[0].focus();
+			trapCleanup = trapFocus(modalCard);
+		}
+	}
+
+	function closeModal() {
+		if (!modal) return;
+		modal.classList.remove('is-open');
+		clearTrap();
+		if (modalTrigger && typeof modalTrigger.focus === 'function') {
+			modalTrigger.focus();
+		}
+		modalTrigger = null;
+	}
 
 	function gtagUpdate(consent) {
 		window.dataLayer = window.dataLayer || [];
@@ -52,6 +115,7 @@
 		var consent = (data && data.update) || (data && data.consent) || {};
 		gtagUpdate(consent);
 		loadGTM();
+		clearTrap();
 		if (root && root.parentNode) root.parentNode.removeChild(root);
 		if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
 		document.dispatchEvent(
@@ -59,9 +123,9 @@
 		);
 	}
 
-	function onAction(action) {
+	function onAction(action, trigger) {
 		if (action === 'customize') {
-			if (modal) modal.classList.add('is-open');
+			openModal(trigger);
 			return;
 		}
 		post({ action: action }).then(done).catch(function () {});
@@ -71,13 +135,13 @@
 		var btn = e.target.closest('[data-consentaro-action]');
 		if (!btn) return;
 		e.preventDefault();
-		onAction(btn.getAttribute('data-consentaro-action'));
+		onAction(btn.getAttribute('data-consentaro-action'), btn);
 	});
 
 	if (modal) {
 		modal.addEventListener('click', function (e) {
 			if (e.target === modal || e.target.closest('[data-consentaro-close]')) {
-				modal.classList.remove('is-open');
+				closeModal();
 				return;
 			}
 			var save = e.target.closest('[data-consentaro-save-custom]');
@@ -94,5 +158,21 @@
 			consent.security_storage = 'granted';
 			post({ action: 'custom', consent: consent }).then(done).catch(function () {});
 		});
+
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+				closeModal();
+			}
+		});
+	}
+
+	// Move focus into the banner on first render — but only if the visitor
+	// isn't already interacting with something else on the page.
+	if (
+		document.activeElement === document.body ||
+		document.activeElement === document.documentElement
+	) {
+		var firstFocusable = root.querySelector('[data-consentaro-action]');
+		if (firstFocusable) firstFocusable.focus();
 	}
 })();
