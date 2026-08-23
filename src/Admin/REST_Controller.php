@@ -92,6 +92,16 @@ final class REST_Controller {
 
 		register_rest_route(
 			'consentaro/v1',
+			'/consent-log/export',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'exportConsentLog' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
 			'/geo-check',
 			array(
 				'methods'             => 'GET',
@@ -202,6 +212,23 @@ final class REST_Controller {
 		}
 
 		return rest_ensure_response( $rows );
+	}
+
+	/**
+	 * GET /consent-log/export — CSV download of the optional consent log.
+	 * Bypasses the normal REST JSON envelope on purpose (file download).
+	 */
+	public function exportConsentLog(): void {
+		/** @var ConsentLog $consent_log */
+		$consent_log = $this->container->get( 'consent_log' );
+		$csv         = $consent_log->exportCsv();
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="consentaro-consent-log-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- raw CSV byte stream, not HTML.
+		echo $csv;
+		exit;
 	}
 
 	/**
@@ -343,6 +370,13 @@ final class REST_Controller {
 		} else {
 			$insights->record( 'customized' );
 		}
+
+		// ConsentLog::record() no-ops internally unless consent_log_enabled
+		// is on — that check lives in one place, not duplicated here.
+		/** @var ConsentLog $consent_log */
+		$consent_log = $this->container->get( 'consent_log' );
+		$log_action  = in_array( $action, array( 'accept-all', 'deny-all' ), true ) ? $action : 'customize';
+		$consent_log->record( (string) $manager->getRid(), $log_action, $states );
 
 		return rest_ensure_response(
 			array(

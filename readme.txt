@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,9 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Automatically holds known third-party trackers (Analytics, Meta Pixel, TikTok Pixel, and more) inert until the matching consent category is granted, with a review screen to override any script's category
 * Design settings now include live preview (desktop/mobile), border-radius, button layout, font size, and one-click preset themes
 * A new Insights tab shows anonymous daily Accept/Deny/Customize counts — no visitor data, IP addresses, or individual records are ever stored
+* Keyboard-accessible consent banner — focus management, focus trap, and Escape support in the Customize dialog
+* Fully translation-ready admin interface (188+ strings) and frontend banner
+* Optional Consent Log — off by default, keeps an anonymized proof-of-consent record (no IP addresses or personal identifiers) for sites that need it for compliance audits
 * Optionally focuses the banner on EU/EEA-style visitors (geo helper)
 * Gates WooCommerce dataLayer events (view item, add to cart, purchase) by consent
 * Plays nicely with popular page caches (WP Rocket, LiteSpeed, W3 Total Cache)
@@ -79,6 +82,18 @@ Consentaro helps with Consent Mode and a clear visitor choice. Rules differ by c
 
 No. The Insights tab only stores anonymous daily aggregate counts (how many Accept / Deny / Customize decisions happened each day). No per-visitor data, IP addresses, cookie IDs, or timestamp-level records are ever stored.
 
+= Can Consentaro keep a record of individual consent decisions? =
+
+Yes, optionally — it is off by default. Turn on "Keep a log of consent decisions" under General and Consentaro stores, per decision: a timestamp, which categories were granted/denied, and a random non-identifying token (so you can tell a returning browser changed its choice later, without knowing who they are). It never stores an IP address, user agent, or any other personal identifier. Records are exportable as CSV and are automatically pruned after the retention period you choose (1–24 months, default 12).
+
+== Translations ==
+
+Consentaro is translation-ready (text domain: `consentaro`). If this plugin is hosted on WordPress.org, you can contribute a translation at [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/consentaro/) — no local setup needed.
+
+For local development, a starter `languages/consentaro.pot` is included. Regenerate it after changing any translatable string with WP-CLI:
+
+`wp i18n make-pot . languages/consentaro.pot --exclude=assets/src,node_modules,vendor`
+
 == Screenshots ==
 
 1. Guide tab — plain-English overview and checklist
@@ -87,6 +102,7 @@ No. The Insights tab only stores anonymous daily aggregate counts (how many Acce
 4. Design settings — banner text, position, colors, live preview
 5. Design tab — live preview, theme presets, shape & layout controls
 6. Insights tab — anonymous daily consent-decision chart
+7. General settings — Consent Log toggle, retention period, and CSV export
 
 == Credits ==
 
@@ -107,6 +123,14 @@ If geo-targeting is enabled in the plugin settings and the visitor's country can
 This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
 
 == Changelog ==
+
+= 1.5.0 =
+* Added: optional Consent Log (off by default) — records anonymized proof-of-consent (timestamp, category choices, a random non-identifying token) for sites that need an audit trail; includes a configurable retention period and CSV export
+* Added: full translation support for the admin interface via wp_set_script_translations() — all admin UI strings are now translatable, not just PHP-side text
+* Fixed: consent banner is now fully keyboard-accessible — focus moves into the banner and Customize dialog automatically, Tab is trapped inside the dialog while open, Escape closes it, and focus returns to the triggering button
+* Fixed: aria-modal was incorrectly applied to non-modal banner positions (top/bottom/corner bars); only the true modal position and the Customize dialog now use it
+* Improved: visible focus outline on all banner buttons and checkboxes across every theme preset
+* Added: PHPUnit + CI test suite covering tracker categorization, consent-state sanitization, Insights aggregation, and the Consent Log's off-by-default guarantee
 
 = 1.4.0 =
 * Changed: admin UI fully re-themed with Consentaro's brand colors (previously used WordPress's default blue throughout)

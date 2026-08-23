@@ -1,0 +1,90 @@
+Consentaro-তে একটা **optional, off-by-default Consent Log** ফিচার যোগ করতে হবে — GDPR-এর
+"proof of consent" দাবি মেটানোর জন্য, কিন্তু privacy-first ডিফল্ট আচরণ ভাঙা যাবে না। কোনো
+বিদ্যমান ফাংশনালিটি (Insights aggregate, ScriptBlocker, ইত্যাদি) বদলাবে না, শুধু নতুন যোগ হবে।
+
+=== ১. Cookie-তে non-identifying correlation token ===
+
+src/Consent/CookieStorage.php বা src/Consent/ConsentManager.php (যেখানে consent cookie
+প্রথম সেট হয় সেখানে) — cookie-র JSON payload-এ একটা নতুন ফিল্ড rid যোগ করো: একটা random UUID
+(wp_generate_uuid4() ব্যবহার করো, WordPress core-এই আছে)। এটা শুধু প্রথমবার consent সেট হওয়ার
+সময় জেনারেট হবে এবং পরবর্তী update-গুলোতে (Accept→পরে Customize করলে ইত্যাদি) একই rid বজায়
+থাকবে (নতুন করে জেনারেট হবে না)। এই rid কোনোভাবেই IP/user-agent/অন্য কোনো identifying তথ্যের
+সাথে যুক্ত না — শুধু "এই একই ব্রাউজার একাধিকবার consent বদলেছে কিনা" ট্র্যাক করার জন্য।
+
+=== ২. Consent Log DB টেবিল ===
+
+src/Core/Activator.php -এ (প্লাগইন activation হুকে) dbDelta() দিয়ে নতুন টেবিল তৈরি করো:
+
+{$wpdb->prefix}consentaro_consent_log (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    rid VARCHAR(36) NOT NULL,
+    action VARCHAR(20) NOT NULL,           -- accept-all | deny-all | customize
+    categories TEXT NOT NULL,              -- JSON: granted consent state at that moment
+    created_at DATETIME NOT NULL,
+    INDEX (rid),
+    INDEX (created_at)
+)
+
+WordPress-এর dbDelta() কনভেনশন মেনে করো (charset_collate, KEY-এর সঠিক ফরম্যাট ইত্যাদি —
+বিদ্যমান কোনো WP core প্লাগইনের dbDelta প্যাটার্ন অনুসরণ করো)। প্লাগইন version আপডেট হলে টেবিল
+স্কিমা migration দরকার হলে সেটাও Activator-এ চেক করে রাখা ভালো (future-proofing)।
+
+=== ৩. নতুন সার্ভিস: src/Admin/ConsentLog.php ===
+
+- record( string $rid, string $action, array $categories ): void — শুধু consent_log_enabled
+  সেটিং true থাকলে row insert করবে (wpdb->insert)
+- prune(): void — created_at যেটা consent_expiry_months-এর চেয়ে পুরনো, সেই row গুলো delete
+  করবে। এটা একটা daily wp_cron event (consentaro_prune_consent_log) দিয়ে চালাও —
+  register_activation_hook-এ cron schedule করো, deactivation-এ unschedule করো (Activator.php/
+  Deactivator.php-এ)
+- exportCsv(): string — সব (বা recent N হাজার, একটা reasonable cap বসিয়ে) row CSV ফরম্যাটে
+  রিটার্ন করবে (rid, action, categories, created_at কলাম)
+
+ServiceContainer-এ 'consent_log' key হিসেবে রেজিস্টার করো, Plugin.php-তে অন্য সার্ভিসের
+প্যাটার্ন অনুসরণ করে।
+
+=== ৪. Recording hook ===
+
+src/Admin/REST_Controller.php -এর saveConsent()-এ, Insights::record() যেখানে কল হয় ঠিক
+তার পাশেই (একই জায়গায়), যদি consent_log_enabled true থাকে তাহলে ConsentLog::record()-ও
+কল করো, cookie থেকে rid বের করে (CookieStorage/ConsentManager থেকে) এবং সেই request-এ
+resolve হওয়া action + categories পাস করে।
+
+=== ৫. Settings ===
+
+Settings.php -এ নতুন ফিল্ড যোগ করো:
+- consent_log_enabled (bool, ডিফল্ট false)
+- consent_expiry_months (int, ডিফল্ট 12, sanitize করো 1-24 রেঞ্জে ক্যাপ করে)
+
+General ট্যাবে (assets/src/admin/components/GeneralTab.js) একটা নতুন ছোট সেকশন "Consent Log"
+যোগ করো:
+- টগল: "Keep a log of consent decisions (off by default)" সাথে সংক্ষিপ্ত ব্যাখ্যা যে এটা কী
+  স্টোর করে আর কী করে না
+- টগল ON থাকলে দৃশ্যমান হবে: retention period ফিল্ড (মাস, RangeControl বা NumberControl)
+- একটা "Export CSV" বাটন — নতুন REST endpoint GET /consentaro/v1/consent-log/export কল করে
+  (permission_callback: canManage()-এর মতো admin-only), ফাইল ডাউনলোড ট্রিগার করবে
+
+=== ৬. Uninstall cleanup ===
+
+uninstall.php -এ টেবিলটা DROP করে দাও ($wpdb->query দিয়ে, বিদ্যমান cleanup প্যাটার্ন অনুসরণ
+করে), আর cron event unschedule করো যদি এখনো shundule করা থাকে।
+
+=== ৭. readme.txt ===
+
+FAQ-এ নতুন এন্ট্রি: "Can Consentaro keep a record of individual consent decisions?" — স্পষ্ট
+করে বলো এটা ঐচ্ছিক এবং ডিফল্টভাবে বন্ধ, চালু করলে ঠিক কী স্টোর হয় (timestamp, category choices,
+একটা random non-identifying token) এবং কী স্টোর হয় না (IP address, user agent, কোনো personal
+identifier)।
+
+=== যাচাই ===
+
+৮. npm run build (যদি JS ফাইল বদলায়), php -l সব নতুন/পরিবর্তিত PHP ফাইলে।
+৯. টেস্ট করো: General ট্যাবে গিয়ে Consent Log চালু করো, retention 12 মাস রেখে Save করো।
+   ফ্রন্টএন্ডে গিয়ে Accept/Deny করো, তারপর phpMyAdmin/Adminer বা wp-cli দিয়ে
+   {$wpdb->prefix}consentaro_consent_log টেবিলে নতুন row এসেছে কিনা দেখো (rid/action/
+   categories/created_at ঠিকমতো ভরা আছে কিনা)। Export CSV বাটন চেপে ফাইল ডাউনলোড হচ্ছে
+   কিনা এবং কনটেন্ট ঠিক আছে কিনা যাচাই করো। স্ক্রিনশট দাও।
+
+গুরুত্বপূর্ণ: টগল বন্ধ থাকা অবস্থায় (ডিফল্ট) কোনো row কখনো insert হবে না — এটা বিশেষভাবে
+নিশ্চিত করো, কারণ এই ফিচারের পুরো premise-ই হলো "শুধু যে সাইট owner ইচ্ছাকৃতভাবে চালু করবে,
+তার জন্যই ডেটা জমা হবে।"

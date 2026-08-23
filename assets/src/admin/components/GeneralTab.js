@@ -5,6 +5,7 @@ import {
 	CardHeader,
 	ToggleControl,
 	TextControl,
+	RangeControl,
 	Button,
 	Spinner,
 	__experimentalHStack as HStack,
@@ -27,6 +28,27 @@ const GeneralTab = ( { form, onChange, onSave, saving } ) => {
 
 	const gtmId = form.gtm_id || '';
 	const gtmInvalid = gtmId !== '' && ! GTM_ID_PATTERN.test( gtmId.toUpperCase() );
+
+	const exportCsv = async () => {
+		try {
+			const response = await apiFetch( {
+				path: '/consentaro/v1/consent-log/export',
+				parse: false,
+			} );
+			const text = await response.text();
+			const blob = new Blob( [ text ], { type: 'text/csv' } );
+			const url = window.URL.createObjectURL( blob );
+			const link = document.createElement( 'a' );
+			link.href = url;
+			link.download = 'consentaro-consent-log.csv';
+			document.body.appendChild( link );
+			link.click();
+			document.body.removeChild( link );
+			window.URL.revokeObjectURL( url );
+		} catch ( e ) {
+			// Silent — a failed export isn't worth a blocking error state here.
+		}
+	};
 
 	return (
 		<Card className="consentaro-admin__card">
@@ -120,6 +142,53 @@ const GeneralTab = ( { form, onChange, onSave, saving } ) => {
 										? __( 'EU region', 'consentaro' )
 										: __( 'Non-EU', 'consentaro' ) }
 								</span>
+							</div>
+						) }
+					</div>
+
+					<div className="consentaro-admin__section">
+						<ToggleControl
+							label={ __(
+								'Keep a log of consent decisions (off by default)',
+								'consentaro'
+							) }
+							help={ __(
+								'When on, each Accept/Deny/Customize decision is stored with a timestamp, the categories chosen, and a random non-identifying token — never an IP address, user agent, or other personal identifier. Useful as GDPR "proof of consent."',
+								'consentaro'
+							) }
+							checked={ !! form.consent_log_enabled }
+							onChange={ ( consent_log_enabled ) =>
+								onChange( 'consent_log_enabled', consent_log_enabled )
+							}
+							__nextHasNoMarginBottom
+						/>
+						{ !! form.consent_log_enabled && (
+							<div className="consentaro-admin__field consentaro-admin__field--indent">
+								<div className="consentaro-admin__field consentaro-admin__field--narrow">
+									<RangeControl
+										label={ __(
+											'Keep records for (months)',
+											'consentaro'
+										) }
+										value={ form.consent_expiry_months ?? 12 }
+										onChange={ ( consent_expiry_months ) =>
+											onChange(
+												'consent_expiry_months',
+												consent_expiry_months
+											)
+										}
+										min={ 1 }
+										max={ 24 }
+										__nextHasNoMarginBottom
+									/>
+								</div>
+								<Button
+									variant="secondary"
+									onClick={ exportCsv }
+									__next40pxDefaultSize
+								>
+									{ __( 'Export CSV', 'consentaro' ) }
+								</Button>
 							</div>
 						) }
 					</div>

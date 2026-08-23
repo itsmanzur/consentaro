@@ -1,0 +1,49 @@
+Consentaro-কে translation-ready করতে হবে। Audit করে দুটো real gap পাওয়া গেছে — এই দুটো ঠিক
+করতে হবে। কোনো ফাংশনালিটি বদলাবে না।
+
+=== ১. সবচেয়ে জরুরি: React admin bundle-এর জন্য wp_set_script_translations() ===
+
+src/Admin/Settings.php -এ wp_enqueue_script( 'consentaro-admin', ... ) কল আছে (হ্যান্ডেল:
+consentaro-admin), কিন্তু এর ঠিক পরেই wp_set_script_translations() কল করা নেই। এই কারণে
+React admin UI-তে থাকা ১৮৮টা @wordpress/i18n __() স্ট্রিং (Guide/General/Scripts/Design/
+Insights ট্যাবের সব টেক্সট) কখনো অনুবাদ পাবে না, যদিও কোডে সঠিকভাবে 'consentaro' text domain
+দিয়ে wrap করা আছে।
+
+wp_enqueue_script( 'consentaro-admin', ... ) কলের ঠিক পরে যোগ করো:
+
+wp_set_script_translations( 'consentaro-admin', 'consentaro', CONSENTARO_PATH . 'languages' );
+
+(CONSENTARO_PATH কনস্ট্যান্ট আগে থেকেই আছে, plugin root path নির্দেশ করে — languages/
+সাবফোল্ডারে .json translation ফাইল থাকার কথা, যেটা wp i18n make-json দিয়ে .po থেকে জেনারেট
+হয়।)
+
+=== ২. .pot ফাইল জেনারেট করা ===
+
+languages/consentaro.pot ফাইল নেই। এটা বানাও যাতে অনুবাদকরা লোকালি কাজ শুরু করতে পারে
+(wordpress.org-এ প্লাগইন publish করা থাকলে translate.wordpress.org নিজে থেকেই SVN থেকে
+স্ট্রিং extract করবে, তাই এই ফাইলটা কড়াভাবে required না, কিন্তু ভালো practice এবং লোকাল
+টেস্টিং/Poedit-এর জন্য দরকারি)।
+
+- যদি সিস্টেমে wp-cli (wp কমান্ড) উপলব্ধ থাকে, চালাও:
+  wp i18n make-pot . languages/consentaro.pot --exclude=assets/src,node_modules,vendor
+  (এটা PHP আর compiled JS bundle দুটো থেকেই স্ট্রিং তুলবে যদি wp-cli ভার্সন যথেষ্ট নতুন হয়;
+  নাহলে শুধু PHP থেকে তুলবে, সেক্ষেত্রে --domain=consentaro ফ্ল্যাগ দিয়ে assets/build/admin.js
+  থেকেও আলাদা করে স্ট্রিং টানতে হতে পারে — @wordpress/scripts-এর wp-scripts i18n বা
+  @wordpress/i18n-cli থাকলে সেটাও ব্যবহার করা যায়)
+- wp-cli উপলব্ধ না থাকলে: readme.txt-এ একটা নোট লিখে রাখো যে .pot ফাইল কীভাবে জেনারেট করতে
+  হবে (কমান্ড সহ), এবং আমাকে জানাও কোন পদ্ধতিতে আটকে গেছ যাতে আমি বিকল্প বলে দিতে পারি
+
+=== ৩. readme.txt-এ translator নির্দেশনা ===
+
+readme.txt -এ একটা ছোট সেকশন/নোট যোগ করো (FAQ-এর কাছাকাছি বা আলাদা "Translations" heading):
+এই প্লাগইন wordpress.org-এ হোস্ট করা হলে translate.wordpress.org-এ গিয়ে অনুবাদে অবদান রাখা
+যায় এমন একটা লাইন, লিংক: https://translate.wordpress.org/projects/wp-plugins/consentaro/
+
+=== ৪. যাচাই ===
+
+grep করে নিশ্চিত করো wp_set_script_translations() ঠিক হ্যান্ডেল নাম ('consentaro-admin')
+আর ঠিক domain ('consentaro') ব্যবহার করছে কিনা — এই দুটো একটুও না মিললে পুরো mechanism
+নিঃশব্দে fail করবে, কোনো error দেখাবে না, তাই এটা বিশেষভাবে ডাবল-চেক করো।
+
+উল্লেখ্য: RTL CSS (style-admin-rtl.css) আগে থেকেই ঠিক আছে, সেটা স্পর্শ করার দরকার নেই। শুধু
+translation-delivery mechanism আর .pot ফাইল নিয়ে কাজ করো।

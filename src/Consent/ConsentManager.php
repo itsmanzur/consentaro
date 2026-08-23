@@ -111,6 +111,21 @@ final class ConsentManager {
 	}
 
 	/**
+	 * Non-identifying per-browser correlation token from the consent cookie,
+	 * if one has been generated yet. Not tied to IP/user-agent/any other
+	 * identifying data — only used to tell "this same browser changed its
+	 * consent choice again later" for the optional Consent Log.
+	 */
+	public function getRid(): ?string {
+		$raw = $this->getRawCookie();
+		if ( null !== $raw && isset( $raw['rid'] ) && is_string( $raw['rid'] ) && '' !== $raw['rid'] ) {
+			return $raw['rid'];
+		}
+
+		return null;
+	}
+
+	/**
 	 * Persist consent and fire hooks.
 	 *
 	 * @param array<string, mixed> $consent Incoming states.
@@ -119,8 +134,16 @@ final class ConsentManager {
 	public function updateStates( array $consent ): array {
 		$old = $this->getCurrentStates();
 		$new = $this->mode->sanitizeStates( $consent );
+		$rid = $this->getRid() ?? wp_generate_uuid4();
 
-		$this->cookies->set( self::COOKIE_NAME, $new, self::COOKIE_TTL );
+		$this->cookies->set(
+			self::COOKIE_NAME,
+			array(
+				'rid'    => $rid,
+				'states' => $new,
+			),
+			self::COOKIE_TTL
+		);
 
 		/**
 		 * Fires after consent cookie is updated.
@@ -152,17 +175,33 @@ final class ConsentManager {
 	}
 
 	/**
+	 * Raw decoded cookie array, or null if unset/invalid.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function getRawCookie(): ?array {
+		$raw = $this->cookies->get( self::COOKIE_NAME );
+		return is_array( $raw ) ? $raw : null;
+	}
+
+	/**
 	 * Raw stored states or null.
+	 *
+	 * Handles both the current cookie shape ({rid, states}) and the older
+	 * flat shape (bare states map) from before the rid field existed, so
+	 * upgrading the plugin doesn't reset every existing visitor's choice.
 	 *
 	 * @return array<string, string>|null
 	 */
 	private function getStoredStates(): ?array {
-		$raw = $this->cookies->get( self::COOKIE_NAME );
-		if ( ! is_array( $raw ) ) {
+		$raw = $this->getRawCookie();
+		if ( null === $raw ) {
 			return null;
 		}
 
-		return $this->mode->sanitizeStates( $raw );
+		$states = isset( $raw['states'] ) && is_array( $raw['states'] ) ? $raw['states'] : $raw;
+
+		return $this->mode->sanitizeStates( $states );
 	}
 
 	/**

@@ -136,6 +136,8 @@ final class Settings {
 			true
 		);
 
+		wp_set_script_translations( 'consentaro-admin', 'consentaro', CONSENTARO_PATH . 'languages' );
+
 		wp_localize_script(
 			'consentaro-admin',
 			'consentaroAdmin',
@@ -159,6 +161,8 @@ final class Settings {
 			'cf_trusted'       => false,
 			'script_blocking'  => true,
 			'script_overrides' => array(),
+			'consent_log_enabled'   => false,
+			'consent_expiry_months' => 12,
 			'banner'           => array(
 				'position'           => 'bottom',
 				'text'               => '',
@@ -210,6 +214,16 @@ final class Settings {
 		}
 		if ( isset( $data['script_blocking'] ) ) {
 			$current['script_blocking'] = (bool) $data['script_blocking'];
+		}
+		if ( isset( $data['consent_log_enabled'] ) ) {
+			$current['consent_log_enabled'] = (bool) $data['consent_log_enabled'];
+		}
+		if ( isset( $data['consent_expiry_months'] ) ) {
+			if ( is_numeric( $data['consent_expiry_months'] ) ) {
+				$current['consent_expiry_months'] = max( 1, min( 24, absint( $data['consent_expiry_months'] ) ) );
+			} else {
+				$rejected[] = 'consent_expiry_months';
+			}
 		}
 		if ( isset( $data['script_overrides'] ) && is_array( $data['script_overrides'] ) ) {
 			$clean_overrides = array();

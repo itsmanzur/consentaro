@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Consentaro\Admin\ConsentLog;
 use Consentaro\Admin\Insights;
 use Consentaro\Admin\REST_Controller;
 use Consentaro\Admin\Settings;
@@ -68,6 +69,11 @@ final class Plugin {
 	 * Boot hooks and services.
 	 */
 	public function init(): void {
+		// Self-healing schema check: a normal plugin "Update" replaces files
+		// but doesn't fire register_activation_hook, so this also runs here
+		// on every load (cheap — short-circuits on a version-option match).
+		Activator::maybeCreateOrUpgradeTable();
+
 		$this->register_services();
 		$this->load_modules();
 	}
@@ -120,6 +126,13 @@ final class Plugin {
 			'insights',
 			static function (): Insights {
 				return new Insights();
+			}
+		);
+
+		$c->set(
+			'consent_log',
+			static function (): ConsentLog {
+				return new ConsentLog();
 			}
 		);
 
@@ -178,6 +191,7 @@ final class Plugin {
 		$this->container->get( 'gtm' )->register();
 		$this->container->get( 'cache_plugins' )->register();
 		$this->container->get( 'script_blocker' )->register();
+		$this->container->get( 'consent_log' )->register();
 
 		// WooCommerce may load after us on plugins_loaded.
 		add_action( 'woocommerce_loaded', array( $this, 'bootWooCommerce' ) );

@@ -1,0 +1,88 @@
+Consentaro-তে PHPUnit + Brain Monkey দিয়ে automated test infrastructure বসাতে হবে। কোনো
+functionality বদলাবে না — শুধু test setup আর test file যোগ হবে। লক্ষ্য: কোডবেস এখন বড় হয়ে
+গেছে (ScriptBlocker regex, Insights aggregation, ConsentLog, ConsentMode) — এগুলোর মূল লজিক
+lock করে রাখা যাতে ভবিষ্যতে কোনো পরিবর্তন silently ভেঙে না দেয়।
+
+=== ১. Composer dev dependencies ===
+
+composer.json -এ (না থাকলে তৈরি করো, .distignore-এ আগে থেকেই composer.json/lock বাদ দেওয়া
+আছে wp.org release থেকে, তাই dev dependency যোগ করলেও শিপড প্যাকেজে যাবে না) require-dev
+হিসেবে যোগ করো:
+
+- phpunit/phpunit (PHP 8.0+ সাপোর্ট করে এমন ভার্সন, সাধারণত ^9.6 বা ^10)
+- brain/monkey (^2.6)
+
+composer install --dev চালিয়ে নিশ্চিত করো ইনস্টল হচ্ছে (Composer TLS সমস্যা হলে
+composer config --global disable-tls true ব্যবহার করো, আগে থেকেই এই workaround প্রতিষ্ঠিত)।
+
+=== ২. Test scaffolding ===
+
+tests/bootstrap.php — Brain Monkey-র setUp/tearDown এর জন্য বেস TestCase ক্লাস
+(tests/TestCase.php) বানাও যেটা Brain\Monkey\setUp()/tearDown() call করে, এবং কমন WP
+function stub (esc_html, sanitize_text_field, sanitize_key, wp_json_encode, absint,
+current_time ইত্যাদি — যেগুলো টেস্ট করা ক্লাসগুলো ব্যবহার করে) কেন্দ্রীয়ভাবে define করে
+যাতে প্রতিটা টেস্ট ফাইলে বারবার লিখতে না হয়।
+
+phpunit.xml.dist রুটে বানাও: bootstrap="tests/bootstrap.php", testsuite নাম "unit",
+directory "tests/Unit"।
+
+=== ৩. Test files ===
+
+tests/Unit/TrackerSignaturesTest.php:
+- categoryFor() — domain match (যেমন 'google-analytics.com' → 'analytics'), unknown domain
+  → 'necessary' (conservative default — এটা সবচেয়ে গুরুত্বপূর্ণ, ভুল হলে script block/unblock
+  ভুল হয়ে যায়), override precedence (site override signature-কে override করে), case-
+  insensitivity
+- categoryForContent() — content pattern match ('fbq(' → marketing), override precedence,
+  কোনো pattern না মিললে 'necessary'
+- isValidCategory() — valid/invalid category string
+
+tests/Unit/ConsentModeTest.php:
+- sanitizeStates() (বা যে মেথড states sanitize করে) — অচেনা key বাদ পড়া উচিত, অচেনা value
+  (granted/denied ছাড়া অন্য কিছু) reject/default হওয়া উচিত
+- default state generation সঠিক ৭টা category-র জন্য সঠিক granted/denied মান দিচ্ছে কিনা
+
+tests/Unit/InsightsTest.php (get_option/update_option Brain Monkey দিয়ে mock করে):
+- record() — নতুন দিনের প্রথম entry তৈরি করা, একই দিনে দ্বিতীয়বার call করলে counter
+  বাড়া (নতুন key না তৈরি হওয়া)
+- ৯০ দিনের বেশি পুরনো entry prune হয়ে যাওয়া (record()-এর সময়)
+- getRange() — চাওয়া রেঞ্জের সব দিন zero-filled আসা, এমনকি যেসব দিনে ডেটা নেই
+
+tests/Unit/ConsentLogTest.php — **এটা সবচেয়ে গুরুত্বপূর্ণ টেস্ট, বিশেষ মনোযোগ দাও:**
+- consent_log_enabled = false (বা সেটিং একদমই না থাকা) অবস্থায় record() কল করলে $wpdb->insert
+  কখনো call হচ্ছে না তা assert করো (Brain Monkey দিয়ে $wpdb mock করে, insert() কল হলে
+  fail করবে এমন expectation বসাও) — এই একটা টেস্ট toggle-off গ্যারান্টিটা স্থায়ীভাবে lock
+  করে রাখবে
+- consent_log_enabled = true অবস্থায় record() কল করলে ঠিক একবার insert() কল হচ্ছে, সঠিক
+  column value সহ
+
+=== ৪. GitHub Actions CI ===
+
+.github/workflows/tests.yml বানাও:
+- push এবং pull_request-এ ট্রিগার হবে (main এবং সব ব্রাঞ্চে)
+- PHP 8.0, 8.1, 8.2 ম্যাট্রিক্সে চালাও (readme.txt-এ Requires PHP: 8.0 উল্লেখ আছে, তাই সেই
+  মিনিমাম থেকে কভার করা উচিত)
+- ধাপ: checkout → PHP সেটআপ (shivammathur/setup-php@v2) → composer install → composer
+  exec phpunit (অথবা vendor/bin/phpunit)
+- এই একই workflow-এ (বা আলাদা job-এ) phpcs/WPCS-ও চালাও যদি আগে থেকে সেটআপ থাকে (readme.txt-এ
+  PHP_CodeSniffer উল্লেখ আছে) — না থাকলে এই ধাপটা স্কিপ করে শুধু phpunit রাখো, phpcs আলাদাভাবে
+  পরে যোগ করা যাবে
+
+=== ৫. .gitignore ===
+
+vendor/ যোগ করো .gitignore-এ যদি আগে থেকে না থাকে (composer.lock কমিট রাখা যেতে পারে
+reproducibility-এর জন্য, কিন্তু vendor/ ফোল্ডার না)।
+
+=== যাচাই ===
+
+৬. composer exec phpunit চালিয়ে সব টেস্ট pass করা নিশ্চিত করো, আউটপুট দাও (কতগুলো টেস্ট,
+   কতগুলো assertion, pass/fail সংখ্যা)।
+৭. ইচ্ছাকৃতভাবে TrackerSignatures::categoryFor()-এ একটা bug ঢুকিয়ে (যেমন return 'necessary'
+   বদলে return 'analytics' করে সবকিছুর জন্য) দেখাও যে সংশ্লিষ্ট টেস্ট fail করছে কিনা — এটা
+   প্রমাণ করবে টেস্টগুলো আসলেই কার্যকর, শুধু pass করার জন্য লেখা হয়নি। তারপর বাগটা revert
+   করে দাও।
+
+গুরুত্বপূর্ণ: এই টেস্টগুলো কোনো real WordPress ইনস্টলেশন বা database ছাড়াই চলার কথা (pure
+Brain Monkey mock দিয়ে) — যদি কোনো টেস্ট লিখতে গিয়ে সত্যিকারের DB/WP bootstrap ছাড়া সম্ভব না
+মনে হয় (যেমন dbDelta() টেস্ট করা), সেটা স্কিপ করে নোট রেখে দাও, জোর করে ভুল mock দিয়ে
+মিথ্যা pass দেখিও না।

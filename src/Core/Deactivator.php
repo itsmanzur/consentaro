@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Consentaro\Core;
 
+use Consentaro\Admin\ConsentLog;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,9 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Deactivator {
 
 	/**
-	 * Flush rewrite rules only.
+	 * Unschedule cron, flush rewrite rules.
 	 */
 	public static function deactivate(): void {
+		$timestamp = wp_next_scheduled( ConsentLog::CRON_HOOK );
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, ConsentLog::CRON_HOOK );
+		}
+
 		flush_rewrite_rules();
 	}
 }

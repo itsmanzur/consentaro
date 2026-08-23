@@ -1,0 +1,59 @@
+Consentaro-এর এই ব্যাচের সব পরিবর্তন (accessibility fixes, i18n readiness, optional Consent
+Log, automated test infra) নিয়ে একটা রিলিজ প্রস্তুত করতে হবে। বর্তমান version ১.৪.০ (ইতিমধ্যে
+wordpress.org-এ publish করা), তাই নতুন ভার্সন দরকার। Consent Log একটা genuinely নতুন
+user-facing ফিচার হওয়ায় এটা minor version bump: 1.5.0।
+
+=== ১. Version bump ===
+
+- consentaro.php -এর হেডার "Version: 1.4.0" → "Version: 1.5.0"
+- CONSENTARO_VERSION constant "1.4.0" → "1.5.0"
+- readme.txt -এর "Stable tag: 1.4.0" → "Stable tag: 1.5.0"
+
+=== ২. readme.txt feature বুলেট লিস্ট আপডেট ===
+
+Description-এর feature বুলেটে যোগ করো:
+- Keyboard-accessible consent banner — focus management, focus trap, and Escape support
+  in the Customize dialog
+- Fully translation-ready admin interface (188+ strings) and frontend banner
+- Optional Consent Log — off by default, keeps an anonymized proof-of-consent record
+  (no IP addresses or personal identifiers) for sites that need it for compliance audits
+
+=== ৩. Changelog এন্ট্রি ===
+
+readme.txt -এর == Changelog ==-এ, 1.4.0-এর উপরে নতুন 1.5.0 এন্ট্রি:
+
+= 1.5.0 =
+* Added: optional Consent Log (off by default) — records anonymized proof-of-consent
+  (timestamp, category choices, a random non-identifying token) for sites that need an
+  audit trail; includes a configurable retention period and CSV export
+* Added: full translation support for the admin interface via wp_set_script_translations()
+  — all admin UI strings are now translatable, not just PHP-side text
+* Fixed: consent banner is now fully keyboard-accessible — focus moves into the banner
+  and Customize dialog automatically, Tab is trapped inside the dialog while open, Escape
+  closes it, and focus returns to the triggering button
+* Fixed: aria-modal was incorrectly applied to non-modal banner positions (top/bottom/
+  corner bars); only the true modal position and the Customize dialog now use it
+* Improved: visible focus outline on all banner buttons and checkboxes across every
+  theme preset
+* Added: PHPUnit + CI test suite covering tracker categorization, consent-state
+  sanitization, Insights aggregation, and the Consent Log's off-by-default guarantee
+
+=== ৪. Consent Log FAQ যাচাই (duplicate এড়াতে) ===
+
+readme.txt-এ আগের প্রম্পটে যোগ করা "Can Consentaro keep a record of individual consent
+decisions?" FAQ এন্ট্রিটা আছে কিনা চেক করো — থাকলে duplicate কোরো না, না থাকলে যোগ করো।
+
+=== ৫. Screenshot তালিকা (ঐচ্ছিক, শুধু যদি নতুন UI অংশ স্ক্রিনশটযোগ্য হয়) ===
+
+General ট্যাবের নতুন "Consent Log" সেকশনের জন্য একটা নতুন screenshot এন্ট্রি readme.txt-এর
+স্ক্রিনশট লিস্টে যোগ করো (নাম্বার বাড়িয়ে) — ফাইল বানানো এখনই লাগবে না, শুধু বর্ণনা/রেফারেন্স।
+
+=== যাচাই ===
+
+৬. grep করে নিশ্চিত হও কোথাও ভুলবশত এখনো "1.4.0" স্ট্রিং হিসেবে থেকে না যায় (পুরনো changelog
+   এন্ট্রি অক্ষত থাকবে, শুধু header/stable tag বদলাবে)।
+৭. npm run build চালিয়ে নিশ্চিত করো (যদি এই ব্যাচে কোনো JS ফাইল ছুঁয়ে থাকো) কোনো error নেই।
+৮. composer exec phpunit চালিয়ে সব টেস্ট এখনো pass করছে কিনা再confirm করো (readme পরিবর্তনে
+   টেস্ট প্রভাবিত হওয়ার কথা না, কিন্তু ভালো অভ্যাস হিসেবে)।
+
+গুরুত্বপূর্ণ: কোনো ফাংশনালিটি বদলাবে না, এটা শুধুই version/readme/changelog মেটাডেটা আপডেট।
