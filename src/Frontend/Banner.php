@@ -65,7 +65,7 @@ final class Banner {
 			$position = 'bottom';
 		}
 
-		$text = (string) ( $banner['text'] ?? '' );
+		$text = $this->translateBannerText( (string) ( $banner['text'] ?? '' ) );
 		if ( '' === $text ) {
 			$text = __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' );
 		}
@@ -87,6 +87,25 @@ final class Banner {
 		echo $html;
 
 		do_action( 'consentaro_after_banner_display' );
+	}
+
+	/**
+	 * Resolves banner.text through WPML / Polylang string translation when
+	 * either plugin is active, so a multilingual site shows the per-language
+	 * version a site owner set under Languages → String Translations. A
+	 * no-op on an ordinary single-language site — has_filter()/
+	 * function_exists() are simply false, and $text passes through unchanged.
+	 *
+	 * @param string $text Raw banner.text setting value.
+	 */
+	private function translateBannerText( string $text ): string {
+		if ( has_filter( 'wpml_translate_single_string' ) ) {
+			$text = (string) apply_filters( 'wpml_translate_single_string', $text, 'Consentaro', 'Banner Text' );
+		} elseif ( function_exists( 'pll__' ) ) {
+			$text = pll__( $text );
+		}
+
+		return $text;
 	}
 
 	/**

@@ -44,6 +44,29 @@ final class Settings {
 		add_action( 'admin_menu', array( $this, 'registerMenu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueAdmin' ) );
 		add_action( 'admin_init', array( $this, 'maybeRedirectAfterActivation' ) );
+		add_action( 'admin_init', array( $this, 'syncTranslatableStrings' ) );
+	}
+
+	/**
+	 * Re-registers banner.text with WPML / Polylang on every wp-admin page
+	 * load, as a backstop alongside the saveSettings() call.
+	 *
+	 * Both plugins' registration APIs only do anything when is_admin() is
+	 * true (Polylang's PLL_ADMIN constant is explicitly gated on it), but
+	 * Consentaro's admin UI saves via a REST XHR from its React app, not a
+	 * classic wp-admin form POST — and a REST request is not is_admin().
+	 * Without this, the saveSettings() registration call would silently
+	 * never actually register anything with either plugin. This hook means
+	 * the current value still reaches String Translation the next time an
+	 * admin loads any wp-admin screen after saving.
+	 */
+	public function syncTranslatableStrings(): void {
+		$settings = $this->getSettings();
+		$text     = (string) ( $settings['banner']['text'] ?? '' );
+
+		if ( '' !== $text ) {
+			$this->registerTranslatableStrings( $text );
+		}
 	}
 
 	/**
@@ -258,6 +281,7 @@ final class Settings {
 			}
 			if ( isset( $banner['text'] ) ) {
 				$current['banner']['text'] = sanitize_text_field( (string) $banner['text'] );
+				$this->registerTranslatableStrings( $current['banner']['text'] );
 			}
 			foreach ( array( 'bg', 'text_color', 'btn_primary_bg', 'btn_primary_text', 'btn_secondary_bg', 'btn_secondary_text' ) as $color_key ) {
 				if ( isset( $banner[ $color_key ] ) ) {
@@ -315,5 +339,24 @@ final class Settings {
 		$current['rejected'] = $rejected;
 
 		return $current;
+	}
+
+	/**
+	 * Registers the banner text with WPML / Polylang string translation so
+	 * site owners can set a per-language version from Languages → String
+	 * Translations. Called on every save (not just once at plugin load)
+	 * because the string value itself can change. No-ops when neither
+	 * plugin is active — has_action()/function_exists() are simply false.
+	 *
+	 * @param string $banner_text Current banner copy.
+	 */
+	private function registerTranslatableStrings( string $banner_text ): void {
+		if ( has_action( 'wpml_register_single_string' ) ) {
+			do_action( 'wpml_register_single_string', 'Consentaro', 'Banner Text', $banner_text );
+		}
+
+		if ( function_exists( 'pll_register_string' ) ) {
+			pll_register_string( 'consentaro_banner_text', $banner_text, 'Consentaro' );
+		}
 	}
 }

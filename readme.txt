@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Keyboard-accessible consent banner — focus management, focus trap, and Escape support in the Customize dialog
 * Fully translation-ready admin interface (188+ strings) and frontend banner
 * Optional Consent Log — off by default, keeps an anonymized proof-of-consent record (no IP addresses or personal identifiers) for sites that need it for compliance audits
+* Compatible with WPML and Polylang — set a per-language version of your banner text from Languages → String Translations
 * Optionally focuses the banner on EU/EEA-style visitors (geo helper)
 * Gates WooCommerce dataLayer events (view item, add to cart, purchase) by consent
 * Plays nicely with popular page caches (WP Rocket, LiteSpeed, W3 Total Cache)
@@ -86,6 +87,10 @@ No. The Insights tab only stores anonymous daily aggregate counts (how many Acce
 
 Yes, optionally — it is off by default. Turn on "Keep a log of consent decisions" under General and Consentaro stores, per decision: a timestamp, which categories were granted/denied, and a random non-identifying token (so you can tell a returning browser changed its choice later, without knowing who they are). It never stores an IP address, user agent, or any other personal identifier. Records are exportable as CSV and are automatically pruned after the retention period you choose (1–24 months, default 12).
 
+= Does Consentaro work with WPML or Polylang? =
+
+Yes. The banner text can be set per language from WPML's String Translation or Polylang's String Translation page. Every other UI label (Accept All, Deny All, Customize, and so on) already works through WordPress's standard translation system, which WPML and Polylang both respect automatically — no extra setup needed for those.
+
 == Translations ==
 
 Consentaro is translation-ready (text domain: `consentaro`). If this plugin is hosted on WordPress.org, you can contribute a translation at [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/consentaro/) — no local setup needed.
@@ -123,6 +128,9 @@ If geo-targeting is enabled in the plugin settings and the visitor's country can
 This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
 
 == Changelog ==
+
+= 1.5.1 =
+* Added: WPML and Polylang compatibility — banner text can now be translated per language via each plugin's String Translation screen; all other UI strings already work through WordPress's standard translation system
 
 = 1.5.0 =
 * Added: optional Consent Log (off by default) — records anonymized proof-of-consent (timestamp, category choices, a random non-identifying token) for sites that need an audit trail; includes a configurable retention period and CSV export
