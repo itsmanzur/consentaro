@@ -105,6 +105,68 @@ final class InsightsTest extends TestCase {
 		$this->addToAssertionCount( 1 ); // Real assertion is the Mockery expectation above.
 	}
 
+	/**
+	 * Scale check: 180 days (2x retention) of high-traffic counts, verifying
+	 * prune() caps the option to exactly 90 entries and that the resulting
+	 * wp_options row stays a reasonable size — not a strict byte-count
+	 * assertion (any regression toward storing per-visitor data instead of
+	 * daily aggregates would blow way past this budget), just a guard.
+	 */
+	public function test_prune_caps_180_days_of_high_traffic_data_to_90_entries(): void {
+		$now  = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
+		$data = array();
+		for ( $i = 0; $i < 180; $i++ ) {
+			$date           = $now->modify( "-{$i} days" )->format( 'Y-m-d' );
+			$data[ $date ] = array(
+				'accepted'   => 5000 + $i,
+				'denied'     => 3000 + $i,
+				'customized' => 1200 + $i,
+			);
+		}
+		$this->assertCount( 180, $data, 'test fixture sanity check' );
+
+		Functions\expect( 'get_option' )
+			->once()
+			->with( 'consentaro_stats_daily', array() )
+			->andReturn( $data );
+
+		$saved = null;
+		Functions\expect( 'update_option' )
+			->once()
+			->with(
+				'consentaro_stats_daily',
+				Mockery::on(
+					static function ( $arg ) use ( &$saved ) {
+						$saved = $arg;
+						return true;
+					}
+				),
+				false
+			);
+
+		( new Insights() )->record( 'accepted' );
+
+		$this->assertIsArray( $saved );
+		$this->assertCount( 90, $saved, 'prune() must cap 180 days of data down to exactly the 90-day retention window' );
+
+		$byte_size = strlen( serialize( $saved ) );
+		fwrite(
+			STDERR,
+			sprintf(
+				"\n[Insights retention] 180 simulated high-traffic days -> %d entries kept after prune(), serialized size %s bytes (%.2f KB)\n",
+				count( $saved ),
+				number_format( $byte_size ),
+				$byte_size / 1024
+			)
+		);
+
+		$this->assertLessThan(
+			50 * 1024,
+			$byte_size,
+			'wp_options row should stay well under 50KB even at max retention with high daily counts'
+		);
+	}
+
 	public function test_get_range_zero_fills_every_day_including_gaps(): void {
 		$populated_date = ( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) )->modify( '-2 days' )->format( 'Y-m-d' );
 

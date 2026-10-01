@@ -93,28 +93,13 @@
 		});
 	}
 
-	function loadGTM() {
-		var g = window.consentaroGTM;
-		if (!g || !g.id || g.loaded) return;
-		window.dataLayer = window.dataLayer || [];
-		window.dataLayer.push({
-			'gtm.start': new Date().getTime(),
-			event: 'gtm.js',
-		});
-		var f = document.getElementsByTagName('script')[0];
-		var j = document.createElement('script');
-		j.async = true;
-		j.src =
-			'https://www.googletagmanager.com/gtm.js?id=' +
-			encodeURIComponent(g.id);
-		f.parentNode.insertBefore(j, f);
-		g.loaded = true;
-	}
-
 	function done(data) {
 		var consent = (data && data.update) || (data && data.consent) || {};
 		gtagUpdate(consent);
-		loadGTM();
+		// GTM injection itself (if any is pending) is handled by
+		// gtm-loader.js's own listener on this same event — it's always
+		// enqueued alongside this script whenever GTM has consent to wait
+		// for, so it isn't duplicated here too.
 		clearTrap();
 		if (root && root.parentNode) root.parentNode.removeChild(root);
 		if (modal && modal.parentNode) modal.parentNode.removeChild(modal);

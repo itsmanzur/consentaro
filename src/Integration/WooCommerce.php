@@ -33,6 +33,16 @@ final class WooCommerce {
 	private ServiceContainer $container;
 
 	/**
+	 * Product id => {price, name} collected as the page renders add-to-cart
+	 * buttons/forms, so the AJAX add-to-cart JS event can carry the same
+	 * value/price/item_name fields as the server-rendered events below
+	 * instead of only item_id + quantity.
+	 *
+	 * @var array<int, array{price: float, name: string}>
+	 */
+	private array $priceMap = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ServiceContainer $container Container.
@@ -53,6 +63,47 @@ final class WooCommerce {
 		add_action( 'woocommerce_add_to_cart', array( $this, 'onAddToCart' ), 10, 6 );
 		add_action( 'woocommerce_thankyou', array( $this, 'onThankYou' ), 20, 1 );
 		add_action( 'wp_footer', array( $this, 'printQueuedEvents' ), 20 );
+
+		// Collect price/name for any product whose add-to-cart control is
+		// actually rendered on this page (loop cards + single product page),
+		// so the AJAX add_to_cart dataLayer push isn't missing value/price.
+		add_filter( 'woocommerce_loop_add_to_cart_link', array( $this, 'collectLoopProductPrice' ), 10, 2 );
+		add_action( 'woocommerce_before_add_to_cart_button', array( $this, 'collectSingleProductPrice' ) );
+	}
+
+	/**
+	 * Record a loop-card product's price/name (shop/archive/related lists).
+	 * Runs on every render of that markup, so it stays correct even if the
+	 * price changes mid-cache-lifetime; return value is passed through
+	 * untouched since this only observes.
+	 *
+	 * @param string     $html    Add-to-cart link markup (untouched).
+	 * @param WC_Product $product Product being rendered.
+	 * @return string
+	 */
+	public function collectLoopProductPrice( string $html, WC_Product $product ): string {
+		$this->rememberProductPrice( $product );
+		return $html;
+	}
+
+	/**
+	 * Record the current single-product page's price/name.
+	 */
+	public function collectSingleProductPrice(): void {
+		global $product;
+		if ( $product instanceof WC_Product ) {
+			$this->rememberProductPrice( $product );
+		}
+	}
+
+	/**
+	 * @param WC_Product $product Product to record.
+	 */
+	private function rememberProductPrice( WC_Product $product ): void {
+		$this->priceMap[ $product->get_id() ] = array(
+			'price' => (float) $product->get_price(),
+			'name'  => $product->get_name(),
+		);
 	}
 
 	/**
@@ -240,11 +291,22 @@ final class WooCommerce {
 			$events = array_merge( $events, $inline );
 		}
 
-		if ( empty( $events ) ) {
+		// Price/name lookup for the JS-side AJAX add_to_cart handler, keyed
+		// by product id — printed whenever we saw an add-to-cart control on
+		// this page, independent of whether any dataLayer event above fired.
+		$prices = '';
+		if ( ! empty( $this->priceMap ) ) {
+			$prices_json = wp_json_encode( $this->priceMap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+			if ( false !== $prices_json ) {
+				$prices = 'window.consentaroWooPrices=' . $prices_json . ';';
+			}
+		}
+
+		if ( empty( $events ) && '' === $prices ) {
 			return;
 		}
 
-		$pushes = '';
+		$pushes = $prices;
 		foreach ( $events as $payload ) {
 			// HEX flags prevent a product/order field (e.g. an item name)
 			// containing "</script>" from breaking out of the inline tag.
@@ -375,10 +437,8 @@ final class WooCommerce {
 	 * Plugin enabled flag.
 	 */
 	private function isEnabled(): bool {
-		$settings = get_option( 'consentaro_settings', array() );
-		if ( ! is_array( $settings ) ) {
-			return true;
-		}
-		return ! isset( $settings['enabled'] ) || ! empty( $settings['enabled'] );
+		/** @var \Consentaro\Admin\Settings $settings */
+		$settings = $this->container->get( 'settings' );
+		return $settings->isEnabled();
 	}
 }

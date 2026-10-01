@@ -181,12 +181,13 @@ final class ScriptBlocker {
 	 * @param string $category  Resolved category.
 	 */
 	private function buildNeutralizedTag( string $attrs_raw, string $content, string $src, string $category ): string {
-		// Strip any existing type="" so we don't emit it twice.
-		$attrs_raw = (string) preg_replace( '/\s+type\s*=\s*(["\']).*?\1/i', '', $attrs_raw );
+		// Strip any existing type="" (quoted or bare, e.g. type=module) so we
+		// don't emit it twice.
+		$attrs_raw = (string) preg_replace( '/\s+type\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+)/i', '', $attrs_raw );
 
 		if ( '' !== $src ) {
-			// Remove the live src so the browser never fetches it.
-			$attrs_raw = (string) preg_replace( '/\s+src\s*=\s*(["\']).*?\1/i', '', $attrs_raw );
+			// Remove the live src (quoted or bare) so the browser never fetches it.
+			$attrs_raw = (string) preg_replace( '/\s+src\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+)/i', '', $attrs_raw );
 			$attrs_raw .= ' data-consentaro-src="' . esc_attr( $src ) . '"';
 		}
 
@@ -202,8 +203,10 @@ final class ScriptBlocker {
 	 * @param string $name      Attribute name.
 	 */
 	private function extractAttr( string $attrs_raw, string $name ): string {
-		if ( preg_match( '/\b' . preg_quote( $name, '/' ) . '\s*=\s*(["\'])(.*?)\1/i', $attrs_raw, $m ) ) {
-			return $m[2];
+		// Quoted (single/double) or bare (unquoted, e.g. src=foo.js) value.
+		$pattern = '/\b' . preg_quote( $name, '/' ) . '\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s"\'>]+))/i';
+		if ( preg_match( $pattern, $attrs_raw, $m ) ) {
+			return ( $m[1] ?? '' ) !== '' ? $m[1] : ( ( $m[2] ?? '' ) !== '' ? $m[2] : ( $m[3] ?? '' ) );
 		}
 		return '';
 	}
@@ -287,12 +290,12 @@ final class ScriptBlocker {
 	private function isEnabled(): bool {
 		/** @var Settings $settings */
 		$settings = $this->container->get( 'settings' );
-		$data     = $settings->getSettings();
 
-		if ( empty( $data['enabled'] ) ) {
+		if ( ! $settings->isEnabled() ) {
 			return false;
 		}
 
+		$data = $settings->getSettings();
 		return ! isset( $data['script_blocking'] ) || ! empty( $data['script_blocking'] );
 	}
 

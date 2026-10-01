@@ -36,6 +36,7 @@ assets/src
 *.docx
 *.md
 !readme.txt
+!docs/*.md
 .DS_Store
 *.log
 .cursor

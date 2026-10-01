@@ -4,7 +4,7 @@ Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,8 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Gates WooCommerce dataLayer events (view item, add to cart, purchase) by consent
 * Plays nicely with popular page caches (WP Rocket, LiteSpeed, W3 Total Cache)
 * Includes a plain-English Guide tab in wp-admin
+* Best-effort settings import from Complianz — banner text, position, and colors, with a preview before anything is applied
+* Documented set of filters and actions for developers (see docs/hooks.md on GitHub)
 
 **What it does not do**
 
@@ -91,6 +93,10 @@ Yes, optionally — it is off by default. Turn on "Keep a log of consent decisio
 
 Yes. The banner text can be set per language from WPML's String Translation or Polylang's String Translation page. Every other UI label (Accept All, Deny All, Customize, and so on) already works through WordPress's standard translation system, which WPML and Polylang both respect automatically — no extra setup needed for those.
 
+= Can I import my settings from Complianz or CookieYes? =
+
+From Complianz, yes — on a best-effort basis. If Complianz is active, the Guide tab shows an Import card: Preview shows a before/after comparison, and nothing is changed until you click Apply. Only banner text, position, and colors are imported; it does not migrate your full Complianz configuration (cookie scanning, legal pages, categories, etc.), and you should review the result on the Design tab afterward. CookieYes is detected but not yet supported for import — its free version stores banner content in a format that cannot be reliably read, so you'll need to configure your banner manually in Consentaro. Either way, Consentaro never deactivates the other plugin for you — do that yourself once you've confirmed your banner looks right, so visitors don't see two banners at once.
+
 == Translations ==
 
 Consentaro is translation-ready (text domain: `consentaro`). If this plugin is hosted on WordPress.org, you can contribute a translation at [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/consentaro/) — no local setup needed.
@@ -98,6 +104,10 @@ Consentaro is translation-ready (text domain: `consentaro`). If this plugin is h
 For local development, a starter `languages/consentaro.pot` is included. Regenerate it after changing any translatable string with WP-CLI:
 
 `wp i18n make-pot . languages/consentaro.pot --exclude=assets/src,node_modules,vendor`
+
+== Developers ==
+
+Consentaro exposes a set of filters and actions for customizing its behavior (consent defaults, geo detection, script categorization, WooCommerce event tracking, and more) without editing plugin code. See the [hooks reference](https://github.com/itsmanzur/consentaro/blob/main/docs/hooks.md) on GitHub.
 
 == Screenshots ==
 
@@ -128,6 +138,11 @@ If geo-targeting is enabled in the plugin settings and the visitor's country can
 This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/docs/legal), [Privacy Policy](https://ip-api.com/docs/legal).
 
 == Changelog ==
+
+= 1.6.0 =
+* Added: best-effort settings import from Complianz — detects an active Complianz installation, previews a mapping of banner text/position/colors into Consentaro, and only applies it on explicit confirmation; CookieYes is detected but not yet supported (its free version stores banner styling as pre-rendered HTML, not structured settings)
+* Added: developer hooks reference (docs/hooks.md on GitHub) documenting all filters and actions for customizing Consentaro's behavior
+* Improved: verified script-blocking performance on large pages (500+ script tags), confirmed the Insights log stays bounded under high-traffic simulation, and audited options for persistent object-cache (Redis/Memcached) compatibility
 
 = 1.5.1 =
 * Added: WPML and Polylang compatibility — banner text can now be translated per language via each plugin's String Translation screen; all other UI strings already work through WordPress's standard translation system

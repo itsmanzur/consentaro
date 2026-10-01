@@ -1,11 +1,13 @@
-import { useState, useEffect } from '@wordpress/element';
-import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useState, useEffect, useCallback } from '@wordpress/element';
+import { Button, Spinner, Notice as WPNotice } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { __, sprintf } from '@wordpress/i18n';
 
 const STORAGE_KEY = 'consentaro_guide_checklist_v1';
 
 const SECTIONS = [
 	{ id: 'intro', label: 'What is Consentaro?' },
+	{ id: 'import', label: 'Switching plugins?' },
 	{ id: 'start', label: 'Quick start' },
 	{ id: 'general', label: 'General settings' },
 	{ id: 'design', label: 'Banner design' },
@@ -23,6 +25,246 @@ const CHECKLIST = [
 	{ id: 'geo', label: 'Decide if the banner should only show in the EU' },
 	{ id: 'test', label: 'Visit your site in a private window and test Accept / Deny' },
 ];
+
+const BANNER_FIELD_LABELS = {
+	position: __( 'Position', 'consentaro' ),
+	text: __( 'Banner text', 'consentaro' ),
+	bg: __( 'Background', 'consentaro' ),
+	text_color: __( 'Text color', 'consentaro' ),
+	btn_primary_bg: __( 'Primary button', 'consentaro' ),
+	btn_secondary_bg: __( 'Secondary button', 'consentaro' ),
+};
+
+const ColorSwatch = ( { value } ) => (
+	<span className="consentaro-import__swatch-row">
+		<span
+			className="consentaro-import__swatch"
+			style={ { backgroundColor: value } }
+			aria-hidden="true"
+		/>
+		{ value }
+	</span>
+);
+
+const ImportDiffRow = ( { label, fieldKey, before, after } ) => {
+	const isColor = fieldKey.indexOf( '_bg' ) !== -1 || fieldKey === 'bg';
+	return (
+		<tr>
+			<th scope="row">{ label }</th>
+			<td>{ isColor ? <ColorSwatch value={ before } /> : String( before ) }</td>
+			<td>{ isColor ? <ColorSwatch value={ after } /> : String( after ) }</td>
+		</tr>
+	);
+};
+
+const ImportCard = ( { source, currentBanner, onImported } ) => {
+	const [ preview, setPreview ] = useState( null );
+	const [ loadingPreview, setLoadingPreview ] = useState( false );
+	const [ applying, setApplying ] = useState( false );
+	const [ confirming, setConfirming ] = useState( false );
+	const [ error, setError ] = useState( null );
+	const [ applied, setApplied ] = useState( false );
+
+	const loadPreview = useCallback( () => {
+		setLoadingPreview( true );
+		setError( null );
+		apiFetch( { path: `/consentaro/v1/import/preview?source=${ source.source }` } )
+			.then( ( data ) => {
+				if ( data.error ) {
+					setError( data.error );
+					setPreview( null );
+				} else {
+					setPreview( data );
+				}
+			} )
+			.catch( () =>
+				setError( __( 'Could not read settings from this plugin.', 'consentaro' ) )
+			)
+			.finally( () => setLoadingPreview( false ) );
+	}, [ source.source ] );
+
+	const apply = useCallback( () => {
+		setApplying( true );
+		setError( null );
+		apiFetch( {
+			path: '/consentaro/v1/import/apply',
+			method: 'POST',
+			data: { source: source.source },
+		} )
+			.then( ( data ) => {
+				if ( ! data.success ) {
+					setError( __( 'Import could not be applied.', 'consentaro' ) );
+					return;
+				}
+				setApplied( true );
+				setConfirming( false );
+				if ( onImported ) {
+					onImported( data.settings );
+				}
+			} )
+			.catch( () => setError( __( 'Import could not be applied.', 'consentaro' ) ) )
+			.finally( () => setApplying( false ) );
+	}, [ source.source, onImported ] );
+
+	if ( ! source.import_supported ) {
+		return (
+			<div className="consentaro-import__card consentaro-import__card--unsupported">
+				<p>
+					{ sprintf(
+						/* translators: %s: plugin name, e.g. "CookieYes" */
+						__(
+							'%s detected — automatic import isn’t available for this plugin yet. You’ll need to configure your banner manually in Consentaro.',
+							'consentaro'
+						),
+						source.name
+					) }
+				</p>
+			</div>
+		);
+	}
+
+	return (
+		<div className="consentaro-import__card">
+			{ ! preview && ! applied && (
+				<>
+					<p>
+						{ sprintf(
+							/* translators: %s: plugin name, e.g. "Complianz" */
+							__(
+								'We found %s active on this site. Import its banner text, position, and colors into Consentaro?',
+								'consentaro'
+							),
+							source.name
+						) }
+					</p>
+					<Button variant="secondary" onClick={ loadPreview } isBusy={ loadingPreview } disabled={ loadingPreview }>
+						{ loadingPreview ? __( 'Reading settings…', 'consentaro' ) : __( 'Preview', 'consentaro' ) }
+					</Button>
+				</>
+			) }
+
+			{ error && (
+				<WPNotice status="error" isDismissible={ false }>
+					{ error }
+				</WPNotice>
+			) }
+
+			{ preview && ! applied && (
+				<>
+					<table className="consentaro-import__diff-table">
+						<thead>
+							<tr>
+								<th scope="col">{ __( 'Setting', 'consentaro' ) }</th>
+								<th scope="col">{ __( 'Current (Consentaro)', 'consentaro' ) }</th>
+								<th scope="col">{ sprintf( __( 'From %s', 'consentaro' ), source.name ) }</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ Object.keys( BANNER_FIELD_LABELS ).map( ( key ) => (
+								<ImportDiffRow
+									key={ key }
+									label={ BANNER_FIELD_LABELS[ key ] }
+									fieldKey={ key }
+									before={ currentBanner?.[ key ] ?? '' }
+									after={ preview.banner?.[ key ] ?? '' }
+								/>
+							) ) }
+						</tbody>
+					</table>
+
+					{ preview.notes && preview.notes.length > 0 && (
+						<ul className="consentaro-import__notes">
+							{ preview.notes.map( ( note, i ) => (
+								<li key={ i }>{ note }</li>
+							) ) }
+						</ul>
+					) }
+
+					{ ! confirming && (
+						<Button variant="primary" onClick={ () => setConfirming( true ) }>
+							{ __( 'Apply', 'consentaro' ) }
+						</Button>
+					) }
+
+					{ confirming && (
+						<div className="consentaro-import__confirm">
+							<p>
+								{ __(
+									'This will overwrite your current banner text, position, and colors in Consentaro. This cannot be undone automatically.',
+									'consentaro'
+								) }
+							</p>
+							<Button variant="primary" isDestructive onClick={ apply } isBusy={ applying } disabled={ applying }>
+								{ applying ? __( 'Applying…', 'consentaro' ) : __( 'Yes, overwrite and apply', 'consentaro' ) }
+							</Button>
+							<Button variant="tertiary" onClick={ () => setConfirming( false ) } disabled={ applying }>
+								{ __( 'Cancel', 'consentaro' ) }
+							</Button>
+						</div>
+					) }
+				</>
+			) }
+
+			{ applied && (
+				<WPNotice status="success" isDismissible={ false }>
+					{ sprintf(
+						__( 'Imported from %s. Review the Design tab to confirm it looks right.', 'consentaro' ),
+						source.name
+					) }
+				</WPNotice>
+			) }
+
+			<p className="consentaro-import__note">
+				{ sprintf(
+					/* translators: %s: plugin name */
+					__(
+						'This imports banner text, position, and colors only — other settings need manual configuration. Remember to deactivate %s once you’ve confirmed Consentaro is set up correctly, so both plugins don’t show a banner at the same time.',
+						'consentaro'
+					),
+					source.name
+				) }
+			</p>
+		</div>
+	);
+};
+
+const ImportSection = ( { onImported, currentBanner } ) => {
+	const [ sources, setSources ] = useState( null );
+	const [ loading, setLoading ] = useState( true );
+
+	useEffect( () => {
+		apiFetch( { path: '/consentaro/v1/import/detect' } )
+			.then( ( data ) => setSources( Array.isArray( data ) ? data : [] ) )
+			.catch( () => setSources( [] ) )
+			.finally( () => setLoading( false ) );
+	}, [] );
+
+	if ( loading ) {
+		return (
+			<section id="consentaro-guide-import" className="consentaro-guide__section">
+				<Spinner />
+			</section>
+		);
+	}
+
+	if ( ! sources || sources.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<section id="consentaro-guide-import" className="consentaro-guide__section">
+			<h2>{ __( 'Switching from another cookie plugin?', 'consentaro' ) }</h2>
+			{ sources.map( ( source ) => (
+				<ImportCard
+					key={ source.source }
+					source={ source }
+					currentBanner={ currentBanner }
+					onImported={ onImported }
+				/>
+			) ) }
+		</section>
+	);
+};
 
 const ModuleCard = ( { mark, title, children, defaultOpen = false } ) => {
 	const [ open, setOpen ] = useState( defaultOpen );
@@ -50,7 +292,7 @@ const ModuleCard = ( { mark, title, children, defaultOpen = false } ) => {
 	);
 };
 
-const GuideTab = ( { settings, onGoToTab } ) => {
+const GuideTab = ( { settings, onGoToTab, onImported } ) => {
 	const [ active, setActive ] = useState( 'intro' );
 	const [ checks, setChecks ] = useState( {} );
 
@@ -164,6 +406,8 @@ const GuideTab = ( { settings, onGoToTab } ) => {
 						</p>
 					</div>
 				</section>
+
+				<ImportSection onImported={ onImported } currentBanner={ settings?.banner } />
 
 				<section id="consentaro-guide-start" className="consentaro-guide__section">
 					<h2>{ __( 'Quick start checklist', 'consentaro' ) }</h2>

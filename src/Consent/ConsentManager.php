@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Consentaro\Consent;
 
+use Consentaro\Admin\Settings;
+use Consentaro\Core\ServiceContainer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -40,14 +43,24 @@ final class ConsentManager {
 	private ConsentMode $mode;
 
 	/**
+	 * Container (lazy access to the settings service — avoids a hard
+	 * dependency cycle at registration time).
+	 *
+	 * @var ServiceContainer
+	 */
+	private ServiceContainer $container;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param CookieStorage $cookies Cookie storage.
-	 * @param ConsentMode   $mode    Consent Mode helper.
+	 * @param CookieStorage     $cookies   Cookie storage.
+	 * @param ConsentMode       $mode      Consent Mode helper.
+	 * @param ServiceContainer  $container Container (for the settings service).
 	 */
-	public function __construct( CookieStorage $cookies, ConsentMode $mode ) {
-		$this->cookies = $cookies;
-		$this->mode    = $mode;
+	public function __construct( CookieStorage $cookies, ConsentMode $mode, ServiceContainer $container ) {
+		$this->cookies   = $cookies;
+		$this->mode      = $mode;
+		$this->container = $container;
 	}
 
 	/**
@@ -208,10 +221,8 @@ final class ConsentManager {
 	 * Plugin enabled flag from settings.
 	 */
 	private function isEnabled(): bool {
-		$settings = get_option( 'consentaro_settings', array() );
-		if ( ! is_array( $settings ) ) {
-			return true;
-		}
-		return ! isset( $settings['enabled'] ) || ! empty( $settings['enabled'] );
+		/** @var Settings $settings */
+		$settings = $this->container->get( 'settings' );
+		return $settings->isEnabled();
 	}
 }

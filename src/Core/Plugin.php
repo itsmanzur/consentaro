@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Consentaro\Admin\ConsentLog;
+use Consentaro\Admin\Import;
 use Consentaro\Admin\Insights;
 use Consentaro\Admin\REST_Controller;
 use Consentaro\Admin\Settings;
@@ -103,7 +104,8 @@ final class Plugin {
 			static function ( ServiceContainer $container ): ConsentManager {
 				return new ConsentManager(
 					$container->get( 'cookie_storage' ),
-					$container->get( 'consent_mode' )
+					$container->get( 'consent_mode' ),
+					$container
 				);
 			}
 		);
@@ -133,6 +135,13 @@ final class Plugin {
 			'consent_log',
 			static function (): ConsentLog {
 				return new ConsentLog();
+			}
+		);
+
+		$c->set(
+			'import',
+			static function ( ServiceContainer $container ): Import {
+				return new Import( $container );
 			}
 		);
 

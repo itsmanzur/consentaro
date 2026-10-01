@@ -27,24 +27,52 @@ if (Test-Path $stagingParent) {
 New-Item -ItemType Directory -Path $staging -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $root "dist") -Force | Out-Null
 
-$patterns = @()
+$excludePatterns = @()
+$negatePatterns = @()
 if (Test-Path $distIgnorePath) {
-	$patterns = Get-Content $distIgnorePath |
+	Get-Content $distIgnorePath |
 		ForEach-Object { $_.Trim() } |
-		Where-Object { $_ -ne "" -and -not $_.StartsWith("#") }
+		Where-Object { $_ -ne "" -and -not $_.StartsWith("#") } |
+		ForEach-Object {
+			if ($_.StartsWith("!")) {
+				$negatePatterns += $_.Substring(1)
+			} else {
+				$excludePatterns += $_
+			}
+		}
+}
+
+function Test-DistPatternMatch([string]$norm, [string]$rawPattern) {
+	$pat = $rawPattern.Replace("\", "/").TrimEnd("/")
+	if ($norm -eq $pat) { return $true }
+	if ($norm.StartsWith("$pat/")) { return $true }
+	# simple glob: *.pdf
+	if ($pat.StartsWith("*.") -and $norm.EndsWith($pat.Substring(1))) { return $true }
+	# directory glob: docs/*.md
+	if ($pat -match "^(.*)/\*(\.[^/]+)$") {
+		$dir = $Matches[1]
+		$ext = $Matches[2]
+		if ($norm.StartsWith("$dir/") -and $norm.EndsWith($ext) -and -not $norm.Substring($dir.Length + 1).Contains("/")) {
+			return $true
+		}
+	}
+	return $false
 }
 
 function Should-Exclude([string]$relativePath) {
 	$norm = $relativePath.Replace("\", "/")
-	foreach ($p in $patterns) {
-		$pat = $p.Replace("\", "/").TrimEnd("/")
-		if ($pat.StartsWith("!")) { continue }
-		if ($norm -eq $pat) { return $true }
-		if ($norm.StartsWith("$pat/")) { return $true }
-		# simple glob: *.pdf
-		if ($pat.StartsWith("*.") -and $norm.EndsWith($pat.Substring(1))) { return $true }
+
+	$excluded = $false
+	foreach ($p in $excludePatterns) {
+		if (Test-DistPatternMatch $norm $p) { $excluded = $true; break }
 	}
-	return $false
+	if (-not $excluded) { return $false }
+
+	# A more specific "!pattern" un-excludes a file an exclude pattern matched.
+	foreach ($p in $negatePatterns) {
+		if (Test-DistPatternMatch $norm $p) { return $false }
+	}
+	return $true
 }
 
 Write-Host "Copying files to staging ($slug/)..."

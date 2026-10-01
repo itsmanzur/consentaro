@@ -25,13 +25,24 @@
 		var id = $btn ? $btn.data('product_id') : null;
 		var qty = $btn ? parseInt($btn.data('quantity'), 10) || 1 : 1;
 		if (!id) return;
+
+		// Filled by WooCommerce.php from whatever add-to-cart controls were
+		// actually rendered on this page — approximate for a variable
+		// product (parent price), exact for a simple product.
+		var prices = window.consentaroWooPrices || {};
+		var known = prices[id] || null;
+		var price = known ? known.price : 0;
+
 		pushEvent({
 			event: 'add_to_cart',
 			ecommerce: {
 				currency: cfg.currency || 'USD',
+				value: price * qty,
 				items: [
 					{
 						item_id: String(id),
+						item_name: known ? known.name : undefined,
+						price: price,
 						quantity: qty,
 					},
 				],

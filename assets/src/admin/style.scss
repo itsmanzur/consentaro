@@ -980,6 +980,97 @@ $consentaro-teal-tint-border: rgba(14, 124, 102, 0.28);
 	color: #50575e;
 }
 
+.consentaro-import__card {
+	border: 1px solid #dcdcde;
+	background: #fff;
+	border-radius: 2px;
+	padding: 16px;
+	margin-bottom: 14px;
+}
+
+.consentaro-import__card--unsupported {
+	background: #fcfcfc;
+	color: #50575e;
+}
+
+.consentaro-import__card p {
+	margin-top: 0;
+}
+
+.consentaro-import__diff-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 12px 0;
+	font-size: 13px;
+}
+
+.consentaro-import__diff-table th,
+.consentaro-import__diff-table td {
+	text-align: left;
+	padding: 8px 10px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: top;
+}
+
+.consentaro-import__diff-table thead th {
+	color: #646970;
+	font-weight: 600;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.consentaro-import__swatch-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.consentaro-import__swatch {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	flex-shrink: 0;
+}
+
+.consentaro-import__notes {
+	margin: 0 0 12px;
+	padding-left: 18px;
+	color: #646970;
+	font-size: 12px;
+}
+
+.consentaro-import__notes li + li {
+	margin-top: 4px;
+}
+
+.consentaro-import__confirm {
+	margin-top: 10px;
+	padding: 12px 14px;
+	border: 1px solid #f0b849;
+	background: #fcf9e8;
+	border-radius: 2px;
+}
+
+.consentaro-import__confirm p {
+	margin: 0 0 10px;
+}
+
+.consentaro-import__confirm .components-button + .components-button {
+	margin-left: 8px;
+}
+
+.consentaro-import__note {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #f0f0f1;
+	color: #646970;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
 @media (max-width: 782px) {
 	.consentaro-guide {
 		grid-template-columns: 1fr;

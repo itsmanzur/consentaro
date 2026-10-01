@@ -66,8 +66,16 @@ final class ConsentMode {
 	 */
 	public function renderDefaultScript( ?array $states = null ): void {
 		$payload = $this->sanitizeStates( $states ?? $this->getDefaultStates() );
-		$payload['wait_for_update'] = 500;
-		$json                       = wp_json_encode( $payload );
+
+		/**
+		 * Milliseconds gtag() waits for an update call (banner interaction)
+		 * before falling back to the default (denied) state.
+		 *
+		 * @param int $wait_ms Wait time in milliseconds.
+		 */
+		$payload['wait_for_update'] = max( 0, (int) apply_filters( 'consentaro_wait_for_update_ms', 500 ) );
+
+		$json = wp_json_encode( $payload );
 
 		if ( false === $json ) {
 			return;

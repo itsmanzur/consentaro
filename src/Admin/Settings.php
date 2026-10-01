@@ -216,6 +216,15 @@ final class Settings {
 	}
 
 	/**
+	 * Single source of truth for the "is Consentaro on" flag — used by
+	 * ConsentManager, WooCommerce, and ScriptBlocker instead of each reading
+	 * (and re-deriving the same default-true fallback for) the raw option.
+	 */
+	public function isEnabled(): bool {
+		return ! empty( $this->getSettings()['enabled'] );
+	}
+
+	/**
 	 * Persist settings.
 	 *
 	 * @param array<string, mixed> $data Incoming data.

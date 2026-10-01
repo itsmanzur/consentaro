@@ -80,6 +80,13 @@ const App = () => {
 		setForm( ( prev ) => ( { ...prev, banner: { ...DEFAULT_BANNER } } ) );
 	}, [] );
 
+	// Called after a successful import apply — the REST call already
+	// persisted the new settings, so just sync local state to match.
+	const handleImported = useCallback( ( updated ) => {
+		setSettings( updated );
+		setForm( updated );
+	}, [] );
+
 	const save = useCallback( async () => {
 		setSaving( true );
 		setNotice( null );
@@ -163,6 +170,7 @@ const App = () => {
 							<GuideTab
 								settings={ settings }
 								onGoToTab={ ( name ) => setTab( name ) }
+								onImported={ handleImported }
 							/>
 						);
 					}

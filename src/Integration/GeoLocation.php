@@ -243,11 +243,14 @@ final class GeoLocation {
 	}
 
 	/**
-	 * Skip API for local/dev addresses.
+	 * Skip API for local/dev addresses — loopback, private (10/8, 172.16/12,
+	 * 192.168/16, IPv6 ULA fc00::/7), and other reserved ranges.
 	 */
 	private function isLocalIp( string $ip ): bool {
-		return in_array( $ip, array( '127.0.0.1', '::1' ), true )
-			|| str_starts_with( $ip, '192.168.' )
-			|| str_starts_with( $ip, '10.' );
+		return false === filter_var(
+			$ip,
+			FILTER_VALIDATE_IP,
+			FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+		);
 	}
 }

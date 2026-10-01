@@ -102,6 +102,36 @@ final class REST_Controller {
 
 		register_rest_route(
 			'consentaro/v1',
+			'/import/detect',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'detectImportSources' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
+			'/import/preview',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'previewImport' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
+			'/import/apply',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'applyImport' ),
+				'permission_callback' => array( $this, 'canManage' ),
+			)
+		);
+
+		register_rest_route(
+			'consentaro/v1',
 			'/geo-check',
 			array(
 				'methods'             => 'GET',
@@ -229,6 +259,64 @@ final class REST_Controller {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- raw CSV byte stream, not HTML.
 		echo $csv;
 		exit;
+	}
+
+	/**
+	 * GET /import/detect — which competitor plugins are present.
+	 */
+	public function detectImportSources(): WP_REST_Response {
+		/** @var Import $import */
+		$import = $this->container->get( 'import' );
+		return rest_ensure_response( $import->detectSources() );
+	}
+
+	/**
+	 * GET /import/preview?source=complianz — read-only mapping preview.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function previewImport( WP_REST_Request $request ): WP_REST_Response {
+		/** @var Import $import */
+		$import = $this->container->get( 'import' );
+		$source = sanitize_key( (string) $request->get_param( 'source' ) );
+
+		return rest_ensure_response( $import->previewImport( $source ) );
+	}
+
+	/**
+	 * POST /import/apply — persists the mapped settings. Only ever called
+	 * from an explicit "Apply" click in the admin UI, never automatically.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function applyImport( WP_REST_Request $request ): WP_REST_Response {
+		/** @var Import $import */
+		$import = $this->container->get( 'import' );
+		$params = $request->get_json_params();
+		if ( ! is_array( $params ) ) {
+			$params = $request->get_params();
+		}
+
+		$source  = sanitize_key( (string) ( $params['source'] ?? '' ) );
+		$success = $import->applyImport( $source );
+
+		if ( ! $success ) {
+			return rest_ensure_response(
+				array(
+					'success' => false,
+				)
+			);
+		}
+
+		/** @var Settings $settings */
+		$settings = $this->container->get( 'settings' );
+
+		return rest_ensure_response(
+			array(
+				'success'  => true,
+				'settings' => $settings->getSettings(),
+			)
+		);
 	}
 
 	/**
