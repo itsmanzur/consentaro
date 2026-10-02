@@ -99,6 +99,117 @@ final class ConsentLog {
 	}
 
 	/**
+	 * Paginated, filterable read of the log — backs the
+	 * `consentaro_consent_log_query` filter that add-ons use to show the log.
+	 *
+	 * Supported $args: page (int, default 1), per_page (int, default 20, max
+	 * 100), action ('accept-all'|'deny-all'|'customize'), date_from/date_to
+	 * ('Y-m-d', inclusive), rid_search (partial rid match), orderby
+	 * ('created_at'|'action'|'rid', default created_at), order ('ASC'|'DESC',
+	 * default DESC).
+	 *
+	 * Returns an empty result (never an error) when logging is disabled or
+	 * the table doesn't exist.
+	 *
+	 * @param array<string, mixed> $args Query args.
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function query( array $args = array() ): array {
+		$empty = array(
+			'items' => array(),
+			'total' => 0,
+		);
+
+		if ( ! $this->isEnabled() || ! $this->tableExists() ) {
+			return $empty;
+		}
+
+		global $wpdb;
+
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$per_page = max( 1, min( 100, (int) ( $args['per_page'] ?? 20 ) ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		$where  = array( '1=1' );
+		$params = array();
+
+		$action = isset( $args['action'] ) ? sanitize_key( (string) $args['action'] ) : '';
+		if ( in_array( $action, array( 'accept-all', 'deny-all', 'customize' ), true ) ) {
+			$where[]  = 'action = %s';
+			$params[] = $action;
+		}
+
+		$date_from = $this->validDate( $args['date_from'] ?? null );
+		if ( null !== $date_from ) {
+			$where[]  = 'created_at >= %s';
+			$params[] = $date_from . ' 00:00:00';
+		}
+
+		$date_to = $this->validDate( $args['date_to'] ?? null );
+		if ( null !== $date_to ) {
+			$where[]  = 'created_at <= %s';
+			$params[] = $date_to . ' 23:59:59';
+		}
+
+		$rid_search = isset( $args['rid_search'] ) ? trim( sanitize_text_field( (string) $args['rid_search'] ) ) : '';
+		if ( '' !== $rid_search ) {
+			$where[]  = 'rid LIKE %s';
+			$params[] = '%' . $wpdb->esc_like( $rid_search ) . '%';
+		}
+
+		$orderby = isset( $args['orderby'] ) ? sanitize_key( (string) $args['orderby'] ) : 'created_at';
+		if ( ! in_array( $orderby, array( 'created_at', 'action', 'rid' ), true ) ) {
+			$orderby = 'created_at';
+		}
+		$order = isset( $args['order'] ) && 'ASC' === strtoupper( (string) $args['order'] ) ? 'ASC' : 'DESC';
+
+		$where_sql = implode( ' AND ', $where );
+		$table     = $this->tableName();
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total_sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
+		$total     = (int) $wpdb->get_var( empty( $params ) ? $total_sql : $wpdb->prepare( $total_sql, $params ) );
+
+		// $orderby/$order are whitelisted above, so interpolating them is safe.
+		$rows_sql = "SELECT id, rid, action, categories, created_at FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order}, id {$order} LIMIT %d OFFSET %d";
+		$rows     = $wpdb->get_results(
+			$wpdb->prepare( $rows_sql, array_merge( $params, array( $per_page, $offset ) ) ),
+			ARRAY_A
+		);
+		// phpcs:enable
+
+		return array(
+			'items' => is_array( $rows ) ? $rows : array(),
+			'total' => $total,
+		);
+	}
+
+	/**
+	 * Whether the log table exists (it is created on activation/load, but a
+	 * hand-dropped table must not turn a read into a fatal error).
+	 */
+	private function tableExists(): bool {
+		global $wpdb;
+		$table = $this->tableName();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
+	}
+
+	/**
+	 * Returns a 'Y-m-d' string only if it is a real calendar date.
+	 *
+	 * @param mixed $value Candidate value.
+	 */
+	private function validDate( $value ): ?string {
+		if ( ! is_string( $value ) || 1 !== preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+			return null;
+		}
+		$parsed = \DateTime::createFromFormat( 'Y-m-d', $value );
+		return ( false !== $parsed && $parsed->format( 'Y-m-d' ) === $value ) ? $value : null;
+	}
+
+	/**
 	 * CSV export of the most recent rows (capped).
 	 */
 	public function exportCsv(): string {

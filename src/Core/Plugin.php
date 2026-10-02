@@ -202,6 +202,20 @@ final class Plugin {
 		$this->container->get( 'script_blocker' )->register();
 		$this->container->get( 'consent_log' )->register();
 
+		// Provider for add-ons (e.g. Consentaro Pro's log viewer). A no-op
+		// unless something applies this filter.
+		$container = $this->container;
+		add_filter(
+			'consentaro_consent_log_query',
+			static function ( $default, array $args = array() ) use ( $container ) {
+				/** @var \Consentaro\Admin\ConsentLog $log */
+				$log = $container->get( 'consent_log' );
+				return $log->query( $args );
+			},
+			10,
+			2
+		);
+
 		// WooCommerce may load after us on plugins_loaded.
 		add_action( 'woocommerce_loaded', array( $this, 'bootWooCommerce' ) );
 		// Fallback if WC already active.

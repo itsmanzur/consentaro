@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consentaro — Cookie Consent & Google Consent Mode v2 for WordPress & WooCommerce</title>
+<meta name="description" content="Consentaro is an ultra-lightweight WordPress plugin for GDPR-compliant cookie consent with Google Consent Mode v2, WooCommerce support, script blocking, and geo-based banner display. Free forever, Pro available.">
+<meta name="keywords" content="consentaro, cookie consent, google consent mode v2, wordpress gdpr, woocommerce consent, cookie banner, GDPR plugin">
+<meta property="og:title" content="Consentaro — Cookie Consent & Google Consent Mode v2">
+<meta property="og:description" content="Ultra-light Google Consent Mode v2 for WordPress. Simple cookie banner, GTM after choice, WooCommerce-ready.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --max-w: 1260px;
+  --pad-d: 40px; --pad-t: 24px; --pad-m: 16px;
+  --gap-section: 110px; --gap-section-t: 80px; --gap-section-m: 64px;
+  --gap-card: 24px;
+  --r-card: 20px; --r-btn: 14px; --r-chip: 999px;
+  --btn-h: 54px;
+
+  --bg: #F6FAF8;
+  --surface: #FFFFFF;
+  --surface-2: #F0F7F4;
+  --ink: #0E1D2B;
+  --muted: #4D6660;
+  --muted-2: #7A938D;
+  --teal: #0E7C66;
+  --teal-d: #095C4C;
+  --teal-l: #18A086;
+  --teal-glow: rgba(14,124,102,0.15);
+  --gold: #F5B942;
+  --gold-d: #8A5A00;
+  --gold-l: #FFF0CE;
+  --mint: #E3F5EE;
+  --mint-2: #D3EDE3;
+  --border: #DDE8E4;
+  --dark1: #0F3429;
+  --dark2: #0D2822;
+  --dark3: #080F18;
+  --pro-purple: #6C47E8;
+  --pro-purple-l: #EDE8FD;
+  --shadow-sm: 0 2px 8px rgba(14,29,43,0.07);
+  --shadow-md: 0 12px 36px rgba(14,29,43,0.11);
+  --shadow-lg: 0 28px 72px rgba(14,29,43,0.18);
+  --shadow-glow: 0 0 40px rgba(14,124,102,0.22);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.68; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif; line-height:1.13; letter-spacing:-0.015em;}
+p{margin:0;}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+ul{list-style:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none;}
+
+/* ===== LAYOUT ===== */
+.wrap{max-width:var(--max-w); margin-inline:auto; padding-inline:var(--pad-d);}
+.section{padding-block:var(--gap-section);}
+.section-tight{padding-block:calc(var(--gap-section)*0.55);}
+
+/* ===== EYEBROW / HEADINGS ===== */
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-weight:700; font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--teal);
+}
+.eyebrow::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--gold); flex:none;}
+h2.h2{font-size:46px; font-weight:800; color:var(--ink); max-width:660px;}
+.lede{font-size:18px; color:var(--muted); max-width:580px; margin-top:16px; line-height:1.7;}
+.center{text-align:center; margin-inline:auto;}
+
+/* ===== BADGES ===== */
+.badge-free{
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--mint); color:var(--teal); font-size:11px; font-weight:700;
+  padding:3px 10px; border-radius:999px; letter-spacing:0.04em;
+}
+.badge-pro{
+  display:inline-flex; align-items:center; gap:5px;
+  background:var(--pro-purple-l); color:var(--pro-purple); font-size:11px; font-weight:700;
+  padding:3px 10px; border-radius:999px; letter-spacing:0.04em;
+}
+.badge-free::before{content:"⬡"; font-size:10px;}
+.badge-pro::before{content:"★"; font-size:10px;}
+
+/* ===== BUTTONS ===== */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  height:var(--btn-h); padding-inline:28px; border-radius:var(--r-btn);
+  font-weight:600; font-size:15px; white-space:nowrap;
+  transition:transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.btn-primary{background:var(--gold); color:var(--ink); box-shadow:0 8px 24px rgba(245,185,66,0.4);}
+.btn-primary:hover{transform:translateY(-2px); background:#F7C561; box-shadow:0 12px 32px rgba(245,185,66,0.5);}
+.btn-teal{background:var(--teal); color:#fff; box-shadow:0 8px 24px rgba(14,124,102,0.3);}
+.btn-teal:hover{transform:translateY(-2px); background:var(--teal-l);}
+.btn-ghost-dark{background:transparent; color:#D8F0E8; border:1.5px solid rgba(216,240,232,0.3);}
+.btn-ghost-dark:hover{border-color:#D8F0E8; transform:translateY(-2px);}
+.btn-ghost{background:transparent; color:var(--ink); border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-2px);}
+.btn-pro{background:linear-gradient(135deg,var(--pro-purple),#8B5CF6); color:#fff; box-shadow:0 8px 24px rgba(108,71,232,0.3);}
+.btn-pro:hover{transform:translateY(-2px); box-shadow:0 12px 32px rgba(108,71,232,0.4);}
+.btn-sm{height:42px; padding-inline:20px; font-size:14px;}
+
+/* ===== ANIMATIONS ===== */
+.reveal{opacity:0; transform:translateY(24px); transition:opacity 580ms ease, transform 580ms ease;}
+.reveal.is-visible{opacity:1; transform:translateY(0);}
+.reveal-scale{opacity:0; transform:scale(0.94); transition:opacity 580ms ease, transform 580ms ease;}
+.reveal-scale.is-visible{opacity:1; transform:scale(1);}
+
+/* ===== FLOATING PARTICLES ===== */
+#particles-canvas{position:absolute; inset:0; pointer-events:none; z-index:0;}
+
+/* ===== SCROLL PROGRESS ===== */
+#scroll-progress{
+  position:fixed; top:0; left:0; right:0; height:3px; z-index:200;
+  background:linear-gradient(90deg, var(--teal), var(--gold));
+  transform-origin:left; transform:scaleX(0);
+  transition:transform 0.1s linear;
+}
+
+/* ===== FLOATING TOC ===== */
+#floating-toc{
+  position:fixed; right:24px; top:50%; transform:translateY(-50%);
+  z-index:40; display:flex; flex-direction:column; gap:8px;
+  opacity:0; pointer-events:none; transition:opacity 300ms ease;
+}
+#floating-toc.is-visible{opacity:1; pointer-events:all;}
+.toc-dot{
+  width:10px; height:10px; border-radius:50%; background:var(--border);
+  border:2px solid var(--border); transition:all 200ms ease; cursor:pointer;
+  position:relative;
+}
+.toc-dot:hover,.toc-dot.active{background:var(--teal); border-color:var(--teal); transform:scale(1.3);}
+.toc-dot .toc-label{
+  position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  background:var(--ink); color:#fff; font-size:12px; font-weight:600;
+  padding:4px 10px; border-radius:8px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity 150ms ease;
+}
+.toc-dot:hover .toc-label{opacity:1;}
+
+/* ===== BACK TO TOP ===== */
+#back-top{
+  position:fixed; bottom:28px; right:28px; z-index:40;
+  width:46px; height:46px; border-radius:50%; background:var(--teal); color:#fff;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-md);
+  opacity:0; pointer-events:none; transition:all 200ms ease; font-size:20px;
+}
+#back-top.is-visible{opacity:1; pointer-events:all;}
+#back-top:hover{transform:translateY(-3px);}
+
+/* ===== HEADER ===== */
+#site-header{
+  position:sticky; top:0; z-index:100;
+  background:rgba(246,250,248,0.85); backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;
+  transition:border-color 200ms ease, box-shadow 200ms ease;
+}
+#site-header.is-scrolled{border-color:var(--border); box-shadow:0 4px 24px rgba(14,29,43,0.06);}
+.nav-inner{display:flex; align-items:center; justify-content:space-between; padding-block:14px;}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; font-size:20px; font-family:'Poppins',sans-serif; color:var(--ink);}
+.brand-mark{
+  width:36px; height:36px; border-radius:11px; flex:none;
+  background:linear-gradient(135deg,var(--teal-l),var(--teal) 50%,var(--teal-d));
+  display:flex; align-items:center; justify-content:center;
+}
+.brand-mark svg{width:22px; height:22px;}
+.brand-version{font-size:11px; font-weight:600; background:var(--mint); color:var(--teal); padding:2px 8px; border-radius:999px; margin-left:-4px;}
+.nav-links{display:flex; align-items:center; gap:32px;}
+.nav-links a{font-weight:500; font-size:15px; color:var(--muted); transition:color 160ms;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);}
+.nav-links a.active{font-weight:600;}
+.nav-cta{display:flex; align-items:center; gap:12px;}
+.nav-toggle{display:none; padding:8px; border-radius:8px;}
+.nav-toggle span{display:block; width:22px; height:2px; background:var(--ink); margin:5px 0; border-radius:2px; transition:all 200ms ease;}
+.nav-mobile{
+  display:none; position:absolute; top:100%; left:0; right:0;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow-md); padding:20px var(--pad-d); z-index:99;
+}
+.nav-mobile a{display:block; padding:10px 0; font-weight:500; border-bottom:1px solid var(--border); color:var(--ink);}
+.nav-mobile a:last-child{border-bottom:none;}
+
+/* ===== HERO ===== */
+#hero{
+  background:linear-gradient(135deg,var(--dark1) 0%, var(--dark2) 60%, var(--dark3) 100%);
+  color:#fff; position:relative; overflow:hidden; padding-block:96px 80px;
+}
+#hero::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(70% 80% at 0% 0%, rgba(24,160,134,0.28), transparent 55%),
+    radial-gradient(50% 60% at 100% 80%, rgba(108,71,232,0.14), transparent 55%);
+}
+.hero-grid{
+  position:relative; z-index:1; display:grid;
+  grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center;
+}
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--gold); font-weight:700; font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
+  background:rgba(245,185,66,0.12); padding:6px 14px; border-radius:999px; border:1px solid rgba(245,185,66,0.3);
+}
+.hero-h1{
+  font-size:60px; font-weight:900; margin-top:20px; color:#fff; line-height:1.06;
+}
+.hero-h1 em{font-style:normal; color:var(--gold);}
+.hero-sub{font-size:18px; color:#B8DDD4; max-width:530px; margin-top:22px; line-height:1.7;}
+.hero-ctas{display:flex; gap:14px; margin-top:36px; flex-wrap:wrap;}
+.hero-trust{display:flex; flex-wrap:wrap; gap:10px 24px; margin-top:40px;}
+.hero-trust .item{display:flex; align-items:center; gap:8px; font-size:13.5px; color:#7EC4B4; font-weight:500;}
+.hero-trust .dot{width:5px; height:5px; border-radius:50%; background:var(--gold); flex:none;}
+
+/* hero banner mockup */
+.browser-wrap{position:relative;}
+.hero-badge-float{
+  position:absolute; top:-14px; right:-14px; z-index:2;
+  background:var(--gold); color:var(--ink); font-weight:800; font-size:12px;
+  padding:6px 14px; border-radius:999px; box-shadow:0 4px 16px rgba(245,185,66,0.5);
+  animation:float 3s ease-in-out infinite;
+}
+.hero-stat-float{
+  position:absolute; bottom:-20px; left:-20px; z-index:2;
+  background:var(--surface); border-radius:16px; padding:12px 18px;
+  box-shadow:var(--shadow-md); display:flex; align-items:center; gap:12px;
+  animation:float 3.5s ease-in-out infinite 0.5s;
+}
+.hero-stat-float .stat-icon{width:34px; height:34px; border-radius:10px; background:var(--mint); display:flex; align-items:center; justify-content:center; font-size:18px;}
+.hero-stat-float .stat-val{font-size:18px; font-weight:800; color:var(--teal); font-family:'Poppins',sans-serif;}
+.hero-stat-float .stat-lbl{font-size:11px; color:var(--muted); font-weight:500;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.browser-card{
+  background:#EDF5F1; border-radius:22px; box-shadow:var(--shadow-lg);
+  transform:rotate(-2deg); overflow:hidden; border:1px solid rgba(255,255,255,0.15);
+}
+.browser-chrome{height:40px; background:#D9E8E2; display:flex; align-items:center; padding-inline:16px; gap:7px;}
+.browser-chrome .dot{width:10px; height:10px; border-radius:50%; background:#B5CAC3;}
+.browser-url{margin-left:14px; background:#EEF5F2; border-radius:8px; height:22px; flex:1; max-width:280px;}
+.browser-body{padding:24px;}
+.ph-line{background:#DDE9E5; border-radius:5px; height:11px;}
+.ph-block{background:#CBE2DA; border-radius:10px;}
+.consent-dock{
+  background:var(--ink); margin:0 -24px -24px; padding:22px 24px;
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.cookie-glyph{width:44px; height:44px; border-radius:50%; background:#C8884A; position:relative; flex:none;}
+.cookie-glyph::before{content:""; position:absolute; width:20px; height:20px; border-radius:50%; background:var(--ink); top:-5px; right:-5px;}
+.cookie-glyph i{position:absolute; width:5px; height:5px; border-radius:50%; background:#8A5828;}
+.cookie-glyph i:nth-child(1){top:15px; left:10px;}
+.cookie-glyph i:nth-child(2){top:25px; left:24px;}
+.cookie-glyph i:nth-child(3){top:30px; left:13px;}
+.consent-text{flex:1; min-width:130px;}
+.consent-text b{color:#EEF9F5; font-size:14px; display:block; margin-bottom:8px;}
+.consent-text span{display:block; height:7px; background:#2E454A; border-radius:4px; width:72%;}
+.consent-actions{display:flex; gap:10px; width:100%; margin-top:6px;}
+.pill-accept{background:var(--gold); color:var(--ink); font-weight:700; font-size:13px; padding:9px 20px; border-radius:999px; cursor:pointer;}
+.pill-custom{border:1.4px solid #4C6660; color:#C8DDD7; font-weight:600; font-size:13px; padding:9px 20px; border-radius:999px; cursor:pointer;}
+.pill-deny{color:#7E9A94; font-weight:600; font-size:13px; padding:9px 4px; cursor:pointer;}
+
+/* ===== TRUST STRIP ===== */
+#trust{background:var(--surface); border-block:1px solid var(--border);}
+.trust-row{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:26px; flex-wrap:wrap;}
+.trust-badge{display:flex; align-items:center; gap:9px; font-weight:600; font-size:14px; color:var(--muted);}
+.trust-badge .ic{width:36px; height:36px; border-radius:10px; background:var(--mint); display:flex; align-items:center; justify-content:center; font-size:17px; flex:none;}
+
+/* ===== TABS (Features/Docs page) ===== */
+#tabs-section{background:var(--surface);}
+.tab-bar{
+  display:flex; border-bottom:2px solid var(--border); margin-bottom:0; overflow-x:auto;
+  scrollbar-width:none; position:sticky; top:64px; z-index:30; background:var(--surface);
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{
+  padding:18px 32px; font-weight:600; font-size:16px; color:var(--muted);
+  border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 180ms ease;
+  white-space:nowrap; display:flex; align-items:center; gap:9px;
+}
+.tab-btn:hover{color:var(--ink);}
+.tab-btn.active{color:var(--teal); border-bottom-color:var(--teal);}
+.tab-content{display:none; padding-block:72px;}
+.tab-content.active{display:block;}
+
+/* ===== FEATURES GRID ===== */
+.features-intro{max-width:660px; margin-bottom:56px;}
+.feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap-card);}
+.feature-card{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-card);
+  padding:30px 26px; transition:transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  position:relative; overflow:hidden;
+}
+.feature-card::after{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--teal),var(--teal-l));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 220ms ease;
+}
+.feature-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md); border-color:var(--mint-2);}
+.feature-card:hover::after{transform:scaleX(1);}
+.feature-ic{
+  width:50px; height:50px; border-radius:14px; background:var(--mint);
+  display:flex; align-items:center; justify-content:center; color:var(--teal);
+  font-size:22px; margin-bottom:18px; transition:background 200ms, transform 200ms;
+}
+.feature-card:hover .feature-ic{background:var(--teal); color:#fff; transform:scale(1.05);}
+.feature-card h3{font-size:17px; font-weight:700; margin-bottom:10px; color:var(--ink);}
+.feature-card p{font-size:14.5px; color:var(--muted); line-height:1.65;}
+.feature-tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;}
+
+/* ===== PRO FEATURE CARD ===== */
+.feature-card.is-pro{border-color:rgba(108,71,232,0.25); background:linear-gradient(135deg,#F9F7FF,var(--surface));}
+.feature-card.is-pro .feature-ic{background:var(--pro-purple-l); color:var(--pro-purple);}
+.feature-card.is-pro:hover .feature-ic{background:var(--pro-purple); color:#fff;}
+.feature-card.is-pro::after{background:linear-gradient(90deg,var(--pro-purple),#8B5CF6);}
+
+/* ===== SECTION DIVIDER ===== */
+.section-divider{
+  display:flex; align-items:center; gap:20px; margin-block:48px;
+  font-weight:700; font-size:13px; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.12em;
+}
+.section-divider::before,.section-divider::after{content:""; flex:1; height:1px; background:var(--border);}
+
+/* ===== FEATURE DETAIL MODAL ===== */
+.feature-card{cursor:pointer;}
+
+/* ===== DOCS TAB ===== */
+.docs-layout{display:grid; grid-template-columns:260px 1fr; gap:48px; align-items:start;}
+.docs-sidebar{
+  position:sticky; top:130px; background:var(--bg); border-radius:var(--r-card);
+  border:1px solid var(--border); padding:24px; overflow:hidden;
+}
+.docs-sidebar h4{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:var(--muted-2); margin-bottom:14px;}
+.docs-nav a{
+  display:block; padding:10px 14px; border-radius:10px; font-size:14.5px; font-weight:500; color:var(--muted);
+  transition:all 160ms; margin-bottom:4px; border:1px solid transparent;
+}
+.docs-nav a:hover,.docs-nav a.active{background:var(--mint); color:var(--teal); border-color:var(--mint-2);}
+.docs-nav a .doc-num{
+  display:inline-flex; width:20px; height:20px; border-radius:50%; background:var(--border);
+  color:var(--muted); font-size:11px; font-weight:700; align-items:center; justify-content:center;
+  margin-right:8px; flex:none;
+}
+.docs-nav a.active .doc-num{background:var(--teal); color:#fff;}
+
+.docs-content{min-width:0;}
+.docs-section{margin-bottom:64px; scroll-margin-top:140px;}
+.docs-section-header{
+  display:flex; align-items:center; gap:16px; margin-bottom:28px;
+  padding-bottom:20px; border-bottom:2px solid var(--border);
+}
+.docs-section-num{
+  width:42px; height:42px; border-radius:12px; background:var(--teal); color:#fff;
+  font-weight:800; font-size:18px; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.docs-section-header h3{font-size:24px; font-weight:700; color:var(--ink);}
+.docs-block{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-card);
+  padding:28px; margin-bottom:20px;
+}
+.docs-block h4{font-size:16px; font-weight:700; color:var(--ink); margin-bottom:12px;}
+.docs-block p{font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:12px;}
+.docs-block p:last-child{margin-bottom:0;}
+.docs-steps{display:flex; flex-direction:column; gap:16px; margin-top:4px;}
+.docs-step{display:flex; gap:16px; align-items:flex-start;}
+.docs-step-num{
+  width:32px; height:32px; border-radius:10px; background:var(--mint); color:var(--teal);
+  font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex:none;
+  margin-top:2px;
+}
+.docs-step-body h5{font-size:15px; font-weight:700; color:var(--ink); margin-bottom:5px;}
+.docs-step-body p{font-size:14.5px; color:var(--muted); line-height:1.65;}
+.docs-tip{
+  background:linear-gradient(135deg,#E8F8F3,#F0FDF8); border:1px solid #B8E5D5;
+  border-left:4px solid var(--teal); border-radius:12px; padding:18px 20px; margin-top:16px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.docs-tip .tip-icon{font-size:18px; flex:none; margin-top:1px;}
+.docs-tip p{font-size:14px; color:#0A5040; line-height:1.65;}
+.docs-warn{
+  background:#FFF8E6; border:1px solid #F5D77A; border-left:4px solid var(--gold);
+  border-radius:12px; padding:18px 20px; margin-top:16px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.docs-warn p{font-size:14px; color:#6B4800; line-height:1.65;}
+.code-block{
+  background:#0E1D2B; color:#B8F0D8; font-family:'Courier New',monospace;
+  border-radius:12px; padding:18px 20px; font-size:13.5px; line-height:1.7; overflow-x:auto;
+  margin-top:12px;
+}
+.code-block .comment{color:#567875;}
+.code-block .key{color:var(--gold);}
+.checklist{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+.check-item{display:flex; gap:12px; align-items:flex-start; padding:12px 16px; border-radius:10px; background:var(--bg);}
+.check-item .chk{
+  width:22px; height:22px; border-radius:6px; background:var(--teal); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; margin-top:1px;
+}
+.check-item p{font-size:14.5px; color:var(--ink); line-height:1.6;}
+.check-item p span{color:var(--muted); font-size:13.5px; display:block; margin-top:2px;}
+
+/* ===== DEMO SECTION ===== */
+#demo{background:var(--bg);}
+.demo-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;}
+.video-card{
+  position:relative; border-radius:22px; overflow:hidden; box-shadow:var(--shadow-lg);
+  aspect-ratio:16/9; background:linear-gradient(135deg,var(--dark1),var(--dark3));
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.play-btn{
+  width:82px; height:82px; border-radius:50%; background:rgba(255,255,255,0.14);
+  border:1.5px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center;
+  transition:transform 200ms, background 200ms;
+}
+.video-card:hover .play-btn{transform:scale(1.1); background:var(--gold);}
+.video-caption{position:absolute; left:24px; bottom:20px; color:#C8E8DE; font-weight:600; font-size:14px;}
+.takeaway-list{display:flex; flex-direction:column; gap:22px;}
+.takeaway{display:flex; gap:16px; align-items:flex-start;}
+.takeaway .num{
+  width:36px; height:36px; border-radius:11px; background:var(--mint); color:var(--teal);
+  font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.takeaway h3{font-size:16px; font-weight:700; margin-bottom:4px;}
+.takeaway p{font-size:14.5px; color:var(--muted);}
+
+/* ===== COMPARE ===== */
+#compare{background:var(--surface);}
+.compare-wrap{
+  margin-top:52px; border:1px solid var(--border); border-radius:var(--r-card); overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.compare-header{
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+  background:var(--bg); border-bottom:2px solid var(--border);
+}
+.compare-col-h{
+  padding:20px 24px; font-size:13px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--muted-2);
+}
+.compare-col-h.featured{background:var(--mint); color:var(--teal); border-radius:0;}
+.compare-rows{}
+.compare-row{
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+  border-top:1px solid var(--border);
+}
+.compare-row:hover{background:var(--bg);}
+.compare-cell{padding:16px 24px; font-size:14px; color:var(--muted); display:flex; align-items:center; gap:8px;}
+.compare-cell.feat-name{color:var(--ink); font-weight:500;}
+.compare-cell.featured{background:rgba(14,124,102,0.04); color:var(--ink); font-weight:600;}
+.chk-y{color:var(--teal); font-size:17px; font-weight:700;}
+.chk-n{color:#C0D0CB; font-size:17px;}
+
+/* ===== PRICING ===== */
+#pricing{background:var(--bg);}
+.pricing-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:var(--gap-card); max-width:840px; margin:56px auto 0;}
+.price-card{
+  background:var(--surface); border:1.5px solid var(--border); border-radius:24px;
+  padding:38px 34px; position:relative; transition:transform 200ms, box-shadow 200ms;
+}
+.price-card:hover{transform:translateY(-4px);}
+.price-card.featured{border-color:var(--teal); box-shadow:0 0 0 4px var(--teal-glow), var(--shadow-md);}
+.price-badge{
+  position:absolute; top:-14px; right:28px; background:var(--teal); color:#fff;
+  font-size:12px; font-weight:700; padding:5px 16px; border-radius:999px; letter-spacing:0.04em;
+}
+.price-card h3{font-size:22px; font-weight:800; margin-bottom:8px;}
+.price-card .amount{font-size:46px; font-weight:900; font-family:'Poppins',sans-serif; margin:18px 0 6px; line-height:1;}
+.price-card .amount sup{font-size:24px; vertical-align:top; margin-top:10px;}
+.price-card .amount span{font-size:16px; font-weight:500; color:var(--muted);}
+.price-card .desc{font-size:14.5px; color:var(--muted); margin-bottom:28px; line-height:1.6;}
+.price-feats{display:flex; flex-direction:column; gap:13px; margin-bottom:30px;}
+.price-feats li{font-size:14.5px; display:flex; gap:10px; align-items:flex-start; color:var(--ink);}
+.price-feats li .pf-ic{color:var(--teal); font-weight:800; flex:none; margin-top:1px;}
+.price-feats li.pro-feat .pf-ic{color:var(--pro-purple);}
+.price-card .btn{width:100%; justify-content:center;}
+
+/* ===== TESTIMONIALS ===== */
+#testimonials{background:var(--surface);}
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap-card); margin-top:52px;}
+.testi-card{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-card);
+  padding:30px 26px; transition:transform 200ms, box-shadow 200ms;
+}
+.testi-card:hover{transform:translateY(-5px); box-shadow:var(--shadow-md);}
+.stars{color:var(--gold); font-size:15px; letter-spacing:2px; margin-bottom:16px;}
+.testi-card blockquote{font-size:14.5px; color:var(--ink); line-height:1.75; margin-bottom:22px; font-style:italic;}
+.testi-person{display:flex; align-items:center; gap:12px;}
+.testi-avatar{
+  width:40px; height:40px; border-radius:50%; flex:none;
+  background:linear-gradient(135deg,var(--teal-l),var(--teal-d));
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:16px;
+}
+.testi-person b{font-size:14px; display:block;}
+.testi-person span{font-size:12.5px; color:var(--muted-2);}
+
+/* ===== FAQ ===== */
+#faq{background:var(--bg);}
+.faq-list{max-width:780px; margin:52px auto 0;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-q{
+  width:100%; background:none; border:none; text-align:left; padding-block:22px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:16.5px; font-weight:600; color:var(--ink); gap:16px; cursor:pointer;
+}
+.faq-plus{
+  width:26px; height:26px; border-radius:50%; border:1.5px solid var(--border);
+  position:relative; flex:none; transition:transform 220ms, border-color 220ms;
+}
+.faq-plus::before,.faq-plus::after{
+  content:""; position:absolute; background:var(--muted-2);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+}
+.faq-plus::before{width:11px; height:1.8px;}
+.faq-plus::after{width:1.8px; height:11px; transition:opacity 200ms;}
+.faq-item.open .faq-plus{transform:rotate(180deg); border-color:var(--teal);}
+.faq-item.open .faq-plus::after{opacity:0;}
+.faq-a{max-height:0; overflow:hidden; transition:max-height 280ms ease;}
+.faq-a p{font-size:15px; color:var(--muted); padding-bottom:24px; line-height:1.75; max-width:660px;}
+
+/* ===== GALLERY ===== */
+#gallery{background:var(--surface);}
+.gallery-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap-card); margin-top:52px;}
+.shot-card{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-card);
+  overflow:hidden; cursor:zoom-in; transition:transform 220ms, box-shadow 220ms;
+}
+.shot-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-md);}
+.shot-screen{
+  background:linear-gradient(135deg,var(--dark2),var(--dark1));
+  padding:20px; aspect-ratio:16/9; display:flex; flex-direction:column; gap:8px;
+}
+.shot-screen .sh-bar{height:8px; background:rgba(255,255,255,0.15); border-radius:4px;}
+.shot-screen .sh-bar.w60{width:60%;}
+.shot-screen .sh-bar.w80{width:80%;}
+.shot-screen .sh-bar.w45{width:45%;}
+.shot-screen .sh-card{background:rgba(255,255,255,0.07); border-radius:10px; flex:1; padding:14px;}
+.shot-caption{padding:18px 20px;}
+.shot-caption b{font-size:14.5px; display:block; margin-bottom:5px; color:var(--ink);}
+.shot-caption span{font-size:13px; color:var(--muted);}
+
+/* ===== FINAL CTA ===== */
+#final-cta{padding-inline:var(--pad-d); padding-block:var(--gap-section);}
+.final-inner{
+  background:linear-gradient(135deg,var(--dark1) 0%, var(--dark2) 60%,var(--dark3) 100%);
+  border-radius:28px; text-align:center; color:#fff; padding:80px 40px;
+  position:relative; overflow:hidden;
+}
+.final-inner::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 70% at 50% 0%, rgba(14,124,102,0.35), transparent 60%);
+}
+.final-inner h2{color:#fff; font-size:40px; max-width:560px; margin-inline:auto; position:relative;}
+.final-inner p{color:#B8DDD4; margin-top:14px; font-size:17px; position:relative;}
+.final-ctas{display:flex; gap:14px; justify-content:center; margin-top:36px; flex-wrap:wrap; position:relative;}
+
+/* ===== FOOTER ===== */
+#site-footer{background:var(--ink); color:#7E988F; padding-block:60px 28px;}
+.footer-grid{display:grid; grid-template-columns:1.5fr repeat(3,1fr); gap:40px;}
+.footer-brand{display:flex; align-items:center; gap:10px; color:#fff; font-weight:800; font-size:19px; font-family:'Poppins',sans-serif; margin-bottom:16px;}
+.footer-brand .brand-mark{width:32px; height:32px;}
+#site-footer .desc{font-size:13.5px; max-width:280px; line-height:1.75;}
+.footer-col h4{color:#C8DCDA; font-size:12px; font-weight:700; margin-bottom:16px; letter-spacing:0.1em; text-transform:uppercase;}
+.footer-col li{margin-bottom:10px;}
+.footer-col a{font-size:14px; color:#7E988F; transition:color 160ms;}
+.footer-col a:hover{color:#fff;}
+.footer-bottom{
+  display:flex; justify-content:space-between; align-items:center; margin-top:52px;
+  padding-top:24px; border-top:1px solid rgba(255,255,255,0.08); font-size:13px; flex-wrap:wrap; gap:12px;
+}
+.footer-links{display:flex; gap:20px;}
+.footer-links a{color:#7E988F; transition:color 160ms;}
+.footer-links a:hover{color:#fff;}
+
+/* ===== FEATURE DETAIL DRAWER ===== */
+#feature-drawer{
+  position:fixed; inset:0; z-index:500; display:none;
+  align-items:flex-end; justify-content:center;
+}
+#feature-drawer.open{display:flex;}
+#drawer-overlay{position:absolute; inset:0; background:rgba(10,18,29,0.7); backdrop-filter:blur(6px);}
+#drawer-panel{
+  position:relative; z-index:1; background:var(--surface);
+  border-radius:28px 28px 0 0; padding:48px 52px 52px;
+  max-width:720px; width:100%; max-height:85vh; overflow-y:auto;
+  transform:translateY(100%); transition:transform 320ms cubic-bezier(0.32,0.72,0,1);
+}
+#feature-drawer.open #drawer-panel{transform:translateY(0);}
+#drawer-close{
+  position:absolute; top:20px; right:24px; width:36px; height:36px;
+  border-radius:50%; background:var(--bg); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--muted);
+}
+#drawer-close:hover{background:var(--border);}
+.drawer-ic{width:60px; height:60px; border-radius:18px; background:var(--mint); display:flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:20px;}
+#drawer-title{font-size:28px; font-weight:800; margin-bottom:12px;}
+#drawer-body{font-size:15.5px; color:var(--muted); line-height:1.75;}
+
+/* ===== SECTION LABELS (for section ordering) ===== */
+[data-mod]{position:relative;}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1080px){
+  .wrap{padding-inline:var(--pad-t);}
+  .section{padding-block:var(--gap-section-t);}
+  .nav-links{display:none;}
+  .nav-toggle{display:block;}
+  .hero-grid,.demo-grid{grid-template-columns:1fr; gap:40px;}
+  .hero-h1{font-size:46px;}
+  h2.h2{font-size:38px;}
+  .feature-grid{grid-template-columns:repeat(2,1fr);}
+  .gallery-grid,.testi-grid{grid-template-columns:repeat(2,1fr);}
+  .compare-header,.compare-row{grid-template-columns:1fr 1fr 1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr; gap:32px;}
+  .docs-layout{grid-template-columns:1fr;}
+  .docs-sidebar{position:relative; top:auto;}
+  #floating-toc{display:none;}
+}
+@media (max-width:767px){
+  .wrap{padding-inline:var(--pad-m);}
+  .section{padding-block:var(--gap-section-m);}
+  h2.h2{font-size:30px;}
+  .hero-h1{font-size:34px;}
+  .hero-ctas{flex-direction:column;}
+  .hero-ctas .btn{justify-content:center;}
+  .feature-grid{grid-template-columns:1fr;}
+  .gallery-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr;}
+  .compare-header,.compare-row{grid-template-columns:2fr 1fr 1fr;}
+  .compare-col-h:nth-child(4),.compare-cell:nth-child(4){display:none;}
+  .footer-grid{grid-template-columns:1fr;}
+  #final-cta{padding-inline:var(--pad-m);}
+  .final-inner{padding:56px 24px;}
+  #drawer-panel{padding:36px 24px 40px; border-radius:24px 24px 0 0;}
+  .tab-btn{padding:14px 20px; font-size:15px;}
+  .trust-row{gap:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- FLOATING TOC -->
+<nav id="floating-toc" aria-label="Page sections">
+  <div class="toc-dot" data-target="hero"><span class="toc-label">Top</span></div>
+  <div class="toc-dot" data-target="tabs-section"><span class="toc-label">Features & Docs</span></div>
+  <div class="toc-dot" data-target="demo"><span class="toc-label">Demo</span></div>
+  <div class="toc-dot" data-target="compare"><span class="toc-label">Compare</span></div>
+  <div class="toc-dot" data-target="pricing"><span class="toc-label">Pricing</span></div>
+  <div class="toc-dot" data-target="testimonials"><span class="toc-label">Reviews</span></div>
+  <div class="toc-dot" data-target="faq"><span class="toc-label">FAQ</span></div>
+</nav>
+
+<!-- BACK TO TOP -->
+<button id="back-top" aria-label="Back to top">↑</button>
+
+<!-- FEATURE DETAIL DRAWER -->
+<div id="feature-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div id="drawer-overlay"></div>
+  <div id="drawer-panel">
+    <button id="drawer-close" aria-label="Close">✕</button>
+    <div class="drawer-ic" id="drawer-ic">⚡</div>
+    <h2 id="drawer-title">Feature Name</h2>
+    <div id="drawer-body"></div>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- SITE HEADER — data-mod="mod-header" -->
+<!-- ============================================================= -->
+<header id="site-header" data-mod="mod-header">
+  <div class="wrap nav-inner">
+    <a href="#hero" class="brand" aria-label="Consentaro Home">
+      <span class="brand-mark">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 11.3C5.8 12.6 7.5 14.1 8.8 15.8C12.4 11.3 16.5 7.2 21 4" stroke="#F4FBF9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="4" cy="11.3" r="1.6" fill="#F5B942"/>
+        </svg>
+      </span>
+      Consentaro
+      <span class="brand-version">v1.6</span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#tabs-section">Features</a>
+      <a href="#tabs-section" data-tab="docs">Docs</a>
+      <a href="#demo">Demo</a>
+      <a href="#compare">Compare</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="#pricing">See Pricing</a>
+      <a class="btn btn-teal btn-sm" href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener">Install Free</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" id="nav-toggle-btn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
+    <a href="#tabs-section">✦ Features</a>
+    <a href="#tabs-section" data-tab="docs">📖 Documentation</a>
+    <a href="#demo">▶ Demo</a>
+    <a href="#compare">⚖ Compare</a>
+    <a href="#pricing">💰 Pricing</a>
+    <a href="#faq">❓ FAQ</a>
+    <a href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener" style="color:var(--teal);font-weight:700;">→ Install Free on WordPress.org</a>
+  </nav>
+</header>
+
+<!-- ============================================================= -->
+<!-- MOD-HERO — data-mod="mod-hero" -->
+<!-- ============================================================= -->
+<section id="hero" data-mod="mod-hero">
+  <canvas id="particles-canvas"></canvas>
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <div class="hero-eyebrow">🔒 Privacy & Consent, Made Simple</div>
+      <h1 class="hero-h1">Cookie consent that doesn't slow you <em>down</em>.</h1>
+      <p class="hero-sub">Consentaro gives your WordPress or WooCommerce site a clean, fast consent banner wired straight into Google Consent Mode v2 — no cloud dependency, no bloated settings, no per-pageview fees.</p>
+      <div class="hero-ctas">
+        <a href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/></svg>
+          Install Free on WordPress.org
+        </a>
+        <a href="#tabs-section" data-tab="docs" class="btn btn-ghost-dark">📖 Read the Docs</a>
+      </div>
+      <div class="hero-trust">
+        <div class="item"><span class="dot"></span>GDPR & ePrivacy Ready</div>
+        <div class="item"><span class="dot"></span>Google Consent Mode v2</div>
+        <div class="item"><span class="dot"></span>WooCommerce-Aware</div>
+        <div class="item"><span class="dot"></span>100% Self-Hosted</div>
+        <div class="item"><span class="dot"></span>No Pageview Limits</div>
+      </div>
+    </div>
+    <div class="reveal browser-wrap">
+      <div class="hero-badge-float">✓ GDPR Compliant</div>
+      <div class="browser-card">
+        <div class="browser-chrome">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="browser-url"></div>
+        </div>
+        <div class="browser-body">
+          <div class="ph-line" style="width:60%;height:15px;margin-bottom:14px;"></div>
+          <div class="ph-line" style="width:88%;margin-bottom:8px;"></div>
+          <div class="ph-line" style="width:72%;margin-bottom:8px;"></div>
+          <div class="ph-line" style="width:80%;margin-bottom:20px;"></div>
+          <div class="ph-block" style="width:120px;height:34px;"></div>
+        </div>
+        <div class="consent-dock">
+          <div class="cookie-glyph"><i></i><i></i><i></i></div>
+          <div class="consent-text">
+            <b>We use cookies 🍪</b>
+            <span></span>
+          </div>
+          <div class="consent-actions">
+            <div class="pill-accept">Accept All</div>
+            <div class="pill-custom">Customize</div>
+            <div class="pill-deny">Deny</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stat-float">
+        <div class="stat-icon">⚡</div>
+        <div>
+          <div class="stat-val">&lt;3KB</div>
+          <div class="stat-lbl">Frontend size</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-TRUST — data-mod="mod-trust" -->
+<!-- ============================================================= -->
+<section id="trust" data-mod="mod-trust">
+  <div class="wrap trust-row reveal">
+    <div class="trust-badge"><span class="ic">⚖️</span>GDPR & ePrivacy Aware</div>
+    <div class="trust-badge"><span class="ic">G</span>Google Consent Mode v2</div>
+    <div class="trust-badge"><span class="ic">🛒</span>WooCommerce-Ready</div>
+    <div class="trust-badge"><span class="ic">⚡</span>Ultra-Lightweight</div>
+    <div class="trust-badge"><span class="ic">🔒</span>No Cloud Dependency</div>
+    <div class="trust-badge"><span class="ic">🌍</span>Geo-Based Display</div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-TABS (Features + Docs) — data-mod="mod-tabs" -->
+<!-- ============================================================= -->
+<section id="tabs-section" data-mod="mod-tabs">
+  <div class="tab-bar" role="tablist" aria-label="Plugin information tabs">
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-features" id="btn-features" data-tab-id="features">
+      ✦ Features
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-docs" id="btn-docs" data-tab-id="docs">
+      📖 Documentation
+    </button>
+  </div>
+
+  <!-- ===== FEATURES TAB ===== -->
+  <div id="tab-features" class="tab-content active" role="tabpanel" aria-labelledby="btn-features">
+    <div class="wrap">
+      <div class="features-intro reveal">
+        <div class="eyebrow">Built for WordPress</div>
+        <h2 class="h2" style="margin-top:14px;">Everything you actually need. Nothing you don't.</h2>
+        <p class="lede">Consentaro focuses on doing the consent workflow correctly, instead of trying to be every legal framework at once. Lightweight, fast, and honest about what it does.</p>
+      </div>
+
+      <!-- FREE FEATURES -->
+      <div class="section-divider"><span>🟢 Free Features</span></div>
+      <div class="feature-grid">
+
+        <div class="feature-card reveal" data-feature="lightweight">
+          <div class="feature-ic">⚡</div>
+          <h3>Ultra-Lightweight by Design</h3>
+          <p>Front-end assets are under 3KB — no heavy scripts, no dashboard bloat. Just the banner and the consent logic you actually need.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="consent-mode">
+          <div class="feature-ic">✅</div>
+          <h3>Google Consent Mode v2</h3>
+          <p>Default and update signals wired correctly out of the box, so your GTM tags and GA4 conversion data stay accurate under consent requirements.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="banner">
+          <div class="feature-ic">🍪</div>
+          <h3>Clean Cookie Banner</h3>
+          <p>Shows a friendly Accept / Deny / Customize banner. Supports top bar, bottom bar, corner, and modal positions — fully customizable colors, fonts & shapes.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="gtm">
+          <div class="feature-ic">🏷️</div>
+          <h3>Conditional GTM Loading</h3>
+          <p>Loads Google Tag Manager only after the visitor makes a consent choice. Paste your GTM ID — Consentaro handles everything else.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="woocommerce">
+          <div class="feature-ic">🛒</div>
+          <h3>WooCommerce-Aware</h3>
+          <p>Gates view_item, add_to_cart, and purchase dataLayer events until the visitor's consent actually allows them. Works out of the box.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="script-blocking">
+          <div class="feature-ic">🚫</div>
+          <h3>Automatic Script Blocking</h3>
+          <p>Holds Google Analytics, Meta Pixel, TikTok Pixel, LinkedIn Insight, Hotjar and more inert until matching consent is granted. Never touches your theme or page builder scripts.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="geo">
+          <div class="feature-ic">🌍</div>
+          <h3>Geo-Based Banner Display</h3>
+          <p>Show the banner only where it's required — EU / EEA / UK / CH — via a lightweight, server-side cached geo lookup. No visitor tracking.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="design">
+          <div class="feature-ic">🎨</div>
+          <h3>Live Design Preview</h3>
+          <p>Desktop/mobile toggle, four one-click preset themes (Consentaro, Minimal, Dark, Warm), border radius, button layout, font size controls. See changes in real time.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="insights">
+          <div class="feature-ic">📊</div>
+          <h3>Anonymous Insights</h3>
+          <p>Daily Accept / Deny / Customize counts with a 7/30/90-day chart. No per-visitor data, no IP addresses, no personal identifiers — ever.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="scripts-tab">
+          <div class="feature-ic">🔍</div>
+          <h3>Scripts Tab</h3>
+          <p>Review every third-party script detected on your site, see its auto-assigned consent category, and override it per-script. Full transparency, full control.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="cache">
+          <div class="feature-ic">⚙️</div>
+          <h3>Cache-Plugin Compatible</h3>
+          <p>Works cleanly with WP Rocket, LiteSpeed Cache, and W3 Total Cache. No extra configuration needed.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="i18n">
+          <div class="feature-ic">🌐</div>
+          <h3>Translation Ready</h3>
+          <p>188+ translatable strings in admin + frontend. Compatible with WPML and Polylang — set a per-language banner text from Languages → String Translations.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="a11y">
+          <div class="feature-ic">♿</div>
+          <h3>Fully Accessible Banner</h3>
+          <p>Keyboard focus management, focus trap in the Customize dialog, Escape key support, ARIA roles, visible focus outlines on all buttons — WCAG-aware by default.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="guide">
+          <div class="feature-ic">📖</div>
+          <h3>Plain-English Guide Tab</h3>
+          <p>A guided setup walkthrough in wp-admin explains every setting in plain language. No legal jargon. A checklist shows your setup progress at a glance.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="import">
+          <div class="feature-ic">📥</div>
+          <h3>Complianz Import</h3>
+          <p>Best-effort settings import from Complianz — banner text, position, and colors. Preview before applying. CookieYes is detected but not yet supported.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="consent-log-free">
+          <div class="feature-ic">📋</div>
+          <h3>Optional Consent Log</h3>
+          <p>Off by default. Records anonymized proof-of-consent (timestamp, categories, random non-identifying token). CSV export. Auto-prune after 1–24 months.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="hooks">
+          <div class="feature-ic">🔌</div>
+          <h3>Developer Hooks</h3>
+          <p>Documented set of filters and actions for customizing consent defaults, geo detection, script categorization, WooCommerce events without editing plugin code.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+        <div class="feature-card reveal" data-feature="self-hosted">
+          <div class="feature-ic">🏠</div>
+          <h3>100% Self-Hosted</h3>
+          <p>No cloud dashboard. No third-party server holds your visitors' consent choices. Everything lives on your own WordPress database. You own your data.</p>
+          <div class="feature-tags"><span class="badge-free">Free</span></div>
+        </div>
+
+      </div>
+
+      <!-- PRO FEATURES -->
+      <div class="section-divider" style="margin-top:56px;"><span>⭐ Pro Features</span></div>
+      <div class="feature-grid">
+
+        <div class="feature-card is-pro reveal" data-feature="consent-log-viewer">
+          <div class="feature-ic">🗂️</div>
+          <h3>Consent Log Viewer</h3>
+          <p>Browse, search, sort and filter every consent decision in an elegant wp-admin table. Filter by date range (7/30/90 days), action type, or search by RID (random non-identifying token).</p>
+          <div class="feature-tags"><span class="badge-pro">Pro</span></div>
+        </div>
+
+        <div class="feature-card is-pro reveal" data-feature="advanced-reporting">
+          <div class="feature-ic">📈</div>
+          <h3>Advanced Reporting <span style="font-size:12px;color:var(--pro-purple);background:var(--pro-purple-l);padding:2px 8px;border-radius:999px;font-weight:600;">Coming Soon</span></h3>
+          <p>Export and analyze consent trends, acceptance rates, and category breakdowns over time — with CSV export, date filters, and visual charts.</p>
+          <div class="feature-tags"><span class="badge-pro">Pro</span></div>
+        </div>
+
+        <div class="feature-card is-pro reveal" data-feature="pro-license">
+          <div class="feature-ic">🔑</div>
+          <h3>Priority License & Support</h3>
+          <p>A validated Pro license unlocks all Pro screens. Comes with priority support from the developer — not a ticketing queue managed by a team you've never met.</p>
+          <div class="feature-tags"><span class="badge-pro">Pro</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DOCUMENTATION TAB ===== -->
+  <div id="tab-docs" class="tab-content" role="tabpanel" aria-labelledby="btn-docs">
+    <div class="wrap">
+      <div class="reveal" style="max-width:660px;margin-bottom:48px;">
+        <div class="eyebrow">Documentation</div>
+        <h2 class="h2" style="margin-top:14px;">Everything explained in plain English.</h2>
+        <p class="lede">You don't need to be a developer to use Consentaro. This guide walks you through every step — from installation to advanced settings — in simple, friendly language.</p>
+      </div>
+
+      <div class="docs-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar" aria-label="Documentation navigation">
+          <h4>Contents</h4>
+          <nav class="docs-nav">
+            <a href="#doc-install" class="active"><span class="doc-num">1</span>Installation</a>
+            <a href="#doc-general"><span class="doc-num">2</span>General Settings</a>
+            <a href="#doc-design"><span class="doc-num">3</span>Banner Design</a>
+            <a href="#doc-scripts"><span class="doc-num">4</span>Script Blocking</a>
+            <a href="#doc-gtm"><span class="doc-num">5</span>Google Tag Manager</a>
+            <a href="#doc-geo"><span class="doc-num">6</span>Geo-Based Display</a>
+            <a href="#doc-consent-log"><span class="doc-num">7</span>Consent Log</a>
+            <a href="#doc-insights"><span class="doc-num">8</span>Insights</a>
+            <a href="#doc-woocommerce"><span class="doc-num">9</span>WooCommerce</a>
+            <a href="#doc-translation"><span class="doc-num">10</span>Translations</a>
+            <a href="#doc-faq-docs"><span class="doc-num">?</span>Quick FAQ</a>
+          </nav>
+        </aside>
+
+        <!-- Documentation Content -->
+        <div class="docs-content">
+
+          <!-- 1. Installation -->
+          <div class="docs-section" id="doc-install">
+            <div class="docs-section-header">
+              <div class="docs-section-num">1</div>
+              <h3>Installation — Get Up and Running</h3>
+            </div>
+            <div class="docs-block">
+              <h4>✅ How to install Consentaro (the easy way)</h4>
+              <p>Installing Consentaro is just like installing any other free WordPress plugin. Here's how:</p>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>Go to your WordPress Dashboard</h5>
+                    <p>Log in to your WordPress admin panel (usually at <code>yoursite.com/wp-admin</code>).</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Click Plugins → Add New</h5>
+                    <p>In the left sidebar, click <strong>Plugins</strong>, then click <strong>Add New Plugin</strong>.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">3</div>
+                  <div class="docs-step-body">
+                    <h5>Search for "Consentaro"</h5>
+                    <p>Type <em>Consentaro</em> in the search box. The plugin should appear at the top of the results.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">4</div>
+                  <div class="docs-step-body">
+                    <h5>Click Install Now, then Activate</h5>
+                    <p>Click the blue <strong>Install Now</strong> button, wait a few seconds, then click <strong>Activate</strong>.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">5</div>
+                  <div class="docs-step-body">
+                    <h5>You're done! Follow the Guide</h5>
+                    <p>After activation, you'll be automatically taken to <strong>Consentaro → Guide</strong> — a friendly walkthrough that tells you exactly what to set up next.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="docs-tip">
+                <span class="tip-icon">💡</span>
+                <p><strong>Test in a private/incognito window!</strong> After setting everything up, open your website in an incognito window (Ctrl+Shift+N / Cmd+Shift+N). You should see the cookie banner appear. Click Accept or Deny — the banner should disappear and not come back in the same window.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. General Settings -->
+          <div class="docs-section" id="doc-general">
+            <div class="docs-section-header">
+              <div class="docs-section-num">2</div>
+              <h3>General Settings — The On/Off Controls</h3>
+            </div>
+            <div class="docs-block">
+              <h4>What you'll find under <strong>Consentaro → General</strong></h4>
+              <div class="checklist">
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>Enable Consentaro</strong><span>The main on/off switch. Keep this ON for the plugin to work. If you turn it off, no banner shows and consent signals stop firing.</span></p>
+                </div>
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>GTM Container ID</strong><span>Optional. If you use Google Tag Manager, paste your container ID here (looks like <code>GTM-XXXXXXX</code>). Consentaro will load it only after the visitor makes a choice.</span></p>
+                </div>
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>Geo-Based Banner</strong><span>When enabled, the banner only shows to visitors from EU/EEA/UK/CH countries. Visitors from other countries won't see it. Great for international sites!</span></p>
+                </div>
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>Script Blocking</strong><span>Automatically holds third-party tracking scripts (Google Analytics, Meta Pixel, etc.) until the visitor gives consent. Recommended to keep ON.</span></p>
+                </div>
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>Consent Log</strong><span>Off by default. Turn on if you want a record of consent decisions (useful for compliance audits). Records are anonymized — no IP addresses stored.</span></p>
+                </div>
+                <div class="check-item">
+                  <div class="chk">✓</div>
+                  <p><strong>Cloudflare Site Toggle</strong><span>Only enable if your site is actually behind Cloudflare. This restores faster geo-detection using Cloudflare headers.</span></p>
+                </div>
+              </div>
+              <div class="docs-tip">
+                <span class="tip-icon">🎯</span>
+                <p>For most sites, just turn on <strong>Enable Consentaro</strong> and leave everything else at defaults. You can always come back and fine-tune later!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Banner Design -->
+          <div class="docs-section" id="doc-design">
+            <div class="docs-section-header">
+              <div class="docs-section-num">3</div>
+              <h3>Banner Design — Make It Yours</h3>
+            </div>
+            <div class="docs-block">
+              <h4>How to customize your cookie banner</h4>
+              <p>Go to <strong>Consentaro → Design</strong>. Everything here has a live preview so you can see changes instantly.</p>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>Choose a Theme Preset</h5>
+                    <p>Pick from 4 one-click themes: <em>Consentaro</em> (green), <em>Minimal</em> (clean white), <em>Dark</em> (dark background), or <em>Warm</em> (warm tones). This sets all colors at once.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Set the Banner Position</h5>
+                    <p>Choose where the banner appears: <em>Bottom bar</em> (most common), <em>Top bar</em>, <em>Bottom-right corner</em>, or <em>Modal</em> (centered overlay).</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">3</div>
+                  <div class="docs-step-body">
+                    <h5>Write Your Banner Text</h5>
+                    <p>Write a friendly message to show visitors. Keep it simple: "We use cookies to improve your experience." You can always customize it later.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">4</div>
+                  <div class="docs-step-body">
+                    <h5>Adjust Colors & Style</h5>
+                    <p>Use the color pickers to match your brand. Adjust border radius (rounded vs. sharp corners), button layout (side by side or stacked), and font size.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">5</div>
+                  <div class="docs-step-body">
+                    <h5>Preview & Save</h5>
+                    <p>Toggle between Desktop and Mobile preview. When happy, click <strong>Save Settings</strong>. Test in an incognito window to confirm it looks right.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="docs-warn">
+                <span class="tip-icon">⚠️</span>
+                <p>If you switch tabs without saving, you'll see a warning. Always click <strong>Save Settings</strong> before leaving the page!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Script Blocking -->
+          <div class="docs-section" id="doc-scripts">
+            <div class="docs-section-header">
+              <div class="docs-section-num">4</div>
+              <h3>Script Blocking — What It Does & Why It Matters</h3>
+            </div>
+            <div class="docs-block">
+              <h4>What is script blocking?</h4>
+              <p>When script blocking is ON, Consentaro automatically detects and "pauses" tracking scripts on your site until the visitor gives consent. Think of it like a bouncer at a club — the tracking scripts are held at the door until the visitor says yes.</p>
+              <p>It works for both external scripts (loaded from remote URLs) and inline scripts (code pasted directly into your theme or page builder).</p>
+            </div>
+            <div class="docs-block">
+              <h4>Which scripts are automatically detected?</h4>
+              <div class="checklist">
+                <div class="check-item"><div class="chk">G</div><p><strong>Google Analytics (GA4)</strong><span>analytics_storage category</span></p></div>
+                <div class="check-item"><div class="chk">M</div><p><strong>Meta / Facebook Pixel</strong><span>ad_storage + ad_user_data category</span></p></div>
+                <div class="check-item"><div class="chk">T</div><p><strong>TikTok Pixel</strong><span>ad_storage category</span></p></div>
+                <div class="check-item"><div class="chk">L</div><p><strong>LinkedIn Insight Tag</strong><span>ad_storage category</span></p></div>
+                <div class="check-item"><div class="chk">H</div><p><strong>Hotjar</strong><span>analytics_storage category</span></p></div>
+              </div>
+              <div class="docs-tip">
+                <span class="tip-icon">🛡️</span>
+                <p><strong>Your site's own scripts are NEVER touched.</strong> Consentaro only blocks scripts it recognizes as third-party trackers. Your theme, page builder, WooCommerce, payment gateways, and everything else always loads normally.</p>
+              </div>
+            </div>
+            <div class="docs-block">
+              <h4>How to manage scripts manually</h4>
+              <p>Go to <strong>Consentaro → Scripts</strong>. You'll see a list of every third-party script detected on your site. You can:</p>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>See what was auto-detected</h5>
+                    <p>Each script shows its URL or identifier and the consent category it was automatically assigned to.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Override the category</h5>
+                    <p>If a script was assigned to the wrong category, use the dropdown to change it. For example, if a chat widget was tagged as "advertising" but it's really "functional."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. GTM -->
+          <div class="docs-section" id="doc-gtm">
+            <div class="docs-section-header">
+              <div class="docs-section-num">5</div>
+              <h3>Google Tag Manager — The Simple Setup</h3>
+            </div>
+            <div class="docs-block">
+              <h4>Do I even need GTM?</h4>
+              <p><strong>No, GTM is completely optional!</strong> Consentaro works perfectly without it. The cookie banner and Google Consent Mode signals work on their own.</p>
+              <p>You'd want to add your GTM ID if you manage Google Analytics, Ads pixels, or other tags through Google Tag Manager.</p>
+            </div>
+            <div class="docs-block">
+              <h4>How to connect Google Tag Manager</h4>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>Find your GTM Container ID</h5>
+                    <p>Log in to <a href="https://tagmanager.google.com" target="_blank" rel="noopener" style="color:var(--teal);">tagmanager.google.com</a>. Your Container ID looks like <code>GTM-XXXXXXX</code> and appears at the top of the screen.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Paste it in Consentaro</h5>
+                    <p>Go to <strong>Consentaro → General</strong> and paste your Container ID into the <em>GTM Container ID</em> field. Must match the pattern <code>GTM-XXXXXXX</code> exactly.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">3</div>
+                  <div class="docs-step-body">
+                    <h5>Save and test</h5>
+                    <p>Click <strong>Save Settings</strong>. In an incognito window, click Accept on the banner. GTM should now load and fire your tags. Verify in GTM Preview mode.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="docs-tip">
+                <span class="tip-icon">✨</span>
+                <p>Consentaro sends Google Consent Mode <strong>default</strong> signals before GTM loads, so GA4 and Google Ads modelling still works even for visitors who deny consent!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Geo-Based Display -->
+          <div class="docs-section" id="doc-geo">
+            <div class="docs-section-header">
+              <div class="docs-section-num">6</div>
+              <h3>Geo-Based Display — Show Banner Only Where Needed</h3>
+            </div>
+            <div class="docs-block">
+              <h4>What does "Geo-Based Banner" do?</h4>
+              <p>When this is enabled, the cookie banner only appears for visitors from countries where cookie consent laws apply — specifically <strong>EU/EEA countries, UK, and Switzerland</strong>. Visitors from the US, Canada, or other regions won't see any banner.</p>
+              <p>This is great for global sites that want to stay compliant without annoying visitors who don't need to see a consent dialog.</p>
+            </div>
+            <div class="docs-block">
+              <h4>I turned Geo on but the banner doesn't appear anymore. Why?</h4>
+              <p>You're probably testing from outside the EU. To test the banner, you can temporarily <strong>turn Geo off</strong> in General settings — the banner will show for all visitors. Remember to turn it back on after testing!</p>
+              <div class="docs-warn">
+                <span class="tip-icon">⚠️</span>
+                <p>If your site is behind Cloudflare, enable the "This site is behind Cloudflare" toggle in General settings. This restores fast, accurate geo detection.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Consent Log -->
+          <div class="docs-section" id="doc-consent-log">
+            <div class="docs-section-header">
+              <div class="docs-section-num">7</div>
+              <h3>Consent Log — Proof of Consent Records</h3>
+            </div>
+            <div class="docs-block">
+              <h4>What is the Consent Log?</h4>
+              <p>The Consent Log is an <strong>optional</strong> feature (off by default) that keeps a record of every consent decision made by visitors. Think of it as a receipt book — every time a visitor clicks Accept, Deny, or Customize, it writes down what happened.</p>
+            </div>
+            <div class="docs-block">
+              <h4>Is it privacy-safe?</h4>
+              <p>Yes, by design. The Consent Log stores <strong>zero personal information</strong>:</p>
+              <div class="checklist">
+                <div class="check-item"><div class="chk">✓</div><p><strong>Timestamp</strong><span>When the decision was made</span></p></div>
+                <div class="check-item"><div class="chk">✓</div><p><strong>Categories Granted/Denied</strong><span>Which consent categories were accepted or rejected</span></p></div>
+                <div class="check-item"><div class="chk">✓</div><p><strong>Random Token (RID)</strong><span>A random number to track if the same browser changed its choice later. NOT linked to any person.</span></p></div>
+                <div class="check-item" style="background:#FFF0F0;border-color:#FFCCCC;"><div class="chk" style="background:#E53E3E;">✗</div><p style="color:#C53030;"><strong>NO IP Address</strong><span>Never stored. Never. Period.</span></p></div>
+              </div>
+            </div>
+            <div class="docs-block">
+              <h4>How to enable and use it</h4>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>Enable in General Settings</h5>
+                    <p>Go to <strong>Consentaro → General</strong> and toggle on <em>"Keep a log of consent decisions."</em></p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Set the retention period</h5>
+                    <p>Choose how long to keep records (1–24 months). Default is 12 months. Old records are automatically deleted.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">3</div>
+                  <div class="docs-step-body">
+                    <h5>Export as CSV (Free)</h5>
+                    <p>Export all consent records as a CSV file for audits or legal compliance reviews.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">4</div>
+                  <div class="docs-step-body">
+                    <h5>View & Filter in Pro</h5>
+                    <p><span class="badge-pro">Pro</span> Upgrade to Consentaro Pro to browse, search, and filter consent records directly in your wp-admin dashboard.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Insights -->
+          <div class="docs-section" id="doc-insights">
+            <div class="docs-section-header">
+              <div class="docs-section-num">8</div>
+              <h3>Insights — Understand Your Consent Rates</h3>
+            </div>
+            <div class="docs-block">
+              <h4>What does the Insights tab show?</h4>
+              <p>The <strong>Consentaro → Insights</strong> tab shows you how many visitors each day chose Accept All, Deny All, or Customize their consent. You can view data for the last 7, 30, or 90 days in a simple chart.</p>
+              <div class="docs-tip">
+                <span class="tip-icon">🔒</span>
+                <p><strong>No visitor tracking involved.</strong> Insights only stores anonymous daily totals (how many Accept / Deny / Customize clicks happened). It has no idea who clicked — just that someone did.</p>
+              </div>
+            </div>
+            <div class="docs-block">
+              <h4>What can I learn from it?</h4>
+              <p>If your Deny rate is very high, it might be worth revisiting your banner text to make it friendlier and more transparent. If almost no one uses Customize, you might simplify the options. These are useful signals for improving your consent flow!</p>
+            </div>
+          </div>
+
+          <!-- 9. WooCommerce -->
+          <div class="docs-section" id="doc-woocommerce">
+            <div class="docs-section-header">
+              <div class="docs-section-num">9</div>
+              <h3>WooCommerce — Smart Event Gating</h3>
+            </div>
+            <div class="docs-block">
+              <h4>How does Consentaro work with WooCommerce?</h4>
+              <p>If your site runs WooCommerce and you use Google Tag Manager or Google Analytics for ecommerce tracking, Consentaro automatically gates the following dataLayer events:</p>
+              <div class="checklist">
+                <div class="check-item"><div class="chk">🛒</div><p><strong>view_item</strong><span>When a visitor views a product page</span></p></div>
+                <div class="check-item"><div class="chk">🛒</div><p><strong>add_to_cart</strong><span>When a visitor adds a product to their cart</span></p></div>
+                <div class="check-item"><div class="chk">🛒</div><p><strong>purchase</strong><span>When an order is completed</span></p></div>
+              </div>
+              <p style="margin-top:14px;">These events are only pushed to the dataLayer when the visitor's analytics consent is granted. This prevents tracking data from firing without permission.</p>
+              <div class="docs-tip">
+                <span class="tip-icon">🎯</span>
+                <p><strong>No configuration needed.</strong> If WooCommerce is active, this feature works automatically. There's nothing to turn on — it just works.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 10. Translation -->
+          <div class="docs-section" id="doc-translation">
+            <div class="docs-section-header">
+              <div class="docs-section-num">10</div>
+              <h3>Translations & Multilingual Sites</h3>
+            </div>
+            <div class="docs-block">
+              <h4>Using WPML or Polylang?</h4>
+              <p>Consentaro works seamlessly with both WPML and Polylang. The banner text can be set <strong>per language</strong> from each plugin's String Translation screen.</p>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body">
+                    <h5>Set your default banner text</h5>
+                    <p>Write your banner text in your main language under <strong>Consentaro → Design</strong>.</p>
+                  </div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body">
+                    <h5>Translate via WPML / Polylang</h5>
+                    <p>In WPML: go to <strong>Languages → String Translations</strong>, search for "Consentaro," and translate the banner text for each language. Same process for Polylang.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="docs-tip">
+                <span class="tip-icon">🌐</span>
+                <p>All other button labels (Accept All, Deny All, Customize, etc.) are translated automatically through WordPress's standard translation system — no extra setup needed!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick FAQ -->
+          <div class="docs-section" id="doc-faq-docs">
+            <div class="docs-section-header">
+              <div class="docs-section-num">?</div>
+              <h3>Quick FAQ — Common Questions</h3>
+            </div>
+            <div class="docs-block">
+              <h4>I don't see the banner. What's wrong?</h4>
+              <p>Try these steps:</p>
+              <div class="docs-steps">
+                <div class="docs-step">
+                  <div class="docs-step-num">1</div>
+                  <div class="docs-step-body"><h5>Test in a private/incognito window</h5><p>Your browser may have already saved a consent choice. Incognito starts fresh.</p></div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">2</div>
+                  <div class="docs-step-body"><h5>Check if the plugin is enabled</h5><p>Go to Consentaro → General and confirm "Enable Consentaro" is toggled ON.</p></div>
+                </div>
+                <div class="docs-step">
+                  <div class="docs-step-num">3</div>
+                  <div class="docs-step-body"><h5>Turn off Geo-Based Banner temporarily</h5><p>If Geo is ON and you're testing from outside the EU, the banner won't show. Turn it off to test.</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="docs-block">
+              <h4>Will this replace my privacy policy?</h4>
+              <p>No. Consentaro handles the <em>technical side</em> of cookie consent and Google Consent Mode signals. It does not generate a privacy policy. You still need a proper privacy policy for your site — either write one yourself or use a service for that.</p>
+            </div>
+            <div class="docs-block">
+              <h4>Does it track individual visitors?</h4>
+              <p>No. Consentaro never stores IP addresses, user agents, or any personal identifiers. The Insights tab only stores anonymous daily totals. The Consent Log (if you enable it) uses a random, non-identifying token — nothing that could identify a real person.</p>
+            </div>
+            <div class="docs-block">
+              <h4>Will script blocking break my website?</h4>
+              <p>No. Consentaro is very conservative — it only blocks scripts it specifically recognizes as third-party trackers. Your theme, page builder, WooCommerce, payment gateway scripts, and anything Consentaro doesn't recognize is always left completely alone.</p>
+            </div>
+          </div>
+
+        </div><!-- end docs-content -->
+      </div><!-- end docs-layout -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-DEMO — data-mod="mod-demo" -->
+<!-- ============================================================= -->
+<section id="demo" class="section" data-mod="mod-demo">
+  <div class="wrap">
+    <div class="demo-grid">
+      <div class="video-card reveal" id="demo-video" tabindex="0" role="button" aria-label="Watch the 90-second setup walkthrough">
+        <div class="play-btn">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><polygon points="10,6 22,14 10,22" fill="#fff"/></svg>
+        </div>
+        <div class="video-caption">▶ Watch the 90-second setup walkthrough</div>
+      </div>
+      <div class="reveal">
+        <div class="eyebrow">See it in 90 seconds</div>
+        <h2 class="h2" style="font-size:36px;margin-top:14px;">Install, connect, done.</h2>
+        <p class="lede" style="margin-bottom:30px; font-size:16px;">No consultants. No legal team. No complex configuration. Get GDPR-compliant consent signals live in under 5 minutes.</p>
+        <div class="takeaway-list">
+          <div class="takeaway">
+            <div class="num">1</div>
+            <div><h3>Setup in under 5 minutes</h3><p>Install the plugin, follow the Guide tab — that's the whole onboarding process.</p></div>
+          </div>
+          <div class="takeaway">
+            <div class="num">2</div>
+            <div><h3>Zero code required</h3><p>Every option is a plain-language toggle, text field, or color picker. If you can use WordPress, you can use Consentaro.</p></div>
+          </div>
+          <div class="takeaway">
+            <div class="num">3</div>
+            <div><h3>Works with your existing GTM</h3><p>Already have a GTM container? Just paste the ID. Consentaro handles all the consent signal timing automatically.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-GALLERY — data-mod="mod-gallery" -->
+<!-- ============================================================= -->
+<section id="gallery" class="section" data-mod="mod-gallery">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:640px;margin-bottom:52px;">
+      <div class="eyebrow">A Look Inside</div>
+      <h2 class="h2 center" style="margin-top:14px;">Every setting, explained in plain English.</h2>
+    </div>
+    <div class="gallery-grid">
+      <div class="shot-card reveal">
+        <div class="shot-screen">
+          <div class="sh-bar w60"></div>
+          <div class="sh-card">
+            <div class="sh-bar w80" style="margin-bottom:8px;height:6px;"></div>
+            <div class="sh-bar w45" style="height:6px;"></div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>🗺️ Guide Tab</b>
+          <span>Plain-English overview with a live setup checklist showing your progress</span>
+        </div>
+      </div>
+      <div class="shot-card reveal">
+        <div class="shot-screen" style="background:linear-gradient(135deg,#0F2A24,#0E1D2B);">
+          <div class="sh-bar w45"></div>
+          <div class="sh-card" style="margin-top:8px;">
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <div style="flex:1;height:28px;background:rgba(14,124,102,0.4);border-radius:6px;"></div>
+              <div style="flex:1;height:28px;background:rgba(255,255,255,0.1);border-radius:6px;"></div>
+            </div>
+            <div class="sh-bar w60" style="height:6px;"></div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>⚙️ General Settings</b>
+          <span>Enable/disable, GTM ID, geo option, script blocking, consent log</span>
+        </div>
+      </div>
+      <div class="shot-card reveal">
+        <div class="shot-screen" style="background:linear-gradient(135deg,#0A1628,#0F2A24);">
+          <div class="sh-bar w80"></div>
+          <div class="sh-card" style="margin-top:8px;">
+            <div style="height:6px;background:rgba(245,185,66,0.5);border-radius:4px;width:30%;margin-bottom:8px;"></div>
+            <div class="sh-bar w60" style="height:5px;"></div>
+            <div class="sh-bar w45" style="height:5px;margin-top:6px;"></div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>🎨 Design Tab</b>
+          <span>Live preview, theme presets, colors, shapes & button layout controls</span>
+        </div>
+      </div>
+      <div class="shot-card reveal">
+        <div class="shot-screen" style="background:linear-gradient(135deg,#0E1D2B,#0A1820);">
+          <div class="sh-bar w45"></div>
+          <div class="sh-card" style="margin-top:8px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="height:16px;background:rgba(24,160,134,0.3);border-radius:4px;width:100%;"></div>
+              <div style="height:16px;background:rgba(255,255,255,0.07);border-radius:4px;width:100%;"></div>
+              <div style="height:16px;background:rgba(255,255,255,0.07);border-radius:4px;width:90%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>🔍 Scripts Tab</b>
+          <span>Review detected trackers, see their categories, override any script</span>
+        </div>
+      </div>
+      <div class="shot-card reveal">
+        <div class="shot-screen" style="background:linear-gradient(135deg,#081520,#0E2830);">
+          <div class="sh-bar w60"></div>
+          <div class="sh-card" style="margin-top:8px;">
+            <div style="display:flex;align-items:flex-end;gap:4px;height:60px;padding-top:10px;">
+              <div style="flex:1;background:rgba(14,124,102,0.6);border-radius:3px 3px 0 0;height:80%;"></div>
+              <div style="flex:1;background:rgba(245,185,66,0.5);border-radius:3px 3px 0 0;height:45%;"></div>
+              <div style="flex:1;background:rgba(168,72,62,0.5);border-radius:3px 3px 0 0;height:25%;"></div>
+              <div style="flex:1;background:rgba(14,124,102,0.6);border-radius:3px 3px 0 0;height:65%;"></div>
+              <div style="flex:1;background:rgba(245,185,66,0.5);border-radius:3px 3px 0 0;height:40%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>📊 Insights Tab</b>
+          <span>Anonymous daily Accept/Deny/Customize counts with 7/30/90 day chart</span>
+        </div>
+      </div>
+      <div class="shot-card reveal">
+        <div class="shot-screen" style="background:linear-gradient(135deg,#0F1E35,#0A2820);">
+          <div class="sh-bar w45"></div>
+          <div class="sh-card" style="margin-top:8px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div style="width:50px;height:14px;background:rgba(14,124,102,0.5);border-radius:999px;"></div>
+                <div style="flex:1;height:10px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div style="width:40px;height:14px;background:rgba(168,72,62,0.5);border-radius:999px;"></div>
+                <div style="flex:1;height:10px;background:rgba(255,255,255,0.07);border-radius:4px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="shot-caption">
+          <b>🗂️ Consent Log Viewer <span class="badge-pro" style="font-size:10px;">Pro</span></b>
+          <span>Browse, search and filter consent records in wp-admin</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-COMPARE — data-mod="mod-compare" -->
+<!-- ============================================================= -->
+<section id="compare" class="section" data-mod="mod-compare">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:620px;margin-bottom:0;">
+      <div class="eyebrow">How We Stack Up</div>
+      <h2 class="h2 center" style="margin-top:14px;">Consentaro vs. the alternatives.</h2>
+      <p class="lede center">A fair comparison of what matters for a WordPress consent solution.</p>
+    </div>
+    <div class="compare-wrap reveal">
+      <div class="compare-header">
+        <div class="compare-col-h">Feature</div>
+        <div class="compare-col-h featured">✦ Consentaro</div>
+        <div class="compare-col-h">Complianz</div>
+        <div class="compare-col-h">CookieYes</div>
+      </div>
+      <div class="compare-rows">
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Google Consent Mode v2</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Full support</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">100% Self-Hosted</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Always</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Cloud required</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">No Pageview Pricing</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Flat price</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Flat</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Per pageview</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Automatic Script Blocking</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Built-in</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">WooCommerce Event Gating</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Auto</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Manual</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Manual</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Frontend Size</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> &lt;3KB</div>
+          <div class="compare-cell"><span class="chk-n">—</span> ~150KB+</div>
+          <div class="compare-cell"><span class="chk-n">—</span> ~100KB+</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Geo-Based Display</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Built-in</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Cache Plugin Compatible</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Varies</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Anonymous Consent Insights</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Built-in</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Limited</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell feat-name">Developer Hooks / Filters</div>
+          <div class="compare-cell featured"><span class="chk-y">✓</span> Documented</div>
+          <div class="compare-cell"><span class="chk-y">✓</span> Yes</div>
+          <div class="compare-cell"><span class="chk-n">—</span> Limited</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-PRICING — data-mod="mod-pricing" -->
+<!-- ============================================================= -->
+<section id="pricing" class="section" data-mod="mod-pricing">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:600px;margin-bottom:0;">
+      <div class="eyebrow">Simple Pricing</div>
+      <h2 class="h2 center" style="margin-top:14px;">One flat price. No surprises.</h2>
+      <p class="lede center">Free forever for the core plugin. Pro unlocks the Consent Log viewer and upcoming advanced features.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="price-card reveal">
+        <div class="badge-free" style="font-size:12px;margin-bottom:14px;">FREE FOREVER</div>
+        <h3>Consentaro Free</h3>
+        <div class="amount">$<sup></sup>0<span>/month</span></div>
+        <p class="desc">Everything you need for GDPR-compliant cookie consent. No account required, no pageview limits, no expiry.</p>
+        <ul class="price-feats">
+          <li><span class="pf-ic">✓</span>Google Consent Mode v2</li>
+          <li><span class="pf-ic">✓</span>Cookie banner with 4 positions</li>
+          <li><span class="pf-ic">✓</span>Live design preview & 4 themes</li>
+          <li><span class="pf-ic">✓</span>Automatic script blocking</li>
+          <li><span class="pf-ic">✓</span>WooCommerce event gating</li>
+          <li><span class="pf-ic">✓</span>Geo-based banner display</li>
+          <li><span class="pf-ic">✓</span>Anonymous insights dashboard</li>
+          <li><span class="pf-ic">✓</span>Consent log + CSV export</li>
+          <li><span class="pf-ic">✓</span>WPML & Polylang support</li>
+          <li><span class="pf-ic">✓</span>Complianz import</li>
+          <li><span class="pf-ic">✓</span>Developer hooks reference</li>
+          <li><span class="pf-ic">✓</span>Cache-plugin compatible</li>
+        </ul>
+        <a href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener" class="btn btn-teal">Install Free on WordPress.org</a>
+      </div>
+      <!-- Pro -->
+      <div class="price-card featured reveal">
+        <div class="price-badge">⭐ PRO</div>
+        <h3>Consentaro Pro</h3>
+        <div class="amount" style="color:var(--pro-purple);">$<sup></sup>??<span>/year</span></div>
+        <p class="desc">All Free features, plus the Consent Log Viewer and future Pro-only modules as they ship.</p>
+        <ul class="price-feats">
+          <li><span class="pf-ic">✓</span><strong>Everything in Free, plus:</strong></li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>Consent Log Viewer in wp-admin</li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>Search & filter by date, action, RID</li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>Sortable columns (date, action)</li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>Advanced reporting <em style="font-size:12px;">(coming soon)</em></li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>Priority support from the developer</li>
+          <li class="pro-feat"><span class="pf-ic" style="color:var(--pro-purple);">★</span>All future Pro features included</li>
+        </ul>
+        <a href="#" class="btn btn-pro">Get Pro License →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-TESTIMONIALS — data-mod="mod-testimonials" -->
+<!-- ============================================================= -->
+<section id="testimonials" class="section" data-mod="mod-testimonials">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:600px;margin-bottom:52px;">
+      <div class="eyebrow">What People Say</div>
+      <h2 class="h2 center" style="margin-top:14px;">Loved by WordPress site owners.</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Finally a consent plugin that doesn't require a PhD to set up. Installed in 3 minutes, working perfectly. The guide tab is brilliant — clear, no jargon."</blockquote>
+        <div class="testi-person">
+          <div class="testi-avatar">S</div>
+          <div><b>Sarah M.</b><span>WooCommerce Store Owner</span></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"After trying Complianz and CookieYes, Consentaro is a breath of fresh air. Lightweight, fast, and the Geo feature means our US visitors don't get annoyed by cookie banners they don't need."</blockquote>
+        <div class="testi-person">
+          <div class="testi-avatar">A</div>
+          <div><b>Ahmed K.</b><span>Digital Marketing Agency</span></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The script blocking works flawlessly. GA4, Meta Pixel — all held until consent is given. As a developer, I appreciate the clean hooks reference too. Exactly what was missing in this space."</blockquote>
+        <div class="testi-person">
+          <div class="testi-avatar">L</div>
+          <div><b>Lena T.</b><span>WordPress Developer</span></div>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:28px;font-size:13px;color:var(--muted-2);font-style:italic;">Reviews are illustrative. Leave a real review on WordPress.org after trying the plugin!</p>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-FAQ — data-mod="mod-faq" -->
+<!-- ============================================================= -->
+<section id="faq" class="section" data-mod="mod-faq">
+  <div class="wrap">
+    <div class="reveal center" style="max-width:600px;margin-bottom:0;">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="h2 center" style="margin-top:14px;">Frequently asked questions.</h2>
+    </div>
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <button class="faq-q">Do I need Google Tag Manager to use Consentaro? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>No, GTM is completely optional. The cookie banner and Google Consent Mode v2 defaults work without it. You only need to add a GTM ID if you use Google Tag Manager to load your analytics or advertising tags.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">I can't see the cookie banner. What should I check? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>First, try a private/incognito window — your browser may have already saved a consent choice. Second, confirm Consentaro is enabled in the General tab. Third, if Geo-Based Banner is on and you're testing from outside the EU, the banner won't show — turn Geo off temporarily to test.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Will Consentaro slow down my website? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>No. Consentaro is built for performance — the front-end assets are under 3KB and only load when needed. In fact, by delaying tracker scripts until after consent, your site often gets faster initial page loads!</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Does script blocking break scripts I actually need? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>No. Consentaro is very conservative — it only blocks scripts it specifically recognizes as third-party trackers (Google Analytics, Meta Pixel, TikTok Pixel, etc.). Your theme scripts, page builder, WooCommerce, payment gateway, and anything Consentaro doesn't recognize is never touched. You can also review every detected script under Scripts and override any assignment.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Is this a complete GDPR solution? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>Consentaro handles the consent mechanism and Google Consent Mode signals very well. But GDPR compliance is broader — it also includes having a privacy policy, processing agreements, subject access request procedures, and more. Consentaro doesn't replace legal advice. If you're unsure, consult a privacy professional for your specific region and business.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Does Consentaro track individual visitors? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>No. The Insights tab only stores anonymous daily aggregate counts (how many Accept / Deny / Customize decisions happened each day) — never per-visitor data. The optional Consent Log uses a random non-identifying token; it never stores IP addresses, user agents, or any personal identifiers.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Can I import settings from Complianz or CookieYes? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>From Complianz, yes — on a best-effort basis. If Complianz is active, the Guide tab shows an Import card with a before/after preview. Nothing is changed until you explicitly confirm. CookieYes is detected but not yet supported for import (its free version stores banner content in a format that can't be reliably read). Either way, Consentaro never deactivates the other plugin for you — do that yourself once you've confirmed the banner looks right.</p></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Does it work with WPML or Polylang? <span class="faq-plus"></span></button>
+        <div class="faq-a"><p>Yes! Banner text can be translated per language from WPML's String Translation or Polylang's String Translation page. All other UI labels (Accept All, Deny All, Customize, etc.) work through WordPress's standard translation system — both WPML and Polylang respect this automatically, so no extra setup is needed for those strings.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- MOD-FINAL-CTA — data-mod="mod-final-cta" -->
+<!-- ============================================================= -->
+<section id="final-cta" data-mod="mod-final-cta">
+  <div class="final-inner reveal">
+    <h2>Ready to make your site privacy-friendly?</h2>
+    <p>Join thousands of WordPress sites using Consentaro. Free forever, Pro when you need more.</p>
+    <div class="final-ctas">
+      <a href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener" class="btn btn-primary">⬇ Install Free on WordPress.org</a>
+      <a href="#tabs-section" data-tab="docs" class="btn btn-ghost-dark">📖 Read the Docs</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================= -->
+<!-- SITE FOOTER — data-mod="mod-footer" -->
+<!-- ============================================================= -->
+<footer id="site-footer" data-mod="mod-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 11.3C5.8 12.6 7.5 14.1 8.8 15.8C12.4 11.3 16.5 7.2 21 4" stroke="#F4FBF9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="4" cy="11.3" r="1.6" fill="#F5B942"/>
+            </svg>
+          </span>
+          Consentaro
+        </div>
+        <p class="desc">Ultra-light Google Consent Mode v2 for WordPress. Simple cookie banner, GTM after choice, WooCommerce-ready. Built with ❤️ by itsmanzur.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Plugin</h4>
+        <ul>
+          <li><a href="#tabs-section">Features</a></li>
+          <li><a href="#tabs-section" data-tab="docs">Documentation</a></li>
+          <li><a href="#demo">Demo</a></li>
+          <li><a href="#compare">Comparison</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://wordpress.org/plugins/consentaro/" target="_blank" rel="noopener">WordPress.org</a></li>
+          <li><a href="https://github.com/itsmanzur/consentaro" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="https://github.com/itsmanzur/consentaro/blob/main/docs/hooks.md" target="_blank" rel="noopener">Developer Hooks</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="https://wordpress.org/support/plugin/consentaro/" target="_blank" rel="noopener">Support Forum</a></li>
+          <li><a href="https://wordpress.org/plugins/consentaro/#reviews" target="_blank" rel="noopener">Leave a Review ⭐</a></li>
+          <li><a href="https://profiles.wordpress.org/itsmanzur/" target="_blank" rel="noopener">Author Profile</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Consentaro by <a href="https://profiles.wordpress.org/itsmanzur/" target="_blank" rel="noopener" style="color:#C8DCDA;">itsmanzur</a>. Licensed GPLv2 or later.</span>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">GPL-2.0</a>
+        <a href="https://github.com/itsmanzur/consentaro" target="_blank" rel="noopener">Source Code</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================= -->
+<script>
+// ===== PARTICLES =====
+(function(){
+  const canvas = document.getElementById('particles-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function rand(a,b){return Math.random()*(b-a)+a;}
+  for(let i=0;i<55;i++){
+    particles.push({
+      x:rand(0,1), y:rand(0,1),
+      vx:rand(-0.00012,0.00012), vy:rand(-0.00015,-0.00005),
+      r:rand(1,3), o:rand(0.04,0.25),
+      color: Math.random()>0.5?'#18A086':'#F5B942'
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=1; if(p.x>1)p.x=0;
+      if(p.y<0)p.y=1; if(p.y>1)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;
+      ctx.globalAlpha=p.o;
+      ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===== SCROLL PROGRESS =====
+const prog = document.getElementById('scroll-progress');
+function updateProgress(){
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  if(prog) prog.style.transform = `scaleX(${docH>0?scrollTop/docH:0})`;
+}
+window.addEventListener('scroll', updateProgress, {passive:true});
+
+// ===== HEADER SCROLL =====
+const header = document.getElementById('site-header');
+window.addEventListener('scroll', ()=>{
+  if(header) header.classList.toggle('is-scrolled', window.scrollY > 30);
+}, {passive:true});
+
+// ===== BACK TO TOP =====
+const backTop = document.getElementById('back-top');
+if(backTop){
+  window.addEventListener('scroll',()=>{ backTop.classList.toggle('is-visible',window.scrollY>400); },{passive:true});
+  backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+}
+
+// ===== FLOATING TOC =====
+const tocDots = document.querySelectorAll('.toc-dot');
+const sections = ['hero','tabs-section','demo','compare','pricing','testimonials','faq'];
+const floatingToc = document.getElementById('floating-toc');
+
+function updateToc(){
+  let current = sections[0];
+  sections.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && window.scrollY >= el.offsetTop - 200) current=id;
+  });
+  tocDots.forEach(dot=>{
+    dot.classList.toggle('active', dot.dataset.target === current);
+  });
+  if(floatingToc) floatingToc.classList.toggle('is-visible', window.scrollY > 300);
+}
+window.addEventListener('scroll', updateToc, {passive:true});
+tocDots.forEach(dot=>{
+  dot.addEventListener('click',()=>{
+    const el = document.getElementById(dot.dataset.target);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// ===== REVEAL ON SCROLL =====
+const reveals = document.querySelectorAll('.reveal,.reveal-scale');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('is-visible'); });
+}, {threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(el=>observer.observe(el));
+
+// ===== MOBILE NAV =====
+const navToggle = document.getElementById('nav-toggle-btn');
+const navMobile = document.getElementById('nav-mobile');
+if(navToggle&&navMobile){
+  navToggle.addEventListener('click',()=>{
+    const open = navMobile.style.display==='block';
+    navMobile.style.display = open?'none':'block';
+    navToggle.setAttribute('aria-expanded', String(!open));
+  });
+  navMobile.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click',()=>{ navMobile.style.display='none'; navToggle.setAttribute('aria-expanded','false'); });
+  });
+}
+
+// ===== TABS =====
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+function switchTab(tabId){
+  tabBtns.forEach(btn=>{
+    const active = btn.dataset.tabId===tabId;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-selected',String(active));
+  });
+  tabContents.forEach(tab=>{
+    tab.classList.toggle('active', tab.id==='tab-'+tabId);
+  });
+  // Re-trigger reveals for newly visible content
+  const newTab = document.getElementById('tab-'+tabId);
+  if(newTab){
+    newTab.querySelectorAll('.reveal,.reveal-scale').forEach(el=>{
+      if(!el.classList.contains('is-visible')) observer.observe(el);
+    });
+  }
+}
+
+tabBtns.forEach(btn=>{
+  btn.addEventListener('click',()=>switchTab(btn.dataset.tabId));
+});
+
+// Handle nav links pointing to docs tab
+document.querySelectorAll('[data-tab="docs"]').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    switchTab('docs');
+    document.getElementById('tabs-section')?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// ===== DOCS SIDEBAR ACTIVE STATE =====
+const docSections = document.querySelectorAll('.docs-section');
+const docNavLinks = document.querySelectorAll('.docs-nav a');
+const docsScrollObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      docNavLinks.forEach(a=>{
+        a.classList.toggle('active', a.getAttribute('href')==='#'+id);
+      });
+    }
+  });
+},{threshold:0.4, rootMargin:'-100px 0px -60% 0px'});
+docSections.forEach(s=>docsScrollObserver.observe(s));
+
+docNavLinks.forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// ===== FAQ =====
+document.querySelectorAll('.faq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i=>{
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight='0';
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      const ans = item.querySelector('.faq-a');
+      ans.style.maxHeight = ans.scrollHeight+'px';
+    }
+  });
+});
+
+// ===== FEATURE DETAIL DRAWER =====
+const drawer = document.getElementById('feature-drawer');
+const drawerClose = document.getElementById('drawer-close');
+const drawerOverlay = document.getElementById('drawer-overlay');
+const drawerTitle = document.getElementById('drawer-title');
+const drawerBody = document.getElementById('drawer-body');
+const drawerIc = document.getElementById('drawer-ic');
+
+const featureData = {
+  'lightweight': {
+    icon:'⚡', title:'Ultra-Lightweight by Design',
+    body:`<p>Consentaro's front-end footprint is tiny by design. The banner JavaScript is under 3KB minified and gzipped, and the CSS is equally small. Compare this to some alternatives that load 100–200KB+ of scripts for a cookie banner.</p>
+    <p style="margin-top:12px;">This matters because every kilobyte of JavaScript your page loads means time spent parsing and executing code. Consentaro is designed to load fast, execute quickly, and get out of the way so your page renders as quickly as possible.</p>
+    <p style="margin-top:12px;"><strong>How it's kept small:</strong> No external dependencies, no framework bundled with the banner, no cloud-hosted scripts. Just vanilla JavaScript that does exactly what it needs to do.</p>`
+  },
+  'consent-mode': {
+    icon:'✅', title:'Google Consent Mode v2 — Fully Wired',
+    body:`<p>Google Consent Mode v2 is Google's system that tells Google's tags what the visitor has and hasn't consented to. It's required by Google for businesses using Google Ads or GA4 in the EU.</p>
+    <p style="margin-top:12px;">Consentaro automatically fires the correct Consent Mode signals:</p>
+    <ul style="margin-top:10px;margin-left:16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Default signals</strong> (denied) before any visitor interaction — so GA4 and Google Ads can use modelling</li>
+      <li><strong>Update signals</strong> when the visitor makes a choice — so the actual consent state is reflected in real-time</li>
+    </ul>
+    <p style="margin-top:12px;">This means even for visitors who deny consent, Google can still do statistical modelling to estimate conversions — protecting your ad measurement without violating privacy.</p>`
+  },
+  'banner': {
+    icon:'🍪', title:'Cookie Banner — Clean & Customizable',
+    body:`<p>The Consentaro banner is designed to be clear, accessible, and non-intrusive. Visitors see exactly three choices:</p>
+    <ul style="margin:12px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Accept All</strong> — consents to all categories</li>
+      <li><strong>Deny All</strong> — denies all optional categories (necessary always allowed)</li>
+      <li><strong>Customize</strong> — opens a dialog to choose per-category</li>
+    </ul>
+    <p><strong>Positions available:</strong> Bottom bar (most common), Top bar, Bottom-right corner, and Modal (centered overlay).</p>
+    <p style="margin-top:12px;"><strong>Customization options:</strong> Background color, text color, button colors, font size, border radius, button layout (inline / stacked), button alignment, and four one-click preset themes.</p>
+    <p style="margin-top:12px;"><strong>Live preview:</strong> All changes show in real-time in the Design tab with desktop/mobile toggle — before you even save.</p>`
+  },
+  'script-blocking': {
+    icon:'🚫', title:'Automatic Script Blocking',
+    body:`<p>When script blocking is enabled, Consentaro scans your pages and automatically identifies third-party tracking scripts. It then holds them in a "paused" state until the visitor grants the appropriate consent.</p>
+    <p style="margin-top:12px;"><strong>How it works technically:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Scripts with matching URL signatures have their <code>type</code> attribute changed so the browser doesn't execute them</li>
+      <li>Inline script content is matched against known tracker signatures</li>
+      <li>When consent is granted, the original scripts are re-injected and executed</li>
+    </ul>
+    <p><strong>Conservative by design:</strong> If Consentaro doesn't recognize a script, it leaves it completely alone. This prevents false positives that break your site.</p>
+    <p style="margin-top:12px;"><strong>Extensible:</strong> Developers can use the <code>consentaro_tracker_signatures</code> filter to add custom tracker patterns.</p>`
+  },
+  'gtm': {
+    icon:'🏷️', title:'Conditional Google Tag Manager Loading',
+    body:`<p>When you provide your GTM Container ID (<code>GTM-XXXXXXX</code>), Consentaro loads the GTM container script only after the visitor has made a consent choice.</p>
+    <p style="margin-top:12px;"><strong>The flow:</strong></p>
+    <ol style="margin:10px 0 12px 16px;list-style:decimal;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Consent Mode defaults (denied) are set before the banner appears</li>
+      <li>Banner is shown; visitor makes a choice</li>
+      <li>Consent Mode is updated with the visitor's actual choice</li>
+      <li>GTM container loads and fires tags based on consent state</li>
+    </ol>
+    <p>If no GTM ID is provided, Consentaro still fires Consent Mode signals so any GTM container you load yourself (e.g., hardcoded) will pick them up correctly.</p>`
+  },
+  'woocommerce': {
+    icon:'🛒', title:'WooCommerce — Smart Event Gating',
+    body:`<p>If WooCommerce is active, Consentaro automatically intercepts and gates three critical ecommerce dataLayer events so they only fire when analytics consent has been granted:</p>
+    <ul style="margin:12px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>view_item</strong> — product page views</li>
+      <li><strong>add_to_cart</strong> — cart additions</li>
+      <li><strong>purchase</strong> — completed orders</li>
+    </ul>
+    <p>These are the events that feed into GA4 ecommerce reports and Google Ads conversion tracking. Without gating them, you'd be sending ecommerce data to Google even for visitors who denied analytics consent.</p>
+    <p style="margin-top:12px;">This works automatically — no configuration needed. If WooCommerce is installed and active, the gating is applied.</p>`
+  },
+  'geo': {
+    icon:'🌍', title:'Geo-Based Banner Display',
+    body:`<p>Cookie consent banners are legally required in the EU, EEA, UK, and Switzerland — but not in most other countries. Showing a banner to a visitor in the US (where GDPR doesn't apply) is unnecessary and can hurt conversion rates.</p>
+    <p style="margin-top:12px;">When the Geo-Based Banner option is enabled, Consentaro checks the visitor's country and only shows the banner to visitors from affected regions:</p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>All 27 EU member states</li>
+      <li>EEA countries (Norway, Iceland, Liechtenstein)</li>
+      <li>United Kingdom</li>
+      <li>Switzerland</li>
+    </ul>
+    <p><strong>How geo detection works:</strong> Consentaro checks your server's GeoIP data first. If not available, and if you've enabled the Cloudflare toggle (for Cloudflare-proxied sites), it uses Cloudflare headers. As a last resort, it calls ip-api.com server-side — the IP is never stored.</p>`
+  },
+  'design': {
+    icon:'🎨', title:'Live Design Preview & Theme Presets',
+    body:`<p>The Design tab gives you a real-time preview of your banner as you customize it — no need to save and reload to see changes.</p>
+    <p style="margin-top:12px;"><strong>Four preset themes:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Consentaro</strong> — brand green with gold accents</li>
+      <li><strong>Minimal</strong> — clean white, subtle shadows</li>
+      <li><strong>Dark</strong> — dark background for dark-mode sites</li>
+      <li><strong>Warm</strong> — warm earthy tones</li>
+    </ul>
+    <p><strong>Manual controls:</strong> Background color, text color, primary button color, secondary button color, border radius (0–50px), font size (11–18px), button layout (inline side-by-side or stacked), button alignment (left / center / right).</p>
+    <p style="margin-top:12px;">A "Reset to defaults" button lets you undo all changes instantly without retyping the original values.</p>`
+  },
+  'insights': {
+    icon:'📊', title:'Anonymous Insights Dashboard',
+    body:`<p>The Insights tab shows you a chart of daily consent decisions for the last 7, 30, or 90 days — broken down by Accept All, Deny All, and Customize.</p>
+    <p style="margin-top:12px;"><strong>What makes it privacy-safe:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Only daily aggregate counts are stored — "27 people accepted today"</li>
+      <li>No per-visitor records of any kind</li>
+      <li>No IP addresses, no user agents, no cookie IDs</li>
+      <li>Data is stored in your own database — never sent to any external service</li>
+    </ul>
+    <p>Use the Insights data to understand how visitors are responding to your banner. A high Deny rate might indicate your banner text needs to be more transparent or friendly. A very low Customize rate might mean visitors don't know they have that option.</p>`
+  },
+  'scripts-tab': {
+    icon:'🔍', title:'Scripts Tab — Full Transparency',
+    body:`<p>The Scripts tab shows you every third-party script Consentaro has detected on your site, along with its automatically assigned consent category and current blocking status.</p>
+    <p style="margin-top:12px;"><strong>What you can do in the Scripts tab:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>See which scripts were detected and what category they were assigned</li>
+      <li>Override the category for any specific script (e.g., move a chat widget from "advertising" to "functional")</li>
+      <li>Use a dropdown interface with fully brand-styled listbox</li>
+    </ul>
+    <p>Overrides are saved per-script using an identifier (usually the script's src URL or a content hash for inline scripts). Future page loads will respect your override.</p>`
+  },
+  'cache': {
+    icon:'⚙️', title:'Cache-Plugin Compatible',
+    body:`<p>Consentaro is designed to work correctly even on sites with aggressive page caching. It's been verified with the three most popular WordPress cache plugins:</p>
+    <ul style="margin:12px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>WP Rocket</strong> — no configuration needed</li>
+      <li><strong>LiteSpeed Cache</strong> — works out of the box</li>
+      <li><strong>W3 Total Cache</strong> — compatible with default settings</li>
+    </ul>
+    <p>The consent state is stored in the visitor's browser (localStorage / cookies) and Consentaro reads it client-side. This means even if the page HTML is cached, the correct consent state is always applied.</p>`
+  },
+  'i18n': {
+    icon:'🌐', title:'Translation Ready — 188+ Strings',
+    body:`<p>Consentaro is fully translation-ready with over 188 translatable strings covering both the admin UI and the frontend banner.</p>
+    <p style="margin-top:12px;"><strong>Translation options:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Translate via WordPress.org at translate.wordpress.org (no local setup needed)</li>
+      <li>Use the included <code>languages/consentaro.pot</code> starter file for local translation</li>
+      <li>All admin strings are translatable via wp_set_script_translations()</li>
+    </ul>
+    <p><strong>WPML & Polylang:</strong> Banner text can be set per-language via each plugin's String Translations screen. All button labels (Accept All, Deny All, etc.) work through WordPress's standard i18n system.</p>`
+  },
+  'a11y': {
+    icon:'♿', title:'Fully Accessible — WCAG-Aware',
+    body:`<p>Accessibility isn't an afterthought in Consentaro — it's built into the banner design from the start.</p>
+    <p style="margin-top:12px;"><strong>Accessibility features:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Focus moves into the banner automatically when it appears</li>
+      <li>Tab key is trapped inside the Customize dialog while it's open</li>
+      <li>Escape key closes the Customize dialog and returns focus to the triggering button</li>
+      <li>ARIA roles and aria-modal are correctly applied (only to actual modal positions)</li>
+      <li>Visible focus outlines on all buttons and checkboxes across all theme presets</li>
+      <li>All action buttons meet WCAG AA color contrast requirements</li>
+    </ul>
+    <p>This means keyboard-only users and screen reader users can use the consent banner without any issues.</p>`
+  },
+  'guide': {
+    icon:'📖', title:'Plain-English Guide Tab',
+    body:`<p>The Guide tab in wp-admin is designed specifically for non-technical users. It explains what Consentaro does, why it matters, and what you need to set up — in plain, friendly language.</p>
+    <p style="margin-top:12px;"><strong>What's in the Guide tab:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>A setup checklist that tracks your progress (green checkmarks for each completed step)</li>
+      <li>Brief explanations of what each setting does and why it matters</li>
+      <li>A success state at 100% completion</li>
+      <li>Import card for Complianz migration (if Complianz is active)</li>
+    </ul>
+    <p>When you first activate Consentaro, you're automatically redirected to the Guide tab so you can start the walkthrough immediately — no hunting through menus.</p>`
+  },
+  'import': {
+    icon:'📥', title:'Complianz Import — Best-Effort Migration',
+    body:`<p>If you're switching from Complianz to Consentaro, the Guide tab shows an Import card that automates the boring parts of the migration.</p>
+    <p style="margin-top:12px;"><strong>What gets imported:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>Banner text / message</li>
+      <li>Banner position (top/bottom/etc.)</li>
+      <li>Banner colors (background, text, button colors)</li>
+    </ul>
+    <p><strong>What doesn't get imported:</strong> Cookie scanning results, legal page links, custom category names, full Complianz configuration — these are too specific to Complianz's data model to map reliably.</p>
+    <p style="margin-top:12px;"><strong>Safety first:</strong> The Import card shows a before/after preview of exactly what will change. Nothing is applied until you click "Apply." Consentaro never deactivates Complianz for you — do that yourself after confirming everything looks right.</p>`
+  },
+  'consent-log-free': {
+    icon:'📋', title:'Consent Log — Off by Default',
+    body:`<p>The optional Consent Log keeps a record of every consent decision made on your site — useful if you need to prove compliance for an audit.</p>
+    <p style="margin-top:12px;"><strong>What each record contains:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Timestamp</strong> — when the decision was made</li>
+      <li><strong>Action</strong> — Accept All, Deny All, or Customize</li>
+      <li><strong>Categories</strong> — which consent categories were granted/denied</li>
+      <li><strong>RID (Random Identifier)</strong> — a random token to track if the same browser changed its choice later</li>
+    </ul>
+    <p><strong>What is NEVER stored:</strong> IP addresses, user agents, email addresses, usernames, or any other personal identifier.</p>
+    <p style="margin-top:12px;"><strong>Retention:</strong> Records are automatically pruned after the retention period you choose (1–24 months, default 12). You can also export all records as CSV for audit purposes.</p>
+    <p style="margin-top:12px;"><span class="badge-pro">Pro</span> Consentaro Pro adds a full viewer UI in wp-admin to browse, search, and filter records without touching the database.</p>`
+  },
+  'hooks': {
+    icon:'🔌', title:'Developer Hooks — Full Extensibility',
+    body:`<p>Consentaro exposes a documented set of WordPress filters and actions so developers can customize its behavior without editing plugin code.</p>
+    <p style="margin-top:12px;"><strong>Available hook categories:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Consent defaults</strong> — customize which categories default to denied/granted</li>
+      <li><strong>Geo detection</strong> — customize which countries trigger the banner</li>
+      <li><strong>Script categorization</strong> — add custom tracker signatures</li>
+      <li><strong>WooCommerce events</strong> — customize which events are gated and how</li>
+      <li><strong>Settings</strong> — hook into settings saves and reads</li>
+    </ul>
+    <p>Full hooks reference is available on <a href="https://github.com/itsmanzur/consentaro/blob/main/docs/hooks.md" target="_blank" rel="noopener" style="color:var(--teal);">GitHub → docs/hooks.md</a>.</p>`
+  },
+  'self-hosted': {
+    icon:'🏠', title:'100% Self-Hosted — You Own Your Data',
+    body:`<p>Unlike some consent management platforms that route consent choices through their own cloud servers, Consentaro stores everything in your own WordPress database.</p>
+    <p style="margin-top:12px;"><strong>What this means for you:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li>No monthly cloud subscription required for the core functionality</li>
+      <li>Visitor consent choices are stored in your site's own database</li>
+      <li>No third-party server ever sees your visitors' consent decisions</li>
+      <li>No risk of data loss if an external service shuts down or changes its pricing</li>
+      <li>GDPR-friendly data residency — data stays wherever you host WordPress</li>
+    </ul>
+    <p>The only optional external service Consentaro uses is <strong>ip-api.com</strong> for geo detection (only if you enable geo-based banner and your host doesn't provide GeoIP data) — and that's just to determine the visitor's country, with no data stored.</p>`
+  },
+  'consent-log-viewer': {
+    icon:'🗂️', title:'Consent Log Viewer — Pro Feature',
+    body:`<p>Consentaro Pro adds a full-featured Consent Log viewer directly in your wp-admin dashboard. Instead of downloading a CSV and opening Excel, you can browse, search, and filter consent records right in your browser.</p>
+    <p style="margin-top:12px;"><strong>Features:</strong></p>
+    <ul style="margin:10px 0 12px 16px;list-style:disc;display:flex;flex-direction:column;gap:8px;font-size:15px;color:var(--muted);">
+      <li><strong>Table view</strong> — paginated table showing Date, Action, Categories, and RID</li>
+      <li><strong>Date range filter</strong> — filter by All time, Last 7 days, Last 30 days, or Last 90 days</li>
+      <li><strong>Action filter</strong> — filter by Accept All, Deny All, or Customize</li>
+      <li><strong>RID search</strong> — search for a specific random identifier to track a browser's consent history</li>
+      <li><strong>Sortable columns</strong> — sort by date, action type, or RID</li>
+    </ul>
+    <p>The viewer is built on WordPress's native WP_List_Table component, so it feels native and familiar. Access it under <strong>Consentaro → Consent Log</strong>.</p>`
+  },
+};
+
+document.querySelectorAll('.feature-card[data-feature]').forEach(card=>{
+  card.addEventListener('click',()=>{
+    const key = card.dataset.feature;
+    const data = featureData[key];
+    if(!data) return;
+    drawerIc.textContent = data.icon;
+    drawerTitle.textContent = data.title;
+    drawerBody.innerHTML = data.body;
+    drawer.classList.add('open');
+    document.body.style.overflow='hidden';
+    document.getElementById('drawer-panel').scrollTop=0;
+    drawerClose.focus();
+  });
+});
+
+function closeDrawer(){
+  drawer.classList.remove('open');
+  document.body.style.overflow='';
+}
+drawerClose?.addEventListener('click',closeDrawer);
+drawerOverlay?.addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+
+// ===== BANNER INTERACTIVE MOCKUP =====
+const pillAccept = document.querySelector('.pill-accept');
+const pillDeny = document.querySelector('.pill-deny');
+const consentDock = document.querySelector('.consent-dock');
+if(pillAccept&&consentDock){
+  pillAccept.addEventListener('click',()=>{
+    consentDock.style.background='#0A5040';
+    consentDock.querySelector('.consent-text b').textContent='✓ Consent accepted!';
+    setTimeout(()=>{
+      consentDock.style.background='';
+      consentDock.querySelector('.consent-text b').textContent='We use cookies 🍪';
+    },2000);
+  });
+}
+if(pillDeny&&consentDock){
+  pillDeny.addEventListener('click',()=>{
+    consentDock.style.background='#4A1A16';
+    consentDock.querySelector('.consent-text b').textContent='✗ Consent denied';
+    setTimeout(()=>{
+      consentDock.style.background='';
+      consentDock.querySelector('.consent-text b').textContent='We use cookies 🍪';
+    },2000);
+  });
+}
+
+// ===== DEMO VIDEO PLACEHOLDER =====
+const demoVideo = document.getElementById('demo-video');
+if(demoVideo){
+  demoVideo.addEventListener('click',()=>alert('📹 Demo video coming soon! Check the WordPress.org plugin page for setup screenshots.'));
+  demoVideo.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') demoVideo.click(); });
+}
+
+// Trigger initial toc update
+updateToc();
+</script>
+</body>
+</html>

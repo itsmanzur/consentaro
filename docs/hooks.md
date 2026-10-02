@@ -203,6 +203,29 @@ add_filter( 'consentaro_banner_html', function ( string $html, array $settings )
 }, 10, 2 );
 ```
 
+### `consentaro_consent_log_query`
+
+**File:** `src/Core/Plugin.php` (provider) · `src/Admin/ConsentLog.php` (`query()`)
+
+A read-only provider for the optional Consent Log. Add-ons call `apply_filters( 'consentaro_consent_log_query', null, $args )` and get back a page of log rows plus the total match count, without touching Consentaro's database table directly. Returns an empty result (no error) if the Consent Log is turned off or its table doesn't exist.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `$default` | `null` | Always `null` from the caller; Consentaro replaces it with the result. |
+| `$args` | `array<string, mixed>` | `page` (int, default 1), `per_page` (int, default 20, max 100), `action` (`accept-all`\|`deny-all`\|`customize`), `date_from` / `date_to` (`Y-m-d`, inclusive), `rid_search` (partial match), `orderby` (`created_at`\|`action`\|`rid`), `order` (`ASC`\|`DESC`). |
+
+Returns `array{ items: array<int, array{id, rid, action, categories, created_at}>, total: int }`.
+
+```php
+// Latest 10 "deny all" decisions in the last week.
+$result = apply_filters( 'consentaro_consent_log_query', null, array(
+	'action'    => 'deny-all',
+	'date_from' => gmdate( 'Y-m-d', strtotime( '-7 days' ) ),
+	'per_page'  => 10,
+) );
+echo $result['total'];
+```
+
 ## Actions
 
 ### `consentaro_consent_updated`
