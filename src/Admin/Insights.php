@@ -62,6 +62,25 @@ final class Insights {
 	}
 
 	/**
+	 * Inclusive Y-m-d bounds for "the last $days days", in the SITE
+	 * timezone (wp_timezone) and counting today as day one. The single
+	 * definition of a range — Insights and the Consent Log both use it so
+	 * their totals describe the same window.
+	 *
+	 * @param int $days Number of days (>= 1).
+	 * @return array{from: string, to: string}
+	 */
+	public static function rangeBounds( int $days ): array {
+		$days = max( 1, $days );
+		$now  = current_datetime();
+
+		return array(
+			'from' => $now->modify( '-' . ( $days - 1 ) . ' days' )->format( 'Y-m-d' ),
+			'to'   => $now->format( 'Y-m-d' ),
+		);
+	}
+
+	/**
 	 * Last $days days of counts, ascending by date, zero-filled for gaps.
 	 *
 	 * @param int $days Number of days to return.

@@ -26,6 +26,11 @@ final class ConsentLog {
 	public const CRON_HOOK = 'consentaro_prune_consent_log';
 
 	/**
+	 * Option holding the date logging was last switched on.
+	 */
+	public const SINCE_OPTION = 'consentaro_consent_log_since';
+
+	/**
 	 * Hard cap on rows returned by an export, to keep it a bounded request.
 	 */
 	private const EXPORT_LIMIT = 5000;
@@ -35,6 +40,20 @@ final class ConsentLog {
 	 */
 	public function register(): void {
 		add_action( self::CRON_HOOK, array( $this, 'prune' ) );
+		add_filter( 'consentaro_consent_log_query', array( $this, 'provideQuery' ), 10, 2 );
+	}
+
+	/**
+	 * Thin filter wrapper around query(), kept separate so query() stays
+	 * directly unit-testable. Used by add-ons such as Consentaro Pro.
+	 *
+	 * @param mixed                $default Incoming value (null).
+	 * @param array<string, mixed> $args    Query args — see query().
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function provideQuery( $default, array $args = array() ): array {
+		unset( $default );
+		return $this->query( $args );
 	}
 
 	/**
@@ -108,8 +127,10 @@ final class ConsentLog {
 	 * ('created_at'|'action'|'rid', default created_at), order ('ASC'|'DESC',
 	 * default DESC).
 	 *
-	 * Returns an empty result (never an error) when logging is disabled or
-	 * the table doesn't exist.
+	 * Deliberately does NOT check the consent_log_enabled setting (unlike
+	 * record()): this only reads rows that were already collected, and they
+	 * should stay visible even after logging has been switched off. Returns
+	 * an empty result (never an error) if the table doesn't exist.
 	 *
 	 * @param array<string, mixed> $args Query args.
 	 * @return array{items: array<int, array<string, mixed>>, total: int}
@@ -120,7 +141,7 @@ final class ConsentLog {
 			'total' => 0,
 		);
 
-		if ( ! $this->isEnabled() || ! $this->tableExists() ) {
+		if ( ! $this->tableExists() ) {
 			return $empty;
 		}
 
@@ -171,7 +192,7 @@ final class ConsentLog {
 		$total     = (int) $wpdb->get_var( empty( $params ) ? $total_sql : $wpdb->prepare( $total_sql, $params ) );
 
 		// $orderby/$order are whitelisted above, so interpolating them is safe.
-		$rows_sql = "SELECT id, rid, action, categories, created_at FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order}, id {$order} LIMIT %d OFFSET %d";
+		$rows_sql = "SELECT rid, action, categories, created_at FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order}, id {$order} LIMIT %d OFFSET %d";
 		$rows     = $wpdb->get_results(
 			$wpdb->prepare( $rows_sql, array_merge( $params, array( $per_page, $offset ) ) ),
 			ARRAY_A
@@ -182,6 +203,64 @@ final class ConsentLog {
 			'items' => is_array( $rows ) ? $rows : array(),
 			'total' => $total,
 		);
+	}
+
+	/**
+	 * Decision counts by action for an inclusive Y-m-d window (site time).
+	 * Zeros when logging is off or the table is missing.
+	 *
+	 * @param string $from First day, 'Y-m-d'.
+	 * @param string $to   Last day, 'Y-m-d'.
+	 * @return array{accepted: int, denied: int, customized: int}
+	 */
+	public function countByAction( string $from, string $to ): array {
+		$out = array(
+			'accepted'   => 0,
+			'denied'     => 0,
+			'customized' => 0,
+		);
+
+		$from = $this->validDate( $from );
+		$to   = $this->validDate( $to );
+		if ( null === $from || null === $to || ! $this->isEnabled() || ! $this->tableExists() ) {
+			return $out;
+		}
+
+		global $wpdb;
+		$table = $this->tableName();
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT action, COUNT(*) AS n FROM {$table} WHERE created_at >= %s AND created_at <= %s GROUP BY action",
+				$from . ' 00:00:00',
+				$to . ' 23:59:59'
+			),
+			ARRAY_A
+		);
+		// phpcs:enable
+
+		$map = array(
+			'accept-all' => 'accepted',
+			'deny-all'   => 'denied',
+			'customize'  => 'customized',
+		);
+		foreach ( (array) $rows as $row ) {
+			$action = (string) ( $row['action'] ?? '' );
+			if ( isset( $map[ $action ] ) ) {
+				$out[ $map[ $action ] ] = (int) ( $row['n'] ?? 0 );
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Date logging was last turned on ('Y-m-d'), or null if unknown.
+	 */
+	public function enabledSince(): ?string {
+		$value = get_option( self::SINCE_OPTION, '' );
+		return is_string( $value ) && '' !== $value ? $value : null;
 	}
 
 	/**

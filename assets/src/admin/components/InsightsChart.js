@@ -52,9 +52,29 @@ const InsightsChart = ( { days } ) => {
 					return (
 						<g
 							key={ day.date }
+							tabIndex={ 0 }
+							role="img"
+							aria-label={ sprintf(
+								/* translators: 1: date 2: accepted 3: denied 4: customized */
+								__(
+									'%1$s: accepted %2$d, denied %3$d, customized %4$d',
+									'consentaro'
+								),
+								formatDate( day.date ),
+								day.accepted,
+								day.denied,
+								day.customized
+							) }
 							onMouseEnter={ () => setHoverIndex( i ) }
 							onMouseLeave={ () =>
 								setHoverIndex( ( cur ) => ( cur === i ? null : cur ) )
+							}
+							onFocus={ () => setHoverIndex( i ) }
+							onBlur={ () =>
+								setHoverIndex( ( cur ) => ( cur === i ? null : cur ) )
+							}
+							onClick={ () =>
+								setHoverIndex( ( cur ) => ( cur === i ? null : i ) )
 							}
 						>
 							<title>
@@ -119,7 +139,13 @@ const InsightsChart = ( { days } ) => {
 			{ hovered && (
 				<div
 					className="consentaro-insights__tooltip"
-					style={ { left: `${ ( ( hoverIndex + 0.5 ) / n ) * 100 }%` } }
+					style={ {
+						// Clamp so the first/last bars' tooltips stay inside the card.
+						left: `${ Math.min(
+							88,
+							Math.max( 12, ( ( hoverIndex + 0.5 ) / n ) * 100 )
+						) }%`,
+					} }
 				>
 					<strong>{ formatDate( hovered.date ) }</strong>
 					<span>
