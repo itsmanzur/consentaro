@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Consentaro - Cookie Consent & Google Consent Mode for WooCommerce 1.4.0\n"
+"Project-Id-Version: Consentaro - Cookie Consent & Google Consent Mode for WooCommerce 1.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/consentaro\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-23T13:31:04+00:00\n"
+"POT-Creation-Date: 2026-10-23T16:32:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: consentaro\n"
@@ -39,948 +39,1119 @@ msgstr ""
 msgid "https://profiles.wordpress.org/itsmanzur/"
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Admin/REST_Controller.php:150
-#: src/Admin/REST_Controller.php:150
+#: src/Admin/REST_Controller.php:190
 msgid "Invalid privacy nonce."
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Admin/REST_Controller.php:318
-#: src/Admin/REST_Controller.php:318
+#: src/Admin/REST_Controller.php:459
 msgid "Provide action or consent map."
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Admin/REST_Controller.php:332
-#: src/Admin/REST_Controller.php:332
+#: src/Admin/REST_Controller.php:473
 msgid "Unknown consent action."
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Core/Activator.php:35
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:70
-#: src/Core/Activator.php:35
-#: src/Frontend/Banner.php:70
+#: src/Admin/Settings.php:216
+msgid "(no title)"
+msgstr ""
+
+#: src/Admin/Settings.php:290
+#: src/Core/Activator.php:42
+#: src/Frontend/Banner.php:148
 msgid "We use cookies to improve your experience and measure traffic."
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:164
-#: src/Frontend/Banner.php:164
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Analytics"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:165
-#: src/Frontend/Banner.php:165
-msgid "Advertising"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:166
-#: src/Frontend/Banner.php:166
-msgid "Ad user data"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:167
-#: src/Frontend/Banner.php:167
-msgid "Ad personalization"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:168
-#: src/Frontend/Banner.php:168
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Personalization"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:203
-msgid "Cookie Consent"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:205
-#: src/Frontend/Banner.php:214
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Accept All"
-msgstr ""
-
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:206
-#: src/Frontend/Banner.php:215
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: src/Admin/Settings.php:301
+#: assets/build/admin.js:6
+#: assets/build/admin.js:9
 msgid "Deny All"
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:207
-#: src/Frontend/Banner.php:216
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: src/Admin/Settings.php:303
+#: assets/build/admin.js:6
+#: assets/build/admin.js:9
 msgid "Customize"
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:208
-#: src/Frontend/Banner.php:217
+#: src/Admin/Settings.php:305
+#: assets/build/admin.js:6
+#: assets/build/admin.js:9
+msgid "Accept All"
+msgstr ""
+
+#: src/Frontend/Banner.php:69
+msgid "Cookie settings"
+msgstr ""
+
+#: src/Frontend/Banner.php:323
+#: assets/build/admin.js:6
+msgid "Privacy Policy"
+msgstr ""
+
+#: src/Frontend/Banner.php:357
+#: assets/build/admin.js:4
+#: assets/build/admin.js:5
+msgid "Analytics"
+msgstr ""
+
+#: src/Frontend/Banner.php:358
+#: assets/build/admin.js:5
+msgid "Advertising"
+msgstr ""
+
+#: src/Frontend/Banner.php:359
+#: assets/build/admin.js:5
+msgid "Ad user data"
+msgstr ""
+
+#: src/Frontend/Banner.php:360
+#: assets/build/admin.js:5
+msgid "Ad personalization"
+msgstr ""
+
+#: src/Frontend/Banner.php:361
+#: assets/build/admin.js:4
+#: assets/build/admin.js:5
+msgid "Personalization"
+msgstr ""
+
+#: src/Frontend/Banner.php:385
+#: assets/build/admin.js:6
 msgid "Customize cookies"
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:210
-#: src/Frontend/Banner.php:219
+#: src/Frontend/Banner.php:387
+#: assets/build/admin.js:6
+#: assets/build/admin.js:7
 msgid "Cancel"
 msgstr ""
 
-#: dist/consentaro-1.4.0/consentaro/src/Frontend/Banner.php:211
-#: src/Frontend/Banner.php:220
+#: src/Frontend/Banner.php:388
+#: assets/build/admin.js:6
 msgid "Save preferences"
 msgstr ""
 
 #: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Consentaro"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Google Consent Mode v2 — light, fast, WooCommerce-ready."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
 msgid "Active"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#. translators: 1: completed items, 2: total items
+#: assets/build/admin.js:2
+#, js-format
+msgid "Setup incomplete (%1$d/%2$d)"
+msgstr ""
+
+#: assets/build/admin.js:2
 msgid "Disabled"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Setup"
+#: assets/build/admin.js:2
+#: assets/build/admin.js:5
+msgid "Consentaro"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Core options for Consent Mode & GTM"
+#: assets/build/admin.js:2
+msgid "Google Consent Mode v2 — light, fast, WooCommerce-ready."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Enable Consentaro"
+#: assets/build/admin.js:2
+msgid "Help"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "GTM Container ID"
+#: assets/build/admin.js:2
+msgid "Add a valid GTM container ID"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Doesn’t look like a GTM ID (e.g. GTM-XXXXXXX) — this won’t be saved until fixed."
+#: assets/build/admin.js:2
+msgid "Google Tag Manager step done"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Example: GTM-XXXXXXX"
+#: assets/build/admin.js:2
+msgid "Review your banner text"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Geo-based banner (EU/EEA)"
+#: assets/build/admin.js:2
+msgid "Banner text reviewed"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Show banner only for EU visitors when enabled."
+#: assets/build/admin.js:2
+msgid "Link your privacy policy"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "This site is behind Cloudflare"
+#: assets/build/admin.js:2
+msgid "Privacy policy linked"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Only enable this if your site actually proxies traffic through Cloudflare (orange-cloud DNS). Cloudflare-supplied headers are used for faster, more accurate country detection — but if your site is not really behind Cloudflare, these headers can be faked by anyone, letting them force the wrong country and skip the consent banner. Leave off if unsure."
+#: assets/build/admin.js:2
+msgid "Test the banner in a private window"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Detected"
+#: assets/build/admin.js:2
+msgid "Banner tested"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Unknown"
+#: assets/build/admin.js:2
+msgid "Add ID"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "EU region"
+#: assets/build/admin.js:2
+msgid "I don’t use GTM"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Non-EU"
+#: assets/build/admin.js:2
+msgid "Edit"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Saving…"
+#: assets/build/admin.js:2
+msgid "Looks good as is"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Save changes"
+#: assets/build/admin.js:2
+msgid "Choose page"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Necessary"
+#: assets/build/admin.js:2
+msgid "Open site in a new tab"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Marketing"
+#: assets/build/admin.js:2
+msgid "Mark as tested"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Auto (detected)"
+#: assets/build/admin.js:2
+msgid "Setup checklist"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Just now"
+#: assets/build/admin.js:2
+msgid "Setup complete"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Inline script"
+#: assets/build/admin.js:2
+msgid "Finish setting up"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Script Blocking"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Automatically hold known trackers back until a visitor consents"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Block third-party scripts until consent"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "When on, scripts recognized as analytics, marketing, or personalization trackers are held inert until the visitor accepts that category. Unrecognized scripts are always left alone."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Detected scripts"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Refresh"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "This list fills in as real visitors browse the site — it is not a one-time scan. Give it some traffic after activating, then check back."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Could not load detected scripts."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "No third-party scripts detected yet."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Script"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Category"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Last seen"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "auto:"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Minimal"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Dark"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Warm"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "✓ Consent saved — Accept All"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "✓ Consent saved — Deny All"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Customize panel would open here"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Live preview"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Preview device size"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Desktop"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Mobile"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Banner text…"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "↺ Reset preview"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Banner"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Position, copy, colors, shape & layout"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Theme presets"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Applies colors only — position, text, and radius stay as they are."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Content"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Position"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Bottom bar"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Top bar"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Bottom-right floating"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Center modal"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Banner text"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Colors"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Background"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Text"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Button background"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Button text"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Secondary button background"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Secondary button text"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Shape & size"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Banner corner radius"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Button corner radius"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Font size"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Layout"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Button layout"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Inline"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Stacked"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Button alignment"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Left"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Center"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Right"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Alignment is most visible with stacked buttons or the center modal position."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Reset to defaults"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Guide sections"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "On this page"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Start here"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "What is Consentaro?"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Consentaro is a simple helper for your WordPress website. It shows a clear cookie message, remembers each visitor’s choice, and tells Google (and your ads/analytics tools) what is allowed — so you can measure traffic and run ads without guessing."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "In everyday words"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "A visitor opens your site."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "If needed, they see a short cookie banner."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "They tap Accept, Deny, or Customize."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Consentaro saves that choice and only then loads Google Tag Manager (if you use it)."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Store tracking (like “add to cart”) only runs when the visitor allowed it."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "You do not need to be a developer. Fill in a few settings, save, and test once in a private browser window."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Quick start checklist"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "Tick each step as you finish it. Your progress is saved in this browser."
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "All set — Consentaro is fully configured"
-msgstr ""
-
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:2
 msgid "Setup progress"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
-msgid "(synced with General)"
+#: assets/build/admin.js:2
+msgid " (done)"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:2
+msgid " (to do)"
+msgstr ""
+
+#. translators: %s: country code, e.g. DE
+#: assets/build/admin.js:3
+#, js-format
+msgid "Your location: %s (EU/EEA) — visitors from here see the banner."
+msgstr ""
+
+#. translators: %s: country code, e.g. US
+#: assets/build/admin.js:4
+#, js-format
+msgid "Your location: %s (outside the EU/EEA) — the banner is hidden for visitors from here."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Your location: couldn’t detect it (common on a local site) — the banner is shown anyway, to be safe."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Location targeting is off — the banner is shown to every visitor."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Preview as EU visitor"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Setup"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Core options for Consent Mode & GTM"
+msgstr ""
+
+#: assets/build/admin.js:4
+#: assets/build/admin.js:9
+msgid "Enable Consentaro"
+msgstr ""
+
+#: assets/build/admin.js:4
+#: assets/build/admin.js:9
+msgid "GTM Container ID"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "That doesn’t look like a GTM ID. Use the form GTM-XXXXXXX (letters and numbers, 4–10 after “GTM-”). It won’t be saved until fixed."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Looks valid"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Example: GTM-XXXXXXX"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Geo-based banner (EU/EEA)"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Show banner only for EU visitors when enabled."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "This site is behind Cloudflare"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Only enable this if your site actually proxies traffic through Cloudflare (orange-cloud DNS). Cloudflare-supplied headers are used for faster, more accurate country detection — but if your site is not really behind Cloudflare, these headers can be faked by anyone, letting them force the wrong country and skip the consent banner. Leave off if unsure."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Keep a log of consent decisions"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Off by default. When on, each Accept/Deny/Customize decision is stored with a timestamp, the categories chosen, and a random non-identifying token — never an IP address, user agent, or other personal identifier. Useful as GDPR “proof of consent.”"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Keep records for (months)"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Open Consent Log (export CSV there) →"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Export CSV"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Necessary"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Marketing"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Auto (detected)"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Just now"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Inline script"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "No scripts detected yet"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Script Blocking"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Automatically hold known trackers back until a visitor consents"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Block third-party scripts until consent"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "When on, scripts recognized as analytics, marketing, or personalization trackers are held inert until the visitor accepts that category. Unrecognized scripts are always left alone."
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Detected scripts"
+msgstr ""
+
+#: assets/build/admin.js:4
+msgid "Refreshing…"
+msgstr ""
+
+#. translators: %s: time of day
+#: assets/build/admin.js:5
+#, js-format
+msgid "Last updated %s"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Refresh"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "This list fills in as real visitors browse the site — it is not a one-time scan. Give it some traffic after activating, then check back."
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Could not load detected scripts."
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "No third-party scripts detected yet"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Scripts appear here as real visitors browse your site. Visit a few pages in a private window, then press Refresh."
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Script"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Category"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Last seen"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "manual"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "auto"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Minimal"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Dark"
+msgstr ""
+
+#: assets/build/admin.js:5
+msgid "Warm"
+msgstr ""
+
+#. translators: %s: contrast ratio, e.g. 4.6
+#: assets/build/admin.js:6
+#, js-format
+msgid "Contrast ratio %s:1 (WCAG AA needs 4.5:1)"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "AA pass"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "AA fail"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "✓ Consent saved — Accept All"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "✓ Consent saved — Deny All"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Customize panel would open here"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Live preview"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Preview device size"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Desktop"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Mobile"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Preview surface"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Banner"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Preferences modal"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "↺ Reset preview"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "— None —"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Position, copy, colors, shape & layout"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Theme presets"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Applies colors only — position, text, and radius stay as they are."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Content"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Position"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Bottom bar"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Top bar"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Bottom-right floating"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Center modal"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Banner text"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Accept button"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Deny button"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Customize button"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Leave a button blank to use its default label."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Privacy policy page"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Adds a “Privacy Policy” link to the banner."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Or a custom URL"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Used only when no page is chosen."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Use my site’s Privacy Policy page"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Colors"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Background"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Text"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Button background"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Button text"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Secondary button background"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Secondary button text"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Some text/background pairs are below WCAG AA (4.5:1) and may be hard to read. This is a warning — you can still save."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "All text and button colors meet WCAG AA contrast (4.5:1)."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Shape & size"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Banner corner radius"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Button corner radius"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Font size"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Layout"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Button layout"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Inline"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Stacked"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Button alignment"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Left"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Center"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Right"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Alignment is most visible with stacked buttons or the center modal position."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Reset to defaults"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Text color"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Primary button"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Secondary button"
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Could not read settings from this plugin."
+msgstr ""
+
+#: assets/build/admin.js:6
+msgid "Import could not be applied."
+msgstr ""
+
+#. translators: %s: plugin name, e.g. "Complianz"
+#: assets/build/admin.js:7
+#, js-format
+msgid "We found %s active on this site. Import its banner text, position, and colors into Consentaro?"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Reading settings…"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Preview"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Setting"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Current (Consentaro)"
+msgstr ""
+
+#: assets/build/admin.js:7
+#, js-format
+msgid "From %s"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Apply"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "This will overwrite your current banner text, position, and colors in Consentaro. This cannot be undone automatically."
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Applying…"
+msgstr ""
+
+#: assets/build/admin.js:7
+msgid "Yes, overwrite and apply"
+msgstr ""
+
+#: assets/build/admin.js:7
+#, js-format
+msgid "Imported from %s. Review the Design tab to confirm it looks right."
+msgstr ""
+
+#. translators: %s: plugin name
+#: assets/build/admin.js:8
+#, js-format
+msgid "This imports banner text, position, and colors only — other settings need manual configuration. Remember to deactivate %s once you’ve confirmed Consentaro is set up correctly, so both plugins don’t show a banner at the same time."
+msgstr ""
+
+#. translators: %s: plugin name, e.g. "CookieYes"
+#: assets/build/admin.js:9
+#, js-format
+msgid "%s detected — automatic import isn’t available for this plugin yet. You’ll need to configure your banner manually in Consentaro."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Switching from another cookie plugin?"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Guide sections"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "On this page"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Start here"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "What is Consentaro?"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Consentaro is a simple helper for your WordPress website. It shows a clear cookie message, remembers each visitor’s choice, and tells Google (and your ads/analytics tools) what is allowed — so you can measure traffic and run ads without guessing."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "In everyday words"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "A visitor opens your site."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "If needed, they see a short cookie banner."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "They tap Accept, Deny, or Customize."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Consentaro saves that choice and only then loads Google Tag Manager (if you use it)."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Store tracking (like “add to cart”) only runs when the visitor allowed it."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "You do not need to be a developer. Fill in a few settings, save, and test once in a private browser window."
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "Quick start checklist"
+msgstr ""
+
+#: assets/build/admin.js:9
+msgid "This checklist is based on your saved settings, so it always matches what is actually set up."
+msgstr ""
+
+#: assets/build/admin.js:9
 msgid "Open General settings"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Open Design"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Module guides"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Tap a module to expand the how-to. Everything is written for non-technical users."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "General settings"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "The main power switch. Turn this off only if you need to pause the plugin temporarily."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "If you use Google Tag Manager, paste an ID that looks like GTM-XXXXXXX. Leave blank if you are not ready yet — the banner still works."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Geo-based banner"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "When ON, the banner focuses on visitors who need a consent choice (such as the EU). When OFF, more visitors may see the banner. The “Detected” badge shows what the plugin thinks about your current location while you are logged into admin."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Edit General →"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Banner design"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Pick where the message appears: bottom bar, top bar, corner, or center."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Write a short, friendly sentence visitors will understand."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Choose colors that match your brand. Watch the live preview update as you change them."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Click Save changes when you are happy with the look."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Edit Design →"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "How the banner works"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Visitor allows analytics and ads-related storage."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Visitor refuses optional tracking. Essential site functions still work."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Visitor picks categories one by one, then saves."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "After a choice, the banner hides and the decision is remembered (so they are not asked again every visit)."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Google Tag Manager (GTM)"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "GTM is a toolbox that loads your analytics and ad tags."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Consentaro waits for a visitor choice before loading GTM when a banner is shown. That way tags do not fire before permission."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "If someone already chose earlier, GTM can load right away on the next visit."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Tip: after saving your GTM ID, open your site → Accept → check the browser Network tab for gtm.js."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Location / EU banner"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "The plugin tries to learn the visitor’s country in a light way (for example via your CDN or server, and a small backup lookup if needed)."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "This helps show the banner where privacy rules usually expect a clear choice."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "On a local test site, country may show as unknown — the banner can still appear so you can test easily."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "WooCommerce shop events"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "If you sell with WooCommerce, Consentaro can send helpful shop events (view product, add to cart, purchase) into the data layer — only when the visitor allowed it."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Add to cart / view product need analytics permission."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Purchase needs both analytics and ads-related permission."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "No extra setup is required beyond enabling Consentaro and connecting GTM if you use it."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Common questions"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "I do not see the banner on my site"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Try a private/incognito window (old choices may be saved). Confirm Consentaro is enabled. If Geo is on and you are outside the EU, the banner may stay hidden on purpose — turn Geo off temporarily to test."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Will this slow my website down?"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Consentaro is built to stay light. The visitor-facing script is very small, and scripts only load when they are needed."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Do I need a lawyer or a huge cookie plugin?"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Consentaro helps with Google Consent Mode and a clear visitor choice. Privacy rules differ by country and business — this guide is not legal advice. If you are unsure, ask a professional for your region."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "You are ready when the checklist feels complete."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Save your settings, test once as a visitor, and you are good to go."
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Back to checklist"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#: assets/build/admin.js:9
 msgid "Daily consent decisions"
 msgstr ""
 
-#: assets/build/admin.js:1
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:1
+#. translators: 1: date 2: accepted 3: denied 4: customized
+#: assets/build/admin.js:10
+#, js-format
+msgid "%1$s: accepted %2$d, denied %3$d, customized %4$d"
+msgstr ""
+
+#: assets/build/admin.js:10
 msgid "decisions"
 msgstr ""
 
 #. translators: 1: accepted count 2: denied count 3: customized count
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 #, js-format
 msgid "Accepted %1$d · Denied %2$d · Customized %3$d"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 msgid "Accepted"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 msgid "Denied"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 msgid "Customized"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:11
+msgid "No data yet"
+msgstr ""
+
+#: assets/build/admin.js:11
+msgid "View Consent Log →"
+msgstr ""
+
+#: assets/build/admin.js:11
+#: assets/build/admin.js:15
 msgid "Insights"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 msgid "Anonymous daily consent-decision counts"
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
+msgid "Daily counts shown here. Individual decisions are stored in the Consent Log (anonymous token, no IP/user agent)."
+msgstr ""
+
+#: assets/build/admin.js:11
 msgid "Only anonymous daily counts are stored — no visitor data, IP addresses, or individual records."
 msgstr ""
 
-#: assets/build/admin.js:2
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:2
+#: assets/build/admin.js:11
 msgid "Range"
 msgstr ""
 
 #. translators: %d: number of days
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:12
 msgid "days"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:12
 msgid "Loading…"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:12
 msgid "Could not load insights."
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
-msgid "No decisions recorded yet — numbers will appear here once visitors start responding to the banner."
-msgstr ""
-
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:12
 msgid "Today"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
-msgid "Accept rate (7 days)"
+#. translators: %d: number of days
+#: assets/build/admin.js:13
+#, js-format
+msgid "Accept rate (%d days)"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:13
 msgid "Total (selected range)"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:13
+msgid "No decisions recorded in this range yet — numbers will appear here once visitors start responding to the banner."
+msgstr ""
+
+#. translators: %d: number of decisions in the Consent Log
+#: assets/build/admin.js:14
+#, js-format
+msgid "Consent Log, same range: %d decisions."
+msgstr ""
+
+#. translators: %s: date, e.g. 2026-08-23
+#: assets/build/admin.js:15
+#, js-format
+msgid "The log was switched on on %s, so it covers only part of this range."
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "Totals can differ if older log records were already pruned by your retention setting."
+msgstr ""
+
+#: assets/build/admin.js:15
 msgid "Failed to load settings."
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "Settings saved, but this looked invalid and was not changed: "
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "Settings saved."
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "Could not save settings."
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
+msgid "Could not update setup progress."
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "Loading settings…"
+msgstr ""
+
+#: assets/build/admin.js:15
 msgid "Guide"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "General"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "Scripts"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
+#: assets/build/admin.js:15
 msgid "Design"
 msgstr ""
 
-#: assets/build/admin.js:3
-#: dist/consentaro-1.4.0/consentaro/assets/build/admin.js:3
-msgid "Loading settings…"
+#: assets/build/admin.js:15
+msgid "Save changes"
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "You have unsaved changes"
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "All changes saved"
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "Discard"
+msgstr ""
+
+#: assets/build/admin.js:15
+msgid "Saving…"
 msgstr ""
