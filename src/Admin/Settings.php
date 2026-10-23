@@ -22,6 +22,11 @@ use Consentaro\Integration\TrackerSignatures;
 final class Settings {
 
 	/**
+	 * GTM container id shape. Mirrored client-side in GeneralTab.js.
+	 */
+	public const GTM_PATTERN = '/^GTM-[A-Z0-9]{4,10}$/';
+
+	/**
 	 * Container.
 	 *
 	 * @var ServiceContainer
@@ -67,6 +72,8 @@ final class Settings {
 		if ( '' !== $text ) {
 			$this->registerTranslatableStrings( $text );
 		}
+
+		$this->registerTranslatableLabels( is_array( $settings['banner'] ?? null ) ? $settings['banner'] : array() );
 	}
 
 	/**
@@ -165,10 +172,52 @@ final class Settings {
 			'consentaro-admin',
 			'consentaroAdmin',
 			array(
-				'root'  => esc_url_raw( rest_url( 'consentaro/v1' ) ),
-				'nonce' => wp_create_nonce( 'wp_rest' ),
+				'root'           => esc_url_raw( rest_url( 'consentaro/v1' ) ),
+				'nonce'          => wp_create_nonce( 'wp_rest' ),
+				// Empty unless an add-on (Consentaro Pro) provides a log screen.
+				'consentLogUrl'  => esc_url_raw( (string) apply_filters( 'consentaro_consent_log_admin_url', '' ) ),
+				'previewUrl'     => esc_url_raw( Preview::url() ),
+				'privacyPageUrl' => esc_url_raw( (string) get_privacy_policy_url() ),
+				'privacyPageId'  => (int) get_option( 'wp_page_for_privacy_policy' ),
+				'homeUrl'        => esc_url_raw( home_url( '/' ) ),
+				'pages'          => $this->publishedPages(),
+				'defaults'       => array(
+					'text'            => self::defaultBannerText(),
+					'label_accept'    => self::defaultLabel( 'accept' ),
+					'label_deny'      => self::defaultLabel( 'deny' ),
+					'label_customize' => self::defaultLabel( 'customize' ),
+				),
 			)
 		);
+	}
+
+	/**
+	 * Published pages for the privacy-policy picker (id + title only,
+	 * capped so a huge site can't bloat the admin payload).
+	 *
+	 * @return array<int, array{id: int, title: string}>
+	 */
+	private function publishedPages(): array {
+		$pages = get_posts(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				'posts_per_page' => 200,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+				'no_found_rows'  => true,
+			)
+		);
+
+		$out = array();
+		foreach ( $pages as $page ) {
+			$out[] = array(
+				'id'    => (int) $page->ID,
+				'title' => '' !== $page->post_title ? $page->post_title : __( '(no title)', 'consentaro' ),
+			);
+		}
+
+		return $out;
 	}
 
 	/**
@@ -186,9 +235,18 @@ final class Settings {
 			'script_overrides' => array(),
 			'consent_log_enabled'   => false,
 			'consent_expiry_months' => 12,
+			'gtm_skipped'      => false,
+			'banner_confirmed' => false,
+			'setup_tested'     => false,
+			'setup_complete'   => false,
 			'banner'           => array(
 				'position'           => 'bottom',
-				'text'               => '',
+				'text'               => self::defaultBannerText(),
+				'privacy_page_id'    => 0,
+				'privacy_url'        => '',
+				'label_accept'       => self::defaultLabel( 'accept' ),
+				'label_deny'         => self::defaultLabel( 'deny' ),
+				'label_customize'    => self::defaultLabel( 'customize' ),
 				'bg'                 => '#ffffff',
 				'text_color'         => '#1a1a1a',
 				'btn_primary_bg'     => '#0E7C66',
@@ -212,7 +270,81 @@ final class Settings {
 		$merged['banner']          = array_merge( $defaults['banner'], is_array( $stored['banner'] ?? null ) ? $stored['banner'] : array() );
 		$merged['script_overrides'] = is_array( $merged['script_overrides'] ?? null ) ? $merged['script_overrides'] : array();
 
+		// A stored empty string must never blank the banner copy or a button.
+		if ( '' === trim( (string) $merged['banner']['text'] ) ) {
+			$merged['banner']['text'] = self::defaultBannerText();
+		}
+		foreach ( array( 'accept', 'deny', 'customize' ) as $label_key ) {
+			if ( '' === trim( (string) $merged['banner'][ 'label_' . $label_key ] ) ) {
+				$merged['banner'][ 'label_' . $label_key ] = self::defaultLabel( $label_key );
+			}
+		}
+
 		return $merged;
+	}
+
+	/**
+	 * Default banner copy (also what the frontend falls back to).
+	 */
+	public static function defaultBannerText(): string {
+		return __( 'We use cookies to improve your experience and measure traffic.', 'consentaro' );
+	}
+
+	/**
+	 * Default button label.
+	 *
+	 * @param string $key 'accept' | 'deny' | 'customize'.
+	 */
+	public static function defaultLabel( string $key ): string {
+		switch ( $key ) {
+			case 'deny':
+				return __( 'Deny All', 'consentaro' );
+			case 'customize':
+				return __( 'Customize', 'consentaro' );
+			default:
+				return __( 'Accept All', 'consentaro' );
+		}
+	}
+
+	/**
+	 * Setup checklist state. Derived from saved settings, so it can never
+	 * drift from what is actually configured.
+	 *
+	 * @param array<string, mixed> $settings Normalized settings (getSettings()).
+	 * @return array{items: array<int, array{id: string, done: bool}>, done: int, total: int, complete: bool}
+	 */
+	public function getSetupStatus( array $settings ): array {
+		$banner = is_array( $settings['banner'] ?? null ) ? $settings['banner'] : array();
+		$gtm    = (string) ( $settings['gtm_id'] ?? '' );
+
+		$items = array(
+			array(
+				'id'   => 'gtm',
+				'done' => 1 === preg_match( self::GTM_PATTERN, $gtm ) || ! empty( $settings['gtm_skipped'] ),
+			),
+			array(
+				'id'   => 'text',
+				'done' => ! empty( $settings['banner_confirmed'] )
+					|| trim( (string) ( $banner['text'] ?? '' ) ) !== self::defaultBannerText(),
+			),
+			array(
+				'id'   => 'privacy',
+				'done' => ( (int) ( $banner['privacy_page_id'] ?? 0 ) > 0 ) || '' !== (string) ( $banner['privacy_url'] ?? '' ),
+			),
+			array(
+				'id'   => 'test',
+				'done' => ! empty( $settings['setup_tested'] ),
+			),
+		);
+
+		$done = count( array_filter( array_column( $items, 'done' ) ) );
+
+		return array(
+			'items'    => $items,
+			'done'     => $done,
+			'total'    => count( $items ),
+			'complete' => count( $items ) === $done,
+		);
 	}
 
 	/**
@@ -272,10 +404,15 @@ final class Settings {
 		}
 		if ( isset( $data['gtm_id'] ) ) {
 			$gtm = strtoupper( sanitize_text_field( (string) $data['gtm_id'] ) );
-			if ( '' === $gtm || preg_match( '/^GTM-[A-Z0-9]+$/', $gtm ) ) {
+			if ( '' === $gtm || preg_match( self::GTM_PATTERN, $gtm ) ) {
 				$current['gtm_id'] = $gtm;
 			} else {
 				$rejected[] = 'gtm_id';
+			}
+		}
+		foreach ( array( 'gtm_skipped', 'banner_confirmed', 'setup_tested' ) as $flag ) {
+			if ( isset( $data[ $flag ] ) ) {
+				$current[ $flag ] = (bool) $data[ $flag ];
 			}
 		}
 		if ( isset( $data['banner'] ) && is_array( $data['banner'] ) ) {
@@ -292,6 +429,35 @@ final class Settings {
 				$current['banner']['text'] = sanitize_text_field( (string) $banner['text'] );
 				$this->registerTranslatableStrings( $current['banner']['text'] );
 			}
+
+			foreach ( array( 'accept', 'deny', 'customize' ) as $label_key ) {
+				$field = 'label_' . $label_key;
+				if ( isset( $banner[ $field ] ) ) {
+					$label = trim( sanitize_text_field( (string) $banner[ $field ] ) );
+					// Blank means "use the default label", resolved in getSettings().
+					$current['banner'][ $field ] = function_exists( 'mb_substr' ) ? mb_substr( $label, 0, 40 ) : substr( $label, 0, 40 );
+				}
+			}
+
+			if ( isset( $banner['privacy_page_id'] ) ) {
+				$page_id = absint( $banner['privacy_page_id'] );
+				if ( 0 === $page_id || 'publish' === get_post_status( $page_id ) ) {
+					$current['banner']['privacy_page_id'] = $page_id;
+				} else {
+					$rejected[] = 'banner.privacy_page_id';
+				}
+			}
+
+			if ( isset( $banner['privacy_url'] ) ) {
+				$raw_url = trim( (string) $banner['privacy_url'] );
+				$url     = '' === $raw_url ? '' : esc_url_raw( $raw_url, array( 'http', 'https' ) );
+				if ( '' === $raw_url || '' !== $url ) {
+					$current['banner']['privacy_url'] = $url;
+				} else {
+					$rejected[] = 'banner.privacy_url';
+				}
+			}
+
 			foreach ( array( 'bg', 'text_color', 'btn_primary_bg', 'btn_primary_text', 'btn_secondary_bg', 'btn_secondary_text' ) as $color_key ) {
 				if ( isset( $banner[ $color_key ] ) ) {
 					$hex = sanitize_hex_color( (string) $banner[ $color_key ] );
@@ -333,6 +499,20 @@ final class Settings {
 			}
 		}
 
+		// Remember (once) that setup finished, so the admin can land on
+		// General afterwards. The header badge still uses the live status.
+		if ( empty( $current['setup_complete'] ) && $this->getSetupStatus( $current )['complete'] ) {
+			$current['setup_complete'] = true;
+		}
+
+		$this->registerTranslatableLabels( $current['banner'] );
+
+		// Remember when logging was switched on, so Insights can explain a
+		// log that covers only part of the selected range.
+		if ( ! empty( $current['consent_log_enabled'] ) && empty( $previous['consent_log_enabled'] ) ) {
+			update_option( ConsentLog::SINCE_OPTION, wp_date( 'Y-m-d' ), false );
+		}
+
 		update_option( 'consentaro_settings', $current, true );
 
 		/**
@@ -346,8 +526,38 @@ final class Settings {
 		// Not persisted — surfaced to the REST response only, so the admin
 		// UI can tell the difference between "saved" and "silently ignored".
 		$current['rejected'] = $rejected;
+		$current['setup']    = $this->getSetupStatus( $current );
 
 		return $current;
+	}
+
+	/**
+	 * Registers customized button labels (only those that differ from the
+	 * built-in default, which WordPress translates on its own).
+	 *
+	 * @param array<string, mixed> $banner Banner settings.
+	 */
+	private function registerTranslatableLabels( array $banner ): void {
+		$names = array(
+			'accept'    => 'Accept Button',
+			'deny'      => 'Deny Button',
+			'customize' => 'Customize Button',
+		);
+
+		foreach ( $names as $key => $name ) {
+			$value = trim( (string) ( $banner[ 'label_' . $key ] ?? '' ) );
+			if ( '' === $value || self::defaultLabel( $key ) === $value ) {
+				continue;
+			}
+
+			if ( has_action( 'wpml_register_single_string' ) ) {
+				do_action( 'wpml_register_single_string', 'Consentaro', $name, $value );
+			}
+
+			if ( function_exists( 'pll_register_string' ) ) {
+				pll_register_string( 'consentaro_' . $key . '_label', $value, 'Consentaro' );
+			}
+		}
 	}
 
 	/**

@@ -1,7 +1,6 @@
 import {
 	Card,
 	CardBody,
-	CardFooter,
 	CardHeader,
 	ToggleControl,
 	CustomSelectControl,
@@ -13,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 const CATEGORY_LABELS = {
 	necessary: __( 'Necessary', 'consentaro' ),
@@ -66,10 +65,36 @@ function shortIdentifier( identifier, isSrc ) {
 	}
 }
 
-const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
+const EmptyIllustration = () => (
+	<svg
+		className="consentaro-admin__empty-art"
+		viewBox="0 0 120 90"
+		role="img"
+		aria-label={ __( 'No scripts detected yet', 'consentaro' ) }
+	>
+		<rect x="14" y="14" width="92" height="62" rx="8" fill="#e7f4f0" />
+		<rect x="26" y="28" width="44" height="6" rx="3" fill="#0E7C66" opacity=".35" />
+		<rect x="26" y="42" width="68" height="6" rx="3" fill="#0E7C66" opacity=".2" />
+		<rect x="26" y="56" width="30" height="6" rx="3" fill="#0E7C66" opacity=".2" />
+		<circle cx="92" cy="62" r="17" fill="#fff" stroke="#0E7C66" strokeWidth="3" />
+		<path d="m104 74 10 10" stroke="#0E7C66" strokeWidth="4" strokeLinecap="round" />
+		<circle cx="29" cy="12" r="5" fill="#F5B942" />
+	</svg>
+);
+
+const formatTime = ( date ) => {
+	try {
+		return date.toLocaleTimeString( undefined, { hour: 'numeric', minute: '2-digit' } );
+	} catch ( e ) {
+		return '';
+	}
+};
+
+const ScriptsTab = ( { form, onChange } ) => {
 	const [ rows, setRows ] = useState( null );
 	const [ loading, setLoading ] = useState( true );
 	const [ loadError, setLoadError ] = useState( false );
+	const [ updatedAt, setUpdatedAt ] = useState( null );
 
 	const overrides = form.script_overrides || {};
 
@@ -81,6 +106,7 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 				const list = Array.isArray( data ) ? data : [];
 				list.sort( ( a, b ) => b.last_seen - a.last_seen );
 				setRows( list );
+				setUpdatedAt( new Date() );
 			} )
 			.catch( () => {
 				setLoadError( true );
@@ -130,18 +156,27 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 					<div className="consentaro-admin__section">
 						<HStack justify="space-between">
 							<strong>{ __( 'Detected scripts', 'consentaro' ) }</strong>
-							<Button
-								variant="tertiary"
-								onClick={ loadDetected }
-								disabled={ loading }
-								__next40pxDefaultSize
-							>
-								{ loading ? (
-									<Spinner />
-								) : (
-									__( 'Refresh', 'consentaro' )
-								) }
-							</Button>
+							<HStack justify="flex-end" spacing={ 3 }>
+								<span className="consentaro-admin__updated" aria-live="polite">
+									{ loading
+										? __( 'Refreshing…', 'consentaro' )
+										: updatedAt
+										? sprintf(
+												/* translators: %s: time of day */
+												__( 'Last updated %s', 'consentaro' ),
+												formatTime( updatedAt )
+										  )
+										: '' }
+								</span>
+								<Button
+									variant="tertiary"
+									onClick={ loadDetected }
+									disabled={ loading }
+									__next40pxDefaultSize
+								>
+									{ loading ? <Spinner /> : __( 'Refresh', 'consentaro' ) }
+								</Button>
+							</HStack>
 						</HStack>
 						<p className="consentaro-admin__card-sub">
 							{ __(
@@ -157,12 +192,18 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 						) }
 
 						{ ! loading && rows && rows.length === 0 && ! loadError && (
-							<WPNotice status="info" isDismissible={ false }>
-								{ __(
-									'No third-party scripts detected yet.',
-									'consentaro'
-								) }
-							</WPNotice>
+							<div className="consentaro-admin__empty">
+								<EmptyIllustration />
+								<strong>
+									{ __( 'No third-party scripts detected yet', 'consentaro' ) }
+								</strong>
+								<p>
+									{ __(
+										'Scripts appear here as real visitors browse your site. Visit a few pages in a private window, then press Refresh.',
+										'consentaro'
+									) }
+								</p>
+							</div>
 						) }
 
 						{ rows && rows.length > 0 && (
@@ -203,12 +244,20 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 														)
 													}
 												/>
-												{ ! overrides[ row.identifier ] && (
-													<span className="consentaro-admin__scripts-auto">
-														{ __( 'auto:', 'consentaro' ) }{ ' ' }
-														{ CATEGORY_LABELS[ row.category ] || row.category }
+												<span
+													className={ `consentaro-chip consentaro-chip--${
+														overrides[ row.identifier ] || row.category
+													}` }
+												>
+													{ CATEGORY_LABELS[
+														overrides[ row.identifier ] || row.category
+													] || row.category }
+													<span className="consentaro-chip__source">
+														{ overrides[ row.identifier ]
+															? __( 'manual', 'consentaro' )
+															: __( 'auto', 'consentaro' ) }
 													</span>
-												) }
+												</span>
 											</td>
 											<td>{ formatSeen( row.last_seen ) }</td>
 										</tr>
@@ -219,25 +268,6 @@ const ScriptsTab = ( { form, onChange, onSave, saving } ) => {
 					</div>
 				</VStack>
 			</CardBody>
-			<CardFooter className="consentaro-admin__footer">
-				<HStack justify="flex-start">
-					<Button
-						variant="primary"
-						disabled={ saving }
-						onClick={ onSave }
-						__next40pxDefaultSize
-					>
-						{ saving ? (
-							<>
-								<Spinner />
-								{ __( 'Saving…', 'consentaro' ) }
-							</>
-						) : (
-							__( 'Save changes', 'consentaro' )
-						) }
-					</Button>
-				</HStack>
-			</CardFooter>
 		</Card>
 	);
 };

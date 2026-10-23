@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Consentaro\Admin\ConsentLog;
 use Consentaro\Admin\Import;
+use Consentaro\Admin\Preview;
 use Consentaro\Admin\Insights;
 use Consentaro\Admin\REST_Controller;
 use Consentaro\Admin\Settings;
@@ -146,6 +147,13 @@ final class Plugin {
 		);
 
 		$c->set(
+			'preview',
+			static function (): Preview {
+				return new Preview();
+			}
+		);
+
+		$c->set(
 			'rest_controller',
 			static function ( ServiceContainer $container ): REST_Controller {
 				return new REST_Controller( $container );
@@ -201,20 +209,7 @@ final class Plugin {
 		$this->container->get( 'cache_plugins' )->register();
 		$this->container->get( 'script_blocker' )->register();
 		$this->container->get( 'consent_log' )->register();
-
-		// Provider for add-ons (e.g. Consentaro Pro's log viewer). A no-op
-		// unless something applies this filter.
-		$container = $this->container;
-		add_filter(
-			'consentaro_consent_log_query',
-			static function ( $default, array $args = array() ) use ( $container ) {
-				/** @var \Consentaro\Admin\ConsentLog $log */
-				$log = $container->get( 'consent_log' );
-				return $log->query( $args );
-			},
-			10,
-			2
-		);
+		$this->container->get( 'preview' )->register();
 
 		// WooCommerce may load after us on plugins_loaded.
 		add_action( 'woocommerce_loaded', array( $this, 'bootWooCommerce' ) );

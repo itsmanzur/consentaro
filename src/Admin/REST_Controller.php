@@ -201,7 +201,11 @@ final class REST_Controller {
 	public function getSettings(): WP_REST_Response {
 		/** @var Settings $settings */
 		$settings = $this->container->get( 'settings' );
-		return rest_ensure_response( $settings->getSettings() );
+		$data     = $settings->getSettings();
+
+		$data['setup'] = $settings->getSetupStatus( $data );
+
+		return rest_ensure_response( $data );
 	}
 
 	/**
@@ -326,11 +330,18 @@ final class REST_Controller {
 		/** @var GeoLocation $geo */
 		$geo = $this->container->get( 'geo_location' );
 
+		// `detected` lets the UI tell "couldn't detect" (banner is shown to be
+		// safe) apart from a real non-EU result; should_show_banner also
+		// reflects this admin's own stored consent cookie, so the UI derives
+		// its message from detected/is_eu + the geo setting instead.
+		$country = $geo->getCountryCode();
+
 		return rest_ensure_response(
 			array(
-				'country'            => $geo->getCountryCode(),
+				'country'            => $country,
 				'is_eu'              => $geo->isEU(),
 				'should_show_banner' => $geo->shouldShowBanner(),
+				'detected'           => null !== $country,
 			)
 		);
 	}
@@ -362,11 +373,26 @@ final class REST_Controller {
 			$totals['customized'] += $day['customized'];
 		}
 
+		// Log totals for the exact same window, so the two can be compared.
+		// Only present when logging is on; `since` lets the UI explain a
+		// log that was switched on partway through the range.
+		/** @var ConsentLog $consent_log */
+		$consent_log = $this->container->get( 'consent_log' );
+		/** @var Settings $settings_svc */
+		$settings_svc = $this->container->get( 'settings' );
+		$log_enabled  = ! empty( $settings_svc->getSettings()['consent_log_enabled'] );
+		$bounds       = Insights::rangeBounds( $range );
+
 		return rest_ensure_response(
 			array(
 				'range'  => $range,
 				'days'   => $days,
 				'totals' => $totals,
+				'log'    => array(
+					'enabled' => $log_enabled,
+					'since'   => $log_enabled ? $consent_log->enabledSince() : null,
+					'totals'  => $log_enabled ? $consent_log->countByAction( $bounds['from'], $bounds['to'] ) : null,
+				),
 			)
 		);
 	}

@@ -2,8 +2,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { Button, Spinner, Notice as WPNotice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
-
-const STORAGE_KEY = 'consentaro_guide_checklist_v1';
+import SetupChecklist from './SetupChecklist';
 
 const SECTIONS = [
 	{ id: 'intro', label: 'What is Consentaro?' },
@@ -16,14 +15,6 @@ const SECTIONS = [
 	{ id: 'geo', label: 'Location (EU banner)' },
 	{ id: 'woo', label: 'WooCommerce' },
 	{ id: 'faq', label: 'FAQ' },
-];
-
-const CHECKLIST = [
-	{ id: 'enable', label: 'Turn Consentaro on in General' },
-	{ id: 'gtm', label: 'Add your GTM container ID (if you use GTM)' },
-	{ id: 'design', label: 'Choose banner position and colors' },
-	{ id: 'geo', label: 'Decide if the banner should only show in the EU' },
-	{ id: 'test', label: 'Visit your site in a private window and test Accept / Deny' },
 ];
 
 const BANNER_FIELD_LABELS = {
@@ -292,42 +283,17 @@ const ModuleCard = ( { mark, title, children, defaultOpen = false } ) => {
 	);
 };
 
-const GuideTab = ( { settings, onGoToTab, onImported } ) => {
+const GuideTab = ( {
+	settings,
+	setup,
+	homeUrl,
+	onGoToTab,
+	onImported,
+	onSkipGtm,
+	onConfirmText,
+	onMarkTested,
+} ) => {
 	const [ active, setActive ] = useState( 'intro' );
-	const [ checks, setChecks ] = useState( {} );
-
-	useEffect( () => {
-		try {
-			const raw = window.localStorage.getItem( STORAGE_KEY );
-			if ( raw ) {
-				setChecks( JSON.parse( raw ) );
-			}
-		} catch ( e ) {
-			// Ignore storage errors.
-		}
-	}, [] );
-
-	const toggleCheck = ( id ) => {
-		setChecks( ( prev ) => {
-			const next = { ...prev, [ id ]: ! prev[ id ] };
-			try {
-				window.localStorage.setItem( STORAGE_KEY, JSON.stringify( next ) );
-			} catch ( e ) {
-				// Ignore.
-			}
-			return next;
-		} );
-	};
-
-	// The "enable" item mirrors the real General → Enable Consentaro toggle
-	// instead of being tracked separately, so it can't drift out of sync
-	// with what's actually turned on.
-	const isChecked = ( id ) =>
-		id === 'enable' ? !! ( settings && settings.enabled ) : !! checks[ id ];
-
-	const doneCount = CHECKLIST.filter( ( item ) => isChecked( item.id ) ).length;
-	const progress = Math.round( ( doneCount / CHECKLIST.length ) * 100 );
-	const isComplete = progress === 100;
 
 	const scrollTo = ( id ) => {
 		setActive( id );
@@ -413,81 +379,19 @@ const GuideTab = ( { settings, onGoToTab, onImported } ) => {
 					<h2>{ __( 'Quick start checklist', 'consentaro' ) }</h2>
 					<p>
 						{ __(
-							'Tick each step as you finish it. Your progress is saved in this browser.',
+							'This checklist is based on your saved settings, so it always matches what is actually set up.',
 							'consentaro'
 						) }
 					</p>
 
-					{ isComplete && (
-						<div className="consentaro-guide__success" role="status">
-							<span
-								className="consentaro-guide__success-icon"
-								aria-hidden="true"
-							>
-								✓
-							</span>
-							{ __(
-								'All set — Consentaro is fully configured',
-								'consentaro'
-							) }
-						</div>
-					) }
-
-					<div
-						className="consentaro-guide__progress"
-						aria-label={ __( 'Setup progress', 'consentaro' ) }
-					>
-						<div className="consentaro-guide__progress-bar">
-							<span
-								className={ isComplete ? 'is-complete' : undefined }
-								style={ { width: `${ progress }%` } }
-							/>
-						</div>
-						<span className="consentaro-guide__progress-label">
-							{ doneCount } / { CHECKLIST.length } · { progress }%
-						</span>
-					</div>
-
-					<ul className="consentaro-guide__checklist">
-						{ CHECKLIST.map( ( item ) => {
-							const isAuto = item.id === 'enable';
-							const checked = isChecked( item.id );
-							return (
-								<li key={ item.id }>
-									<label
-										className={
-											isAuto
-												? 'consentaro-guide__checklist-auto'
-												: undefined
-										}
-									>
-										<input
-											type="checkbox"
-											checked={ checked }
-											disabled={ isAuto }
-											onChange={
-												isAuto
-													? undefined
-													: () => toggleCheck( item.id )
-											}
-										/>
-										<span className={ checked ? 'is-done' : undefined }>
-											{ item.label }
-											{ isAuto && (
-												<em className="consentaro-guide__auto-tag">
-													{ ' ' }
-													{ __(
-														'(synced with General)',
-														'consentaro'
-													) }
-												</em>
-											) }
-										</span>
-									</label>
-								</li>
-							);
-						} ) }
-					</ul>
+					<SetupChecklist
+						setup={ setup }
+						homeUrl={ homeUrl }
+						onGoToTab={ onGoToTab }
+						onSkipGtm={ onSkipGtm }
+						onConfirmText={ onConfirmText }
+						onMarkTested={ onMarkTested }
+					/>
 
 					<div className="consentaro-guide__actions">
 						<Button
