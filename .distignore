@@ -45,3 +45,6 @@ assets/src
 *.log
 .cursor
 agent-transcripts
+
+# Marketing landing page, not part of the plugin
+Demo
