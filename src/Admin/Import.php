@@ -257,11 +257,11 @@ final class Import {
 	}
 
 	/**
-	 * Whether CookieYes is active on this site.
+	 * Whether CookieYes is active on this site. A leftover cky_* option from
+	 * a deleted install must not count — only an active plugin does.
 	 */
 	private function isCookieYesPresent(): bool {
-		return $this->isPluginActive( 'cookie-law-info/cookie-law-info.php' )
-			|| false !== get_option( 'cky_settings', false );
+		return $this->isPluginActive( 'cookie-law-info/cookie-law-info.php' );
 	}
 
 	/**
