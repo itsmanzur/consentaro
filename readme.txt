@@ -2,9 +2,9 @@
 Contributors: itsmanzur
 Tags: consent mode, cookies, gdpr, woocommerce, privacy
 Requires at least: 6.6
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,10 @@ Consentaro helps your site ask visitors for a clear cookie choice, remember that
 * Includes a plain-English Guide tab in wp-admin
 * Best-effort settings import from Complianz — banner text, position, and colors, with a preview before anything is applied
 * Documented set of filters and actions for developers (see docs/hooks.md on GitHub)
+* A "Cookie settings" link ([consentaro_settings]) so visitors can change their choice later
+* Preview the banner as an EU visitor from wp-admin, without changing any setting
+* A short setup checklist in wp-admin: GTM ID, banner text, privacy policy link and a private-window test
+* Editable banner text and button labels, a privacy policy page picker, and a colour contrast check (WCAG AA)
 
 **What it does not do**
 
@@ -64,6 +68,10 @@ No. The banner and Consent Mode defaults work without GTM. Add a GTM ID when you
 = Why don’t I see the banner? =
 
 Try a private window (an earlier choice may be saved). Confirm the plugin is enabled. If “Geo-based banner” is on and you are outside the EU, the banner may stay hidden on purpose — turn Geo off temporarily to test.
+
+= How can visitors change their cookie choice later? =
+
+Add the shortcode [consentaro_settings] to a footer, menu or page. It shows a "Cookie settings" button (change the text with label="Manage cookies") that reopens the preferences dialog with the visitor's saved choice. Any element with data-consentaro-action="reopen" does the same once the shortcode is on the page. If a visitor switches a category off, the page reloads so scripts that already ran are not left running.
 
 = Will this slow my site down? =
 
@@ -139,6 +147,16 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 
 == Changelog ==
 
+= 1.7.0 =
+* Added: "Cookie settings" link. Use the [consentaro_settings] shortcode (or any element with data-consentaro-action="reopen") in a footer, menu or page. It reopens the preferences dialog with the visitor's saved choice ticked; switching a category off reloads the page so scripts that already ran are not left running
+* Added: "Preview as EU visitor" in wp-admin. An admin-only, nonce-protected front-end preview of the banner that never records a decision or changes a setting
+* Added: setup checklist (GTM container ID, banner text, privacy policy link, test in a private window)
+* Added: editable banner text and Accept / Deny / Customize button labels, plus a privacy policy page picker (or a custom URL) linked from the banner
+* Added: colour contrast check in the Design tab, flagging banner colours below the WCAG AA ratio of 4.5:1
+* Improved: Insights shows the accept rate and, when the Consent Log is on, compares its totals over the same date range; saved Consent Log rows stay visible after logging is switched off
+* Improved: admin screens reorganised, with an unsaved-changes indicator and clearer tab copy
+* Developers: new filters consentaro_consent_log_query and consentaro_consent_log_admin_url for add-ons; the [consentaro_settings] shortcode is documented in docs/hooks.md
+
 = 1.6.0 =
 * Added: best-effort settings import from Complianz — detects an active Complianz installation, previews a mapping of banner text/position/colors into Consentaro, and only applies it on explicit confirmation; CookieYes is detected but not yet supported (its free version stores banner styling as pre-rendered HTML, not structured settings)
 * Added: developer hooks reference (docs/hooks.md on GitHub) documenting all filters and actions for customizing Consentaro's behavior
@@ -203,6 +221,9 @@ This service is provided by ip-api.com: [Terms of Service](https://ip-api.com/do
 * React admin: Guide, General, and Design tabs
 
 == Upgrade Notice ==
+
+= 1.7.0 =
+Adds a "Cookie settings" link ([consentaro_settings]) so visitors can change their choice, an admin preview as an EU visitor, a setup checklist and editable banner labels. After updating, open Consentaro → Design once to review the banner text and labels.
 
 = 1.2.0 =
 Security hardening: Cloudflare geo/IP headers are now ignored unless you explicitly confirm your site is behind Cloudflare (new toggle on the General tab). If your site is behind Cloudflare, enable the toggle after updating to keep fast geo detection.

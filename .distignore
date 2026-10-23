@@ -35,8 +35,12 @@ assets/src
 *.pdf
 *.docx
 *.md
+*.txt
 !readme.txt
 !docs/*.md
+
+# Local tooling (these were being shipped in earlier zips)
+.claude
 .DS_Store
 *.log
 .cursor
