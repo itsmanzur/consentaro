@@ -2,9 +2,11 @@
 	'use strict';
 	var cfg = window.consentaroAPI || {};
 	var root = document.getElementById('consentaro-banner');
-	if (!root || !cfg.url) return;
-
 	var modal = document.getElementById('consentaro-banner-modal');
+	// The banner is gone once a visitor has chosen, but the modal may still be
+	// on the page for a "Cookie settings" link ([consentaro_settings]).
+	if (!cfg.url || (!root && !modal)) return;
+
 	var modalCard = modal ? modal.querySelector('.consentaro-banner__modal-card') : null;
 	var modalTrigger = null; // Element that opened the modal, to restore focus on close.
 	var trapCleanup = null;
@@ -63,7 +65,7 @@
 		if (!modal) return;
 		modal.classList.remove('is-open');
 		clearTrap();
-		if (modalTrigger && typeof modalTrigger.focus === 'function') {
+		if (modalTrigger && typeof modalTrigger.focus === 'function' && document.contains(modalTrigger)) {
 			modalTrigger.focus();
 		}
 		modalTrigger = null;
@@ -102,21 +104,97 @@
 		// for, so it isn't duplicated here too.
 		clearTrap();
 		if (root && root.parentNode) root.parentNode.removeChild(root);
-		if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+		root = null;
+		// Keep the dialog so a "Cookie settings" link can reopen it later.
+		applyStates(consent);
+		closeModal();
+		// Cookies or scripts that already ran cannot be recalled, so reload after a withdrawal.
+		if (withdrew(consent)) {
+			window.location.reload();
+			return;
+		}
 		document.dispatchEvent(
 			new CustomEvent('consentaro:updated', { detail: consent })
 		);
 	}
+
+	// Admin preview: show the banner as a visitor would, but never record a
+	// decision, set the consent cookie, or fire a consent update.
+	function previewDone() {
+		clearTrap();
+		if (root && root.parentNode) root.parentNode.removeChild(root);
+		if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+	}
+
+	var openedStates = {};
+
+	function boxes() {
+		return modal ? modal.querySelectorAll('[data-consentaro-type]') : [];
+	}
+
+	// Tick the boxes to match a { type: 'granted' | 'denied' } map.
+	function applyStates(consent) {
+		var list = boxes();
+		for (var i = 0; i < list.length; i++) {
+			list[i].checked = consent[list[i].getAttribute('data-consentaro-type')] === 'granted';
+		}
+	}
+
+	// True when something that was allowed when the dialog opened is now switched off.
+	function withdrew(consent) {
+		for (var type in openedStates) {
+			if (openedStates[type] === 'granted' && consent[type] !== 'granted') return true;
+		}
+		return false;
+	}
+
+	// "Cookie settings" link: load the saved choice, then show the dialog.
+	function reopen(trigger) {
+		if (!modal) return;
+		if (root) {
+			openModal(trigger);
+			return;
+		}
+		fetch(cfg.url, { credentials: 'same-origin' })
+			.then(function (r) {
+				return r.json();
+			})
+			.then(function (d) {
+				applyStates((d && d.consent) || {});
+				openedStates = {};
+				var list = boxes();
+				for (var i = 0; i < list.length; i++) {
+					openedStates[list[i].getAttribute('data-consentaro-type')] = list[i].checked
+						? 'granted'
+						: 'denied';
+				}
+			})
+			.catch(function () {})
+			.then(function () {
+				openModal(trigger);
+			});
+	}
+
+	document.addEventListener('click', function (e) {
+		var link = e.target.closest && e.target.closest('[data-consentaro-action="reopen"]');
+		if (!link) return;
+		e.preventDefault();
+		reopen(link);
+	});
 
 	function onAction(action, trigger) {
 		if (action === 'customize') {
 			openModal(trigger);
 			return;
 		}
+		if (cfg.preview) {
+			previewDone();
+			return;
+		}
 		post({ action: action }).then(done).catch(function () {});
 	}
 
-	root.addEventListener('click', function (e) {
+	if (root) root.addEventListener('click', function (e) {
 		var btn = e.target.closest('[data-consentaro-action]');
 		if (!btn) return;
 		e.preventDefault();
@@ -132,6 +210,10 @@
 			var save = e.target.closest('[data-consentaro-save-custom]');
 			if (!save) return;
 			e.preventDefault();
+			if (cfg.preview) {
+				previewDone();
+				return;
+			}
 			var consent = {};
 			var boxes = modal.querySelectorAll('[data-consentaro-type]');
 			for (var i = 0; i < boxes.length; i++) {
@@ -157,7 +239,7 @@
 		document.activeElement === document.body ||
 		document.activeElement === document.documentElement
 	) {
-		var firstFocusable = root.querySelector('[data-consentaro-action]');
+		var firstFocusable = root && root.querySelector('[data-consentaro-action]');
 		if (firstFocusable) firstFocusable.focus();
 	}
 })();

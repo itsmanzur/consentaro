@@ -7,6 +7,25 @@ This is a reference for theme and plugin developers who want to customize Consen
 - [Filters](#filters)
 - [Actions](#actions)
 
+## Shortcodes
+
+### `[consentaro_settings]`
+
+**File:** `src/Frontend/Banner.php`
+
+Prints a "Cookie settings" button that lets a visitor reopen the preferences dialog after the banner is gone, so withdrawing consent is as easy as giving it. It renders nothing when the plugin is disabled or the banner does not apply to the visitor (and they have not chosen yet).
+
+| Attribute | Default | Description |
+|---|---|---|
+| `label` | `Cookie settings` | Button text. |
+| `class` | empty | Extra CSS class. |
+
+```
+[consentaro_settings label="Manage cookies"]
+```
+
+The shortcode also loads Consentaro's banner CSS/JS on that page. Any other element with `data-consentaro-action="reopen"` works the same once the script is present. When a visitor turns a category off, the page reloads.
+
 ## Filters
 
 ### `consentaro_default_consent_states`
@@ -205,16 +224,18 @@ add_filter( 'consentaro_banner_html', function ( string $html, array $settings )
 
 ### `consentaro_consent_log_query`
 
-**File:** `src/Core/Plugin.php` (provider) · `src/Admin/ConsentLog.php` (`query()`)
+**File:** `src/Admin/ConsentLog.php` (`provideQuery()` → `query()`)
 
-A read-only provider for the optional Consent Log. Add-ons call `apply_filters( 'consentaro_consent_log_query', null, $args )` and get back a page of log rows plus the total match count, without touching Consentaro's database table directly. Returns an empty result (no error) if the Consent Log is turned off or its table doesn't exist.
+A read-only provider for the optional Consent Log. Consentaro Pro's Consent Log viewer reads its data through this filter and never queries the database table directly. Any other add-on can hook the same filter to supply its own consent-log data source (or override the built-in `query()` result).
+
+Reads rows that were already collected, so it works even after logging has been switched off. Returns an empty result (no error) only if the table doesn't exist.
 
 | Parameter | Type | Description |
 |---|---|---|
 | `$default` | `null` | Always `null` from the caller; Consentaro replaces it with the result. |
 | `$args` | `array<string, mixed>` | `page` (int, default 1), `per_page` (int, default 20, max 100), `action` (`accept-all`\|`deny-all`\|`customize`), `date_from` / `date_to` (`Y-m-d`, inclusive), `rid_search` (partial match), `orderby` (`created_at`\|`action`\|`rid`), `order` (`ASC`\|`DESC`). |
 
-Returns `array{ items: array<int, array{id, rid, action, categories, created_at}>, total: int }`.
+Returns `array{ items: array<int, array{rid, action, categories, created_at}>, total: int }` — `total` is the match count for the filters, ignoring pagination.
 
 ```php
 // Latest 10 "deny all" decisions in the last week.
@@ -224,6 +245,22 @@ $result = apply_filters( 'consentaro_consent_log_query', null, array(
 	'per_page'  => 10,
 ) );
 echo $result['total'];
+```
+
+### `consentaro_consent_log_admin_url`
+
+**File:** `src/Admin/Settings.php`
+
+Lets an add-on tell Consentaro where its Consent Log screen lives. Consentaro shows "View Consent Log →" (Insights) and "Open Consent Log" (General) only when this returns a non-empty URL, so a site without such an add-on never sees a dead link. Consentaro Pro uses this.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `$url` | `string` | Admin URL of the log screen. Default `''` (no screen available). |
+
+```php
+add_filter( 'consentaro_consent_log_admin_url', function ( string $url ): string {
+	return admin_url( 'admin.php?page=my-consent-log' );
+} );
 ```
 
 ## Actions

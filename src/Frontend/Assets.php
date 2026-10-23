@@ -55,6 +55,21 @@ final class Assets {
 			return;
 		}
 
+		$this->enqueueBanner();
+	}
+
+	/**
+	 * Enqueue banner CSS/JS (and script blocker). Safe to call more than once;
+	 * also used by the [consentaro_settings] link when the banner itself is
+	 * not shown because the visitor has already chosen.
+	 */
+	public function enqueueBanner(): void {
+		static $done = false;
+		if ( $done ) {
+			return;
+		}
+		$done = true;
+
 		$version = $this->getAssetVersion();
 
 		wp_enqueue_style(
@@ -79,8 +94,11 @@ final class Assets {
 			'consentaro-banner',
 			'consentaroAPI',
 			array(
-				'nonce' => wp_create_nonce( 'wp_rest' ),
-				'url'   => esc_url_raw( rest_url( 'consentaro/v1/consent' ) ),
+				'nonce'   => wp_create_nonce( 'wp_rest' ),
+				'url'     => esc_url_raw( rest_url( 'consentaro/v1/consent' ) ),
+				// Admin "preview as EU visitor": the banner must not record
+				// real decisions or fire consent updates.
+				'preview' => \Consentaro\Admin\Preview::isActive(),
 			)
 		);
 
